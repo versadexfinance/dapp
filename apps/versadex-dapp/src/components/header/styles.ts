@@ -27,27 +27,29 @@ export const ContainerHeader = styled('header', {
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
+  margin: '0 auto',
   py: 0,
   borderBottom: '1px solid #1F1F1F', // [TODO] add to Template border-color
-  // backgroundColor: '$bg',
-  // position: 'fixed',
   top: 0,
   zIndex: '$header',
-  // px: 4,
-  '@desktop': {
-    px: 12,
-  },
-  '@largeDesktop': {
-    px: 17,
-  },
+ 
+ 
 });
 
 export const ContainerHeaderNavbar = styled(Flex, {
+  maxWidth:380,
+  width: '100%',
+  margin: '0 auto',
+  padding:10,
   alignItems: 'center',
   justifyContent: 'spaceBetween',
-  gap: 0,
+  gap:5,
   py: "16px",
-  
+  flexDirection: 'column',
+  "@tablet":{
+    flexDirection: 'row',
+    gap:0
+  }
   // backgroundColor: 'white',
   // '@laptopMini': {
   //   gap: 4,

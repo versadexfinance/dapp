@@ -5,6 +5,8 @@ import { ReactNode } from 'react';
 // import { I18nParametersProps, Locale } from '@/pods/i18n/interfaces';
 import Html from '@/pages/document/html';
 import ServerStylesheet from '@/styled/server-stylesheet';
+import { Flex } from '@/components/box';
+import Typography from '@/components/typography';
 
 export const metadata = {
   icons: {
@@ -36,10 +38,40 @@ const RootLayout = ({ children, ...props }: RootLayoutProps) => (
       <body>
         {children}
         {/* <Footer /> */}
-        {/* <RouteChecker /> */}ç
-        <footer>
-          <p>Footer</p>
-        </footer>
+        {/* <RouteChecker /> */}
+        <Flex
+          as={'footer'}
+          fullWidth
+          css={{
+            maxWidth: 380,
+            margin: 'auto',
+            padding: 20,
+            py: 10
+          }}
+          justifyContent={'spaceBetween'}
+          alignItems={'center'}
+        >
+          <Typography
+            css={{
+              fontSize: '14px',
+              color: '#BFBFBF'
+            }}
+          >
+            VersaDex 2023
+          </Typography>
+
+          <Flex gap={1} alignItems={'center'}>
+            <Typography
+              css={{
+                fontSize: '12px',
+                color: '#009851'
+              }}
+            >
+              2665839
+            </Typography>
+            <img src="/icons/Ellipse.svg" />
+          </Flex>
+        </Flex>
       </body>
     </Html>
     {/* 

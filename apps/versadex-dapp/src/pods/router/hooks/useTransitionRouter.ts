@@ -1,5 +1,5 @@
 'use client';
-import { NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { NavigateOptions } from 'next/dist/shared/lib/app-router-context';
 import { useRouter } from 'next/navigation';
 
 interface ExtendedDocument extends Document {

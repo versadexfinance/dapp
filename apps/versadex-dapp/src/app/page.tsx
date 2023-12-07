@@ -1,7 +1,3 @@
-export default async function Index() {
-  return (
-    <div>
-      <h2>Hello Versadex</h2>
-    </div>
-  );
-}
+// import withProps from '@/pods/common/with-props';
+
+// export default withProps(Redirect, { to: '/home' });

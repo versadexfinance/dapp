@@ -1,5 +1,8 @@
 'use client';
 
+import { Flex } from '@/components/box';
+import Header from '@/components/header';
+import { styled } from '@/styled';
 import { ReactNode } from 'react';
 
 // import { Flex } from '@/components/box';
@@ -18,28 +21,32 @@ interface LayoutProps {
 //   account: 'userSection.account'
 // } as const;
 
-// const Container = styled(Flex, {
-//   transition: 'all 0.5s ease-in-out',
-//   opacity: 0,
-//   variants: {
-//     mounted: {
-//       true: {
-//         opacity: 1
-//       }
-//     }
-//   },
-//   width: '100%',
-//   maxWidth: 300,
-//   mx: 'auto',
-//   py: 4
-// });
+const Container = styled(Flex, {
+  transition: 'all 0.5s ease-in-out',
+  display: 'flex',
+  flexDirection: 'column',
+  opacity: 0,
+  variants: {
+    mounted: {
+      true: {
+        opacity: 1
+      }
+    }
+  },
+  width: '100%',
+  padding: 10,
+  maxWidth: 380,
+  // background: 'red',
+  mx: 'auto',
+  py: 4
+});
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div>
-      <h2>Dashboard Header</h2>
-      {children}
-    </div>
+    <>
+      <Header />
+      <Container mounted>{children}</Container>
+    </>
   );
 };
 

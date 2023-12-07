@@ -1,14 +1,17 @@
 'use client';
 import Image from 'next/image';
-
 import { Flex } from '@/components/box';
-//
-
 import { ContainerHeader, ContainerHeaderNavbar } from './styles';
 import NextLink from '../next-link';
-
 import { styled } from '@/styled';
 import { usePathname } from 'next/navigation';
+import Button from '../button';
+import Select from '../select';
+import media from '@/styled/media';
+import { useMediaQuery } from 'usehooks-ts';
+import { start } from 'repl';
+
+// Common components
 
 const StyledNextLink = styled(NextLink, {
   fontSize: '18px',
@@ -27,43 +30,96 @@ const StyledNextLink = styled(NextLink, {
   }
 });
 
+const ConnectButton = () => (
+  <Button
+    css={{
+      color: 'white',
+      fontSize: '16px',
+      textTransform: 'capitalize',
+      fontWeight: 300,
+      borderRadius: '4px',
+      padding: '10px 16px'
+    }}
+  >
+    <div
+      style={{
+        height: '20px',
+        width: '20px',
+        borderRadius: '50%',
+        background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)'
+      }}
+    ></div>
+    Connect
+  </Button>
+);
+
+const NavigationLinks = ({
+  gtThanTablet,
+  pathname
+}: {
+  gtThanTablet: boolean;
+  pathname: string | null;
+}) => (
+  <Flex
+    fullWidth={!gtThanTablet}
+    css={{
+      gap: gtThanTablet ? 4 : 0
+    }}
+    justifyContent={gtThanTablet ? 'start' : 'spaceBetween'}
+  >
+    <StyledNextLink href="dashboard" active={pathname === '/dashboard'} shallow>
+      Dashboard
+    </StyledNextLink>
+    <StyledNextLink href="swap" active={pathname === '/swap'} shallow>
+      Swap
+    </StyledNextLink>
+    <StyledNextLink
+      href="liquidity-pool"
+      active={pathname === '/liquidity-pool'}
+      shallow
+    >
+      Liquidity Pool
+    </StyledNextLink>
+  </Flex>
+);
+
+// Refactored Header component
+
 const Header = () => {
   const pathname = usePathname();
+  const gtThanTablet = useMediaQuery(media.tablet);
 
   return (
     <ContainerHeader>
-      <ContainerHeaderNavbar
-        alignItems="center"
-        justifyContent="spaceBetween"
-        fullWidth
-      >
-        <Flex alignItems="center" justifyContent="end" gap="10">
-          <NextLink css={{ height: 7.5 }} href="/home" shallow>
+      <ContainerHeaderNavbar alignItems="center" justifyContent="spaceBetween">
+        <Flex
+          css={{
+            width: '100%',
+            justifyContent: 'space-between',
+            '@tablet': {
+              alignItems: 'center',
+              justifyContent: 'start',
+              gap: 10
+            }
+          }}
+        >
+          <NextLink css={{ height: 7.5 }} href="/dashboard" shallow>
             <Image src="/img/logo.svg" alt="logo" width={50} height={40} />
           </NextLink>
-
-          <Flex gap={4}>
-            <StyledNextLink
-              href="dashboard"
-              active={pathname === '/dashboard'}
-              shallow
-            >
-              Dashboard
-            </StyledNextLink>
-            <StyledNextLink href="swap" active={pathname === '/swap'} shallow>
-              Swap
-            </StyledNextLink>
-            <StyledNextLink
-              href="liquidity-pool"
-              active={pathname === '/liquidity-pool'}
-              shallow
-            >
-              Liquidity Pool
-            </StyledNextLink>
-          </Flex>
+          {!gtThanTablet && <Flex>{<ConnectButton />}</Flex>}
+          {gtThanTablet && (
+            <NavigationLinks gtThanTablet={gtThanTablet} pathname={pathname} />
+          )}
         </Flex>
+        {gtThanTablet && (
+          <Flex>
+            <ConnectButton />
+          </Flex>
+        )}
+        {!gtThanTablet && (
+          <NavigationLinks gtThanTablet={gtThanTablet} pathname={pathname} />
+        )}
       </ContainerHeaderNavbar>
-      {/* <NavbarBottom /> */}
     </ContainerHeader>
   );
 };
