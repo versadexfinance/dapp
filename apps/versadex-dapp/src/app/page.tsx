@@ -1,3 +1,4 @@
-// import withProps from '@/pods/common/with-props';
+'use client';
+import { redirect } from 'next/navigation';
 
-// export default withProps(Redirect, { to: '/home' });
+redirect('/swap');

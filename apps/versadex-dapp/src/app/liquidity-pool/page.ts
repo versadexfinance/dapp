@@ -1,1 +1,1 @@
-export { default } from '@/pages/dashboard/components/layout';
+export { default } from '@/pages/liquidity-pool/liquidity-pool.page';

@@ -9,7 +9,9 @@ import Button from '../button';
 import Select from '../select';
 import media from '@/styled/media';
 import { useMediaQuery } from 'usehooks-ts';
-import { start } from 'repl';
+// import { start } from 'repl';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import ConnectWalletButton from '../connect-button/connect-button';
 
 // Common components
 
@@ -29,29 +31,6 @@ const StyledNextLink = styled(NextLink, {
     }
   }
 });
-
-const ConnectButton = () => (
-  <Button
-    css={{
-      color: 'white',
-      fontSize: '16px',
-      textTransform: 'capitalize',
-      fontWeight: 300,
-      borderRadius: '4px',
-      padding: '10px 16px'
-    }}
-  >
-    <div
-      style={{
-        height: '20px',
-        width: '20px',
-        borderRadius: '50%',
-        background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)'
-      }}
-    ></div>
-    Connect
-  </Button>
-);
 
 const NavigationLinks = ({
   gtThanTablet,
@@ -106,14 +85,14 @@ const Header = () => {
           <NextLink css={{ height: 7.5 }} href="/dashboard" shallow>
             <Image src="/img/logo.svg" alt="logo" width={50} height={40} />
           </NextLink>
-          {!gtThanTablet && <Flex>{<ConnectButton />}</Flex>}
+          {!gtThanTablet && <Flex>{<ConnectWalletButton />}</Flex>}
           {gtThanTablet && (
             <NavigationLinks gtThanTablet={gtThanTablet} pathname={pathname} />
           )}
         </Flex>
         {gtThanTablet && (
           <Flex>
-            <ConnectButton />
+            <ConnectWalletButton />
           </Flex>
         )}
         {!gtThanTablet && (

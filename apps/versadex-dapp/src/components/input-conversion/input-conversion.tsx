@@ -28,6 +28,6 @@ const InputConversion = forwardRef<HTMLInputElement, InputProps>(
   )
 );
 
-// InputConversion.displayName = 'InputConversion';
+InputConversion.displayName = 'InputConversion';
 
 export default InputConversion;
