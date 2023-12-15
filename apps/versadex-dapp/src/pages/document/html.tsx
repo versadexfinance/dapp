@@ -21,40 +21,14 @@ import { getCssText } from '@/styled/styled';
 import globalStyles from '@/styled/global-styles';
 import '@rainbow-me/rainbowkit/styles.css';
 
-import {
-  darkTheme,
-  getDefaultWallets,
-  RainbowKitProvider
-} from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import {
-  // mainnet,
-  // polygon,
-  // optimism,
-  // arbitrum,
-  // base,
-  // zora,
-  goerli
-} from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
+import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { WagmiConfig } from 'wagmi';
+
+import config from 'web3/client';
 interface HtmlProps {
   children: ReactNode;
   // lng: Locale;
 }
-
-const { chains, publicClient } = configureChains([goerli], [publicProvider()]);
-
-const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
-  projectId: 'YOUR_PROJECT_ID',
-  chains
-});
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient
-});
 
 const Html = ({ children }: HtmlProps) => {
   // const locale = useCurrentLocale(lng);
@@ -67,20 +41,22 @@ const Html = ({ children }: HtmlProps) => {
           dangerouslySetInnerHTML={{ __html: getCssText() }}
         />
       </Head>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor: '#EBFE64',
-            accentColorForeground: '#0A0A0A',
-            borderRadius: 'small',
-            fontStack: 'system',
-            overlayBlur: 'small'
-          })}
-          chains={chains}
-        >
-          <RecoilRoot>{children}</RecoilRoot>
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <body>
+        <WagmiConfig config={config.wagmiConfig}>
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: '#EBFE64',
+              accentColorForeground: '#0A0A0A',
+              borderRadius: 'small',
+              fontStack: 'system',
+              overlayBlur: 'small'
+            })}
+            chains={config.chains}
+          >
+            <RecoilRoot>{children}</RecoilRoot>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </body>
     </html>
   );
 };

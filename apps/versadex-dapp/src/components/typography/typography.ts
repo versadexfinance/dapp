@@ -12,7 +12,7 @@ import {
   whiteSpaceVariant,
 } from './variants';
 
-const Typography = styled('p', {
+const Typography = styled('div', {
   color: '$foreground',
   defaultVariants: {
     weight: '300',

@@ -2,7 +2,6 @@
 import { styled } from '@stitches/react';
 import { useMediaQuery } from 'usehooks-ts';
 
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Thead } from './styles';
 import { PoolTableRowProps, PoolsTableProps } from './interfaces';
 import CoinImagePair from '@/components/coin-image-pair/coin-image-pair';
@@ -42,7 +41,7 @@ const Td = styled('td', {
   padding: '$2'
 });
 
-const ResponsiveTh = styled('th', {
+const ResponsiveTh = styled('td', {
   // padding: '$2',
   paddingLeft: '$2',
   fontWeight: '500',

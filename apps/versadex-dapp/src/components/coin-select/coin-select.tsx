@@ -5,7 +5,7 @@ import { SelectItem } from './interfaces';
 import Typography from '../typography';
 import { Flex, Stack } from '../box';
 import { TriangleDownIcon } from '@radix-ui/react-icons';
-import { Token } from '@/pods/web3/tokenList';
+import { Token } from 'web3/tokenList';
 
 type CustomSelectProps = SelectProps<any, false> & {
   options: Token[];
@@ -74,7 +74,7 @@ const CoinSelector = ({ options, ...props }: CustomSelectProps) => {
                 color: 'white' // Add text color
               }}
             >
-              {option.ticker}
+              {option.displayTicker}
             </Typography>
             <Typography
               css={{

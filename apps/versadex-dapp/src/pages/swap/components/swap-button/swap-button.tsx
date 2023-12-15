@@ -2,7 +2,15 @@
 import React from 'react';
 import Button from '@/components/button';
 
-const SwapButton = ({ address, isDisconnected, fetchDexSwap }) => {
+const SwapButton = ({
+  address,
+  isDisconnected,
+  fetchDexSwap
+}: {
+  address: string;
+  isDisconnected: boolean;
+  fetchDexSwap: () => void;
+}) => {
   return (
     <Button
       css={{

@@ -8,127 +8,170 @@ import CoinSelector from '@/components/coin-select';
 import Button from '@/components/button';
 import InputConversion from '@/components/input-conversion/input-conversion';
 import CollapsibleCard from '@/components/collapsible-card';
-import { useAccount, useBalance } from 'wagmi';
+import {
+  useAccount,
+  useBalance,
+  useSendTransaction,
+  useWaitForTransaction
+} from 'wagmi';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import axios from 'axios';
 import Image from 'next/image';
 import { usePair, usePrices } from 'web3/hooks/usePair';
 import { useConversion } from 'web3/hooks/useConversion';
-import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format';
-import { Amount, Tokens, tokenList } from 'web3/types';
-import useEthPrice from 'web3/hooks/useEthPrice';
-import { useEstimatedGasFee } from 'web3/hooks/useGasPrice';
-import { useSwap } from 'web3/hooks/useSwap';
-import { useTokenBalance } from 'web3/hooks';
-import { usePriceImpact } from 'web3/hooks/usePriceImpact';
+import {
+  formatDecimal,
+  roundToFirstNonZeroDecimal
+} from '@/pods/utils/number-format';
+import { tokenList } from 'web3/types';
 
 const SwapCard = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
-
   const { data: balanceData } = useBalance({
     address: address
   });
 
-  // useEffect(() => {
-  //   async function fetchTokenBalance() {
-  //     const balance = await getTokenBalance(tokenOne);
-  //     setTokenOneBalance(balance);
-  //   }
-  //   fetchTokenBalance();
-  // },[tokenOne, tokenTwo]])
+  const [tokenOneAmount, setTokenOneAmount] = useState(null);
+  const [tokenTwoAmount, setTokenTwoAmount] = useState(null);
 
-  const [conversionRate, setConversionRate] = useState<string | null>(null);
+  const [tokenOne, setTokenOne] = useState(tokenList[0]);
+  const [tokenTwo, setTokenTwo] = useState(tokenList[1]);
 
-  const [amount, setAmount] = useState<Amount>({ in: '', out: '' });
+  //const [slippage, setSlippage] = useState(2.5);
 
-  const [tokenOne, setTokenOne] = useState<Tokens>(tokenList[0]);
-  const [tokenTwo, setTokenTwo] = useState<Tokens>(tokenList[1]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [prices, setPrices] = useState(null);
+
+  const [txDetails, setTxDetails] = useState({
+    to: null,
+    data: null,
+    value: null
+  });
 
   const usePairResponse = usePair(tokenOne.address, tokenTwo.address);
   const reserves = usePrices(usePairResponse);
-  const ethPrice = useEthPrice();
-  const updatedConversionResult = '';
 
-  const tokenOneBalance = useTokenBalance({
-    address: address as `0x${string}`,
-    token: tokenOne?.address as `0x${string}`,
-    chainId: 5
-  });
+  // const { data, sendTransaction } = useSendTransaction({
+  //   request: {
+  //     from: address,
+  //     to: String(txDetails.to),
+  //     data: String(txDetails.data),
+  //     value: String(txDetails.value)
+  //   }
+  // });
 
-  const tokenTwoBalance = useTokenBalance({
-    address: address as `0x${string}`,
-    token: tokenTwo?.address as `0x${string}`,
-    chainId: 5
-  });
+  // const { isLoading, isSuccess } = useWaitForTransaction({
+  //   hash: data?.hash
+  // });
 
-  function getPriceUsd(ethAmount: number): string {
-    if (ethPrice) {
-      return `${(Number(ethPrice.ethusd) * ethAmount).toFixed(2)}`;
+  // const result = useConversion(
+  //   String(tokenOneAmount),
+  //   tokenOne.ticker,
+  //   String(reserves?.tokenOne ?? 0),
+  //   String(reserves?.tokenTwo ?? 0)
+  // );
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function changeAmount(e: any) {
+    console.log('Chnage amount', e.target.value);
+    const amount = Number(e.target.value);
+    console.log('Prices', reserves);
+    console.log(reserves);
+
+    setTokenOneAmount(amount == 0 ? null : amount);
+
+    if (amount && reserves) {
+      console.log('Setting amount Amount', amount);
+
+      setTokenTwoAmount(Number(result));
+    } else {
+      setTokenTwoAmount(null);
     }
-    return '';
   }
 
-  const swap = useSwap({
-    tokenIn: tokenOne,
-    tokenOut: tokenTwo,
-    amount: amount.in,
-    ethBalance: balanceData?.value || BigInt(0)
-  });
-
-  const onSwap = () => {
-    swap();
-    console.log(
-      `Swapping ${amount.in} ${tokenOne.ticker} for ${conversionResult} ${tokenTwo?.ticker}`
-    );
-  };
-
   function switchTokens() {
-    setAmount({ in: '', out: '' });
+    setPrices(null);
+    setTokenOneAmount(null);
+    setTokenTwoAmount(null);
     const one = tokenOne;
     const two = tokenTwo;
     setTokenOne(two);
     setTokenTwo(one);
+    //fetchPrices(two.address, one.address);
+  }
+
+  function modifyToken(i, changeToken) {
+    console.log('modify token', i);
+
+    setPrices(null);
+    setTokenOneAmount(null);
+    setTokenTwoAmount(null);
+    if (changeToken === 1) {
+      setTokenOne(tokenList.find((t) => t.address === i.address));
+      fetchPrices(
+        tokenList.find((t) => t.address === i.address).address,
+        tokenTwo.address
+      );
+    } else {
+      setTokenTwo(tokenList.find((t) => t.address === i.address));
+      fetchPrices(
+        tokenOne.address,
+        tokenList.find((t) => t.address === i.address).address
+      );
+    }
+    setIsOpen(false);
   }
 
   useEffect(() => {
-    async function calculateConversionRate() {
-      if (reserves) {
-        let ratio = null;
-        if (tokenOne?.ticker == 'WETH') {
-          ratio = reserves?.tokenTwo / reserves?.tokenOne;
-        } else {
-          ratio = reserves?.tokenOne / reserves?.tokenTwo;
-        }
-        setConversionRate(roundToFirstNonZeroDecimal(String(ratio)));
-      }
+    fetchPrices(tokenList[0].address, tokenList[1].address);
+  }, []);
+
+  useEffect(() => {
+    if (txDetails.to && !isConnecting) {
+      sendTransaction();
     }
-    calculateConversionRate();
-  }, [tokenOne, reserves]);
+  }, [txDetails]);
 
-  const gas = useEstimatedGasFee(tokenOne, tokenTwo, address as string);
+  useEffect(() => {
+    // messageApi.destroy();
+    // if (isLoading) {
+    //   messageApi.open({
+    //     type: 'loading',
+    //     content: 'Transaction is Pending...',
+    //     duration: 0
+    //   });
+    // }
+  // }, [isLoading]);
 
-  async function changeAmount(e: any) {
-    const inAmount = e.target.value;
-    setAmount({ in: inAmount, out: '' });
-  }
+  useEffect(() => {
+    // messageApi.destroy();
+    // if (isSuccess) {
+    //   messageApi.open({
+    //     type: 'success',
+    //     content: 'Transaction Successful',
+    //     duration: 1.5
+    //   });
+    // } else if (txDetails.to) {
+    //   messageApi.open({
+    //     type: 'error',
+    //     content: 'Transaction Failed',
+    //     duration: 1.5
+    //   });
+    // }
+  }, [isSuccess]);
 
-  const conversionResult = useConversion(
-    amount,
-    tokenOne ? tokenOne.ticker : '',
-    String(reserves?.tokenOne ?? 0),
-    String(reserves?.tokenTwo ?? 0)
-  );
+  // async function fetchPrices(one: string, two: string) {
+  //   const res = await axios.get(`http://localhost:4200/api/tokenPrice`, {
+  //     params: { addressOne: one, addressTwo: two }
+  //   });
 
-  const priceImpact = usePriceImpact({
-    inputAmount: amount.in,
-    outputAmount: conversionResult || '0', // Provide a default value for outputAmount
-    tokenAPoolSize: String(reserves?.tokenOne ?? 0),
-    tokenBPoolSize: String(reserves?.tokenTwo ?? 0)
-  });
-
-  // function getConversionUnit = (token:Tokens) => {
-
+  //   setPrices(res.data.usdPrices);
   // }
+
+  async function fetchDexSwap() {}
 
   return (
     <Stack
@@ -137,11 +180,6 @@ const SwapCard = () => {
         flex: '4'
       }}
     >
-      {/* <h2>ETHPRICE: {ethPrice && JSON.stringify(ethPrice.ethusd)}</h2>
-      <h2>CONV RESULT: {String(JSON.stringify(conversionResult))}</h2>
-      <h2>GAS: {gas}</h2> */}
-      {/* <h2>TOKEN ONE BALANCE: {tokenOneBalance?.data?.formatted}</h2>
-      <h2>TOKEN TWO BALANCE: {tokenTwoBalance?.data?.formatted}</h2> */}
       <Container>
         <img
           style={{
@@ -187,35 +225,14 @@ const SwapCard = () => {
                         color: '#AFAFAF'
                       }}
                     >
-                      {roundToFirstNonZeroDecimal(
-                        (tokenOneBalance
-                          ? tokenOneBalance?.data?.formatted
-                          : balanceData?.formatted) ?? '0'
-                      )}{' '}
-                      {/* {tokenOne?.ticker == 'WETH'
-                        ? balanceData?.formatted
-                        : '21'}{' '} */}
-                      {tokenOne?.displayTicker}
+                      {balanceData?.formatted} {balanceData?.symbol}
                     </Typography>
                     <Typography
                       css={{
                         fontSize: '12px',
                         lineHeight: '16px',
                         color: '$primary',
-                        padding: '4px 8px',
-                        cursor: 'pointer',
-                        '&:hover': {
-                          scale: 1.1
-                        }
-                      }}
-                      onClick={() => {
-                        setAmount({
-                          ...amount,
-                          in:
-                            (tokenOneBalance
-                              ? tokenOneBalance.data?.formatted
-                              : balanceData?.formatted) ?? '0'
-                        });
+                        padding: '4px 8px'
                       }}
                     >
                       Max
@@ -243,23 +260,19 @@ const SwapCard = () => {
                       // fetchPrices(e.address, tokenTwo.address);
                     }}
                     value={tokenOne}
-                    options={[tokenList[0], tokenList[1]].filter((t) => {
-                      return t.address !== tokenTwo?.address;
-                    })}
+                    options={[tokenList[0], tokenList[1]]}
                   />
 
                   <InputConversion
                     max={Number(balanceData?.formatted)}
                     step={0.000000000000000001}
                     placeholder="0"
-                    value={amount.in}
+                    value={amo}
                     onChange={changeAmount}
                     type="number"
-                    label={`~ ${getPriceUsd(
-                      Number(
-                        tokenOne?.ticker == 'WETH' ? amount.in : amount.out
-                      )
-                    )} USD`}
+                    label={`~ ${(
+                      tokenOneAmount * (prices ? prices.tokenOne : 0)
+                    ).toFixed(2)}USD`}
                   />
                 </Flex>
               </Container>
@@ -323,14 +336,9 @@ const SwapCard = () => {
                         color: '#AFAFAF'
                       }}
                     >
-                      {roundToFirstNonZeroDecimal(
-                        (tokenTwoBalance
-                          ? tokenTwoBalance?.data?.formatted
-                          : balanceData?.formatted) ?? '0'
-                      )}{' '}
-                      {tokenTwo?.displayTicker}{' '}
+                      {balanceData?.formatted} {balanceData?.symbol}
                     </Typography>
-                    {/* <Typography
+                    <Typography
                       css={{
                         fontSize: '12px',
                         lineHeight: '16px',
@@ -339,7 +347,7 @@ const SwapCard = () => {
                       }}
                     >
                       Max
-                    </Typography> */}
+                    </Typography>
                   </Flex>
                 </Flex>
                 <Flex
@@ -357,9 +365,13 @@ const SwapCard = () => {
                         flex: 1
                       }
                     }}
-                    options={[tokenList[0], tokenList[1]].filter((t) => {
-                      return t.address !== tokenOne?.address;
-                    })}
+                    options={
+                      [tokenList[0], tokenList[1]]
+
+                      // .filter((t) => {
+                      // return t.address !== from.tokenAddress;
+                      // })
+                    }
                     onChange={(e) => {
                       modifyToken(e, 2);
 
@@ -368,20 +380,14 @@ const SwapCard = () => {
                     }}
                     value={tokenTwo}
                   />
-                  {/* <pre>{amount.out}</pre> */}
+                  <pre>{tokenTwoAmount}</pre>
                   <InputConversion
-                    value={
-                      conversionResult
-                        ? roundToFirstNonZeroDecimal(conversionResult)
-                        : 'loading'
-                    }
+                    value={roundToFirstNonZeroDecimal(String(tokenTwoAmount))}
                     readOnly
                     step={0.00000000001}
-                    label={`~ ${getPriceUsd(
-                      Number(
-                        tokenTwo?.ticker == 'WETH' ? amount.out : amount.in
-                      )
-                    )} USD`}
+                    label={`~ ${(
+                      tokenTwoAmount * (prices ? prices.tokenTwo : null)
+                    ).toFixed(2)} USD`}
                   />
                 </Flex>
               </Container>
@@ -397,22 +403,19 @@ const SwapCard = () => {
                         gap: 2
                       }}
                     >
-                      {
+                      {prices && (
                         <Typography>
-                          1 {tokenOne.ticker} ~ {conversionRate}{' '}
+                          1 {tokenOne.ticker} ={' '}
+                          {(prices.tokenTwo * prices.ratio).toFixed(2)}{' '}
                           {tokenTwo.ticker}
                         </Typography>
-                      }
+                      )}
                       <Typography
                         css={{
                           color: '#BFBFBF'
                         }}
                       >
-                        ($
-                        {getPriceUsd(
-                          tokenOne?.ticker == 'WETH' ? 1 : conversionRate
-                        )}
-                        )
+                        {'($0.98)'}
                       </Typography>
                     </Flex>
                     <Flex gap={1}>
@@ -423,7 +426,7 @@ const SwapCard = () => {
                           color: '#BFBFBF'
                         }}
                       >
-                        ${getPriceUsd(gas ?? 0)}
+                        $0.15
                       </Typography>
                     </Flex>
                   </Flex>
@@ -447,7 +450,7 @@ const SwapCard = () => {
                         color: '#E1E1E1'
                       }}
                     >
-                      {amount.in ?? 0} {tokenOne.ticker}
+                      {tokenOneAmount ?? 0} {tokenOne.ticker}
                     </Typography>
                   </Flex>
                   <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
@@ -467,11 +470,10 @@ const SwapCard = () => {
                         color: '#E1E1E1'
                       }}
                     >
-                      {roundToFirstNonZeroDecimal(conversionResult) ?? 0}{' '}
-                      {tokenTwo.ticker}
+                      {tokenTwoAmount ?? 0} {tokenTwo.ticker}
                     </Typography>
                   </Flex>
-                  {/* <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
+                  <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
                     <Typography
                       css={{
                         fontSize: '14px',
@@ -481,7 +483,7 @@ const SwapCard = () => {
                     >
                       Exchange rate
                     </Typography>
-                    {/* <Flex
+                    <Flex
                       css={{
                         fontSize: '16px',
                         lineHeight: '20px',
@@ -489,11 +491,14 @@ const SwapCard = () => {
                       }}
                       gap={1}
                     >
-                      <Typography>
-                        1 {tokenOne.ticker} = {conversionRate}
-                        {tokenTwo.ticker}
-                      </Typography>
-
+                      {prices && (
+                        <Typography>
+                          {' '}
+                          1 {tokenOne.ticker} ={' '}
+                          {(prices.tokenTwo * prices.ratio).toFixed(2)}{' '}
+                          {tokenTwo.ticker}
+                        </Typography>
+                      )}
                       <Typography
                         css={{
                           fontSize: '16px',
@@ -502,8 +507,8 @@ const SwapCard = () => {
                       >
                         ($98)
                       </Typography>
-                    </Flex>                   </Flex> 
-*/}
+                    </Flex>
+                  </Flex>
                   <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
                     <Typography
                       css={{
@@ -521,28 +526,7 @@ const SwapCard = () => {
                         color: '#E1E1E1'
                       }}
                     >
-                      AUTO
-                    </Typography>
-                  </Flex>
-
-                  <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
-                    <Typography
-                      css={{
-                        fontSize: '14px',
-                        lineHeight: '16px',
-                        color: '#BFBFBF'
-                      }}
-                    >
-                      Price Impact
-                    </Typography>
-                    <Typography
-                      css={{
-                        fontSize: '16px',
-                        lineHeight: '20px',
-                        color: '#E1E1E1'
-                      }}
-                    >
-                      {priceImpact ?? 0}%
+                      3238.0 DAI
                     </Typography>
                   </Flex>
                   <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
@@ -564,7 +548,7 @@ const SwapCard = () => {
                           color: '#E1E1E1'
                         }}
                       >
-                        ${getPriceUsd(gas ?? 0)}
+                        $0.15
                       </Typography>
                       <Typography
                         css={{
@@ -573,7 +557,7 @@ const SwapCard = () => {
                           color: '#E1E1E1'
                         }}
                       >
-                        ~ {!gas ? '-' : roundToFirstNonZeroDecimal(gas)} ETH
+                        3238.0 DAI
                       </Typography>
                     </Flex>
                   </Flex>
@@ -616,7 +600,7 @@ const SwapCard = () => {
           padding: '12px  40px'
         }}
         fullWidth
-        onClick={onSwap}
+        onClick={fetchDexSwap}
         disabled={!address || isDisconnected}
       >
         {!isDisconnected ? 'SWAP' : 'CONNECT WALLET'}

@@ -11,3 +11,19 @@ export const formatNumber = (value:number, includeCommas:boolean = false) => {
       return `$${value.toFixed(2)}`;
     }
   };
+
+
+  export function roundToFirstNonZeroDecimal(input: string) {
+    if(!Number(input)) return 0;
+    // Parse the input as a floating-point number
+    const number = parseFloat(input);
+    console.log("input", number, "result",Math.max(2,1-Math.floor(Math.log(number)/Math.log(10))));
+    
+
+  
+    const finalNumber = number.toFixed(Math.max(2, 1-Math.floor(Math.log(number)/Math.log(10))))
+
+    return finalNumber;
+  }
+  
+    

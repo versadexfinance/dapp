@@ -5,17 +5,15 @@ import { ContainerHeader, ContainerHeaderNavbar } from './styles';
 import NextLink from '../next-link';
 import { styled } from '@/styled';
 import { usePathname } from 'next/navigation';
-import Button from '../button';
-import Select from '../select';
 import media from '@/styled/media';
 import { useMediaQuery } from 'usehooks-ts';
 // import { start } from 'repl';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import ConnectWalletButton from '../connect-button/connect-button';
+import Link from 'next/link';
 
 // Common components
 
-const StyledNextLink = styled(NextLink, {
+const StyledNextLink = styled(Link, {
   fontSize: '18px',
   textDecoration: 'none',
   color: 'inherit',
@@ -82,7 +80,7 @@ const Header = () => {
             }
           }}
         >
-          <NextLink css={{ height: 7.5 }} href="/dashboard" shallow>
+          <NextLink css={{ height: 7.5 }} href="/dashboard">
             <Image src="/img/logo.svg" alt="logo" width={50} height={40} />
           </NextLink>
           {!gtThanTablet && <Flex>{<ConnectWalletButton />}</Flex>}

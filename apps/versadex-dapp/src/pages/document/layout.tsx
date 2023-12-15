@@ -36,12 +36,10 @@ const RootLayout = ({ children, ...props }: RootLayoutProps) => {
     <LocaleClientProvider locale={props.params.lng}>
     */}
       <Html>
-        <body>
-          {children}
-          {/* <Footer /> */}
-          {/* <RouteChecker /> */}
-          <Footer />
-        </body>
+        {children}
+        {/* <Footer /> */}
+        {/* <RouteChecker /> */}
+        <Footer />
       </Html>
       {/* 
     Uncomment this if needed
