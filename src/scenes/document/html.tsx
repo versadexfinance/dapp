@@ -35,11 +35,13 @@ const Html = ({ children }: HtmlProps) => {
   globalStyles();
   return (
     <html className={poppins.className}>
+      <title> Versadex </title>
       <Head>
         <style
           id="stitches"
           dangerouslySetInnerHTML={{ __html: getCssText() }}
         />
+        
       </Head>
       <body>
         <WagmiConfig config={config.wagmiConfig}>
