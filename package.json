@@ -19,6 +19,7 @@
     "big.js": "6.2.1",
     "ethers": "5.7.2",
     "next": "14.0.4",
+    "pino-pretty": "^10.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-select": "5.8.0",
