@@ -77,16 +77,16 @@ const ConnectWalletButton = () => {
                   <Button
                     onClick={openChainModal}
                     css={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      color: 'white',
-                      textTransform: 'capitalize',
-                      bacjground: 'transparent',
-                      borderRadius: '4px',
-                      border: '1px solid #424242',
-                      fontWeight: 500,
-                      padding: '10px 12px',
-                      fontSize: '16px'
+                      display: 'flex !important',
+                      alignItems: 'center !important',
+                      color: 'white !important',
+                      textTransform: 'capitalize !important ',
+                      bacjground: 'transparent !important',
+                      borderRadius: '4px !important',
+                      border: '1px solid #424242 !important',
+                      fontWeight: "500 !important",
+                      padding: '10px 12px !important',
+                      fontSize: '16px !important'
                     }}
                     type="button"
                   >
