@@ -257,7 +257,7 @@ const SwapCard = () => {
                     type="number"
                     label={`~ ${getPriceUsd(
                       Number(
-                        tokenOne?.ticker == 'WETH' ? amount.in : amount.out
+                        tokenOne?.ticker == 'WETH' ? amount.in : conversionResult
                       )
                     )} USD`}
                   />
@@ -373,7 +373,7 @@ const SwapCard = () => {
                     step={0.00000000001}
                     label={`~ ${getPriceUsd(
                       Number(
-                        tokenTwo?.ticker == 'WETH' ? amount.out : amount.in
+                        tokenOne?.ticker == 'WETH' ? amount.in : conversionResult
                       )
                     )} USD`}
                   />
