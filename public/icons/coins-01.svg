@@ -1,0 +1,16 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="coins-01" clip-path="url(#clip0_939_87833)">
+<path id="Vector" d="M10.3333 8.66679C12.7266 8.66679 14.6667 8.06984 14.6667 7.33346C14.6667 6.59708 12.7266 6.00012 10.3333 6.00012C7.9401 6.00012 6 6.59708 6 7.33346C6 8.06984 7.9401 8.66679 10.3333 8.66679Z" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+<path id="Vector_2" d="M14.6667 10.3335C14.6667 11.0699 12.7266 11.6668 10.3333 11.6668C7.94007 11.6668 6 11.0699 6 10.3335" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+<path id="Vector_3" d="M14.6667 7.3335V13.2002C14.6667 14.0102 12.7266 14.6668 10.3333 14.6668C7.94007 14.6668 6 14.0102 6 13.2002V7.3335" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+<path id="Vector_4" d="M5.66659 4.00016C8.05982 4.00016 9.99992 3.40321 9.99992 2.66683C9.99992 1.93045 8.05982 1.3335 5.66659 1.3335C3.27335 1.3335 1.33325 1.93045 1.33325 2.66683C1.33325 3.40321 3.27335 4.00016 5.66659 4.00016Z" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+<path id="Vector_5" d="M4.66659 7.33346C3.33325 7.33346 1.57986 6.78312 1.33325 6.00012M4.66659 10.6668C3.33325 10.6668 1.57986 10.1165 1.33325 9.33346" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+<path id="Vector_6" d="M4.66659 14.0001C3.33325 14.0001 1.57986 13.4497 1.33325 12.6667V2.66675" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+<path id="Vector_7" d="M10 4.66675V2.66675" stroke="#8CEA69" stroke-width="1.5" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_939_87833">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>

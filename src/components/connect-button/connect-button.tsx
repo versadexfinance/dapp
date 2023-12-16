@@ -1,0 +1,142 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Button from '../button';
+import { TriangleDownIcon } from '@radix-ui/react-icons';
+
+const CustomConnectButton = (props: any) => (
+  <Button
+    {...props}
+    css={{
+      color: 'white',
+      fontSize: '16px',
+      textTransform: 'capitalize',
+      fontWeight: 300,
+      borderRadius: '4px',
+      padding: '10px 16px'
+    }}
+  >
+    <div
+      style={{
+        height: '20px',
+        width: '20px',
+        borderRadius: '50%',
+        background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)'
+      }}
+    ></div>
+    {props.children}
+  </Button>
+);
+
+const ConnectWalletButton = () => {
+  return (
+    <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+        authenticationStatus,
+        mounted
+      }) => {
+        // Note: If your app doesn't use authentication, you
+        // can remove all 'authenticationStatus' checks
+        const ready = mounted && authenticationStatus !== 'loading';
+        const connected =
+          ready &&
+          account &&
+          chain &&
+          (!authenticationStatus || authenticationStatus === 'authenticated');
+        return (
+          <div
+            {...(!ready && {
+              'aria-hidden': true,
+              style: {
+                opacity: 0,
+                pointerEvents: 'none',
+                userSelect: 'none'
+              }
+            })}
+          >
+            {(() => {
+              if (!connected) {
+                return (
+                  <CustomConnectButton onClick={openConnectModal} type="button">
+                    Connect
+                  </CustomConnectButton>
+                );
+              }
+              if (chain.unsupported) {
+                return (
+                  <button onClick={openChainModal} type="button">
+                    Wrong network
+                  </button>
+                );
+              }
+              return (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button
+                    onClick={openChainModal}
+                    css={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'white',
+                      textTransform: 'capitalize',
+                      bacjground: 'transparent',
+                      borderRadius: '4px',
+                      border: '1px solid #424242',
+                      fontWeight: 500,
+                      padding: '10px 12px',
+                      fontSize: '16px'
+                    }}
+                    type="button"
+                  >
+                    {chain.hasIcon && (
+                      <div
+                        style={{
+                          background: chain.iconBackground,
+                          width: 20,
+                          height: 20,
+                          borderRadius: 999,
+                          overflow: 'hidden',
+                          marginRight: 4
+                        }}
+                      >
+                        {chain.iconUrl && (
+                          <img
+                            alt={chain.name ?? 'Chain icon'}
+                            src={chain.iconUrl}
+                            style={{ width: 12, height: 12 }}
+                          />
+                        )}
+                      </div>
+                    )}
+                    {chain.name}
+                    <TriangleDownIcon />
+                  </Button>
+                  <CustomConnectButton
+                    css={{
+                      color: 'white',
+                      fontSize: '16px',
+                      textTransform: 'capitalize',
+                      fontWeight: 300,
+                      borderRadius: '4px',
+                      padding: '10px 16px'
+                    }}
+                    onClick={openAccountModal}
+                    type="button"
+                  >
+                    {account.displayName}
+                    {account.displayBalance
+                      ? ` (${account.displayBalance})`
+                      : ''}
+                  </CustomConnectButton>
+                </div>
+              );
+            })()}
+          </div>
+        );
+      }}
+    </ConnectButton.Custom>
+  );
+};
+export default ConnectWalletButton;
