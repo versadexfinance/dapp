@@ -25,7 +25,7 @@ import { useTokenBalance } from '@/web3/hooks';
 import Modal from '@/components/modal/modal';
 import SearchToken from '../search-token';
 import { useRecoilState } from 'recoil';
-import { tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
+import { maxSlippageState, tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
 import { usePriceImpact } from '@/web3/hooks/usePriceImpact';
 import SwapSettings from '../swap-settings';
 
@@ -43,6 +43,8 @@ const SwapCard = () => {
 
   const [tokenOne, setTokenOne] = useRecoilState(tokenInState);
   const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState);
+
+  const [maxSlippage, setMaxSlippage] = useRecoilState(maxSlippageState);
 
   const usePairResponse = usePair(
     tokenOne ? tokenOne.address : '',
@@ -506,7 +508,7 @@ const SwapCard = () => {
                         color: '#E1E1E1'
                       }}
                     >
-                      AUTO
+                      {maxSlippage == "" ? "Auto":maxSlippage + "%"} 
                     </Typography>
                   </Flex>
 
