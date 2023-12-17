@@ -1,5 +1,5 @@
 import { Tokens, tokenList } from '@/web3/types';
-import { atom } from 'recoil';
+import { RecoilState, atom } from 'recoil';
 
 export const tokenInState = atom({
   key: 'tokenInState',
@@ -13,7 +13,7 @@ export const tokenOutState = atom({
 
 export const maxSlippageState = atom({
   key: 'maxSlippageState',
-  default: 0,
+  default: "",
 });
 
 export const transactionDeadlineState = atom({

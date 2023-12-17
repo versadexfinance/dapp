@@ -64,6 +64,7 @@ export function usePriceImpact({inputAmount, outputAmount, tokenAPoolSize, token
 
   console.log("Price impact params",inputAmount,outputAmount,tokenAPoolSize,tokenBPoolSize);
   
+  return 0;
 
   useEffect(() => {
     const calculatePriceImpact = () => {
@@ -86,7 +87,7 @@ export function usePriceImpact({inputAmount, outputAmount, tokenAPoolSize, token
         console.log("Constant product",constantProductBN.toString());
         
 
-        setPriceImpact(priceImpactPercentage);
+        // setPriceImpact(priceImpactPercentage);
       } catch (error) {
         console.error('Error calculating price impact:', error);
         setIsError(true);

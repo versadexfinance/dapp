@@ -13,7 +13,7 @@ export const formatNumber = (value:number, includeCommas:boolean = false) => {
   };
 
 
-  export function roundToFirstNonZeroDecimal(input: string | null) {
+  export function roundToFirstNonZeroDecimal(input: any) {
     if(!Number(input)) return 0;
     // Parse the input as a floating-point number
     const number = parseFloat(input??'0');

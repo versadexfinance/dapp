@@ -44,7 +44,7 @@ const Container = styled(Flex, {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <>
-      <Header from={""} />
+      <Header />
       <Container mounted>{children}</Container>
     </>
   );

@@ -442,7 +442,7 @@ const SwapCard = () => {
                           color: '#BFBFBF'
                         }}
                       >
-                        ${roundToFirstNonZeroDecimal(getPriceUsd(String(gas?.gasFee ?? 0)))}
+                        ${roundToFirstNonZeroDecimal(getPriceUsd(gas?.gasFee ?? 0))}
                       </Typography>
                     </Flex>
                   </Flex>
@@ -551,7 +551,7 @@ const SwapCard = () => {
                           color: '#E1E1E1'
                         }}
                       >
-                        ${roundToFirstNonZeroDecimal(getPriceUsd(String(gas?.gasFee ?? 0)))}
+                        ${roundToFirstNonZeroDecimal(getPriceUsd(gas?.gasFee ?? 0))}
                       </Typography>
                       <Typography
                         css={{
