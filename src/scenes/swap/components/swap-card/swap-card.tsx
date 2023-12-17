@@ -20,6 +20,10 @@ import useEthPrice from '@/web3/hooks/useEthPrice';
 import { useEstimatedGasFee } from '@/web3/hooks/useGasPrice';
 import { useSwap } from '@/web3/hooks/useSwap';
 import { useTokenBalance } from '@/web3/hooks';
+import Modal from '@/components/modal/modal';
+import SearchToken from '../search-token';
+import { useRecoilState } from 'recoil';
+import { tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
 // import { usePriceImpact } from '@/web3/hooks/usePriceImpact';
 
 const SwapCard = () => {
@@ -28,21 +32,13 @@ const SwapCard = () => {
   const { data: balanceData } = useBalance({
     address: address
   });
-
-  // useEffect(() => {
-  //   async function fetchTokenBalance() {
-  //     const balance = await getTokenBalance(tokenOne);
-  //     setTokenOneBalance(balance);
-  //   }
-  //   fetchTokenBalance();
-  // },[tokenOne, tokenTwo]])
-
   const [conversionRate, setConversionRate] = useState<string | null | 0>(null);
 
   const [amount, setAmount] = useState<Amount>({ in: '', out: '' });
 
-  const [tokenOne, setTokenOne] = useState<Tokens>(tokenList[0]);
-  const [tokenTwo, setTokenTwo] = useState<Tokens>(tokenList[1]);
+
+  const [tokenOne, setTokenOne] = useRecoilState(tokenInState);
+  const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState);
 
   const usePairResponse = usePair(
     tokenOne ? tokenOne.address : '',
@@ -82,7 +78,6 @@ const SwapCard = () => {
   };
 
   function switchTokens() {
-    setAmount({ in: '', out: '' });
     const one = tokenOne;
     const two = tokenTwo;
     setTokenOne(two);
@@ -114,7 +109,7 @@ const SwapCard = () => {
 
   const conversionResult = useConversion(
     amount,
-    tokenOne ? tokenOne.ticker : '',
+    tokenOne,
     String(reserves?.tokenOne ?? 0),
     String(reserves?.tokenTwo ?? 0)
   );
@@ -238,14 +233,7 @@ const SwapCard = () => {
                         flex: 1
                       }
                     }}
-                    onChange={() => {
-                      // setTokenOne(e);
-                      // fetchPrices(e.address, tokenTwo.address);
-                    }}
-                    value={tokenOne}
-                    options={[tokenList[0], tokenList[1]].filter((t) => {
-                      return (t && t.address) !== tokenTwo?.address;
-                    })}
+                    tokenPosition='in'
                   />
 
                   <InputConversion
@@ -357,10 +345,7 @@ const SwapCard = () => {
                         flex: 1
                       }
                     }}
-                    options={[tokenList[0], tokenList[1]].filter((t) => {
-                      return (t && t.address) !== tokenOne?.address;
-                    })}
-                    value={tokenTwo}
+                   tokenPosition='out'
                   />
                   {/* <pre>{amount.out}</pre> */}
                   <InputConversion
@@ -467,39 +452,7 @@ const SwapCard = () => {
                       {tokenTwo && tokenTwo.ticker}
                     </Typography>
                   </Flex>
-                  {/* <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
-                    <Typography
-                      css={{
-                        fontSize: '14px',
-                        lineHeight: '16px',
-                        color: '#BFBFBF'
-                      }}
-                    >
-                      Exchange rate
-                    </Typography>
-                    {/* <Flex
-                      css={{
-                        fontSize: '16px',
-                        lineHeight: '20px',
-                        color: '#E1E1E1'
-                      }}
-                      gap={1}
-                    >
-                      <Typography>
-                        1 {tokenOne.ticker} = {conversionRate}
-                        {tokenTwo.ticker}
-                      </Typography>
-
-                      <Typography
-                        css={{
-                          fontSize: '16px',
-                          color: '#F7FFBB'
-                        }}
-                      >
-                        ($98)
-                      </Typography>
-                    </Flex>                   </Flex> 
-*/}
+                 
                   <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
                     <Typography
                       css={{
@@ -617,6 +570,7 @@ const SwapCard = () => {
       >
         {!isDisconnected ? 'SWAP' : 'CONNECT WALLET'}
       </Button>
+
     </Stack>
   );
 };

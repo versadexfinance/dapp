@@ -4,6 +4,7 @@ import { ethers, Contract, BigNumberish } from 'ethers';
 import { config } from '@/web3/config';
 import { routerAbi } from '@/web3/abis';
 import { useContractRead } from 'wagmi';
+import { Token, Tokens } from '../types';
 
 interface Amount {
   in: string;
@@ -13,7 +14,7 @@ interface Amount {
 
 export function useConversion(
   amount: Amount,
-  tokenTicker: string,
+  token: Tokens,
   supply1: string,
   supply2: string
 ): string | null {
@@ -29,7 +30,7 @@ export function useConversion(
     ethers.utils.parseEther(supply1).toBigInt(),
   ];
 
-  const args: bigint[] = tokenTicker === 'WETH' ? args1 : args2;
+  const args: bigint[] = token.ticker === 'WETH' ? args1 : args2;
 
   const result = useContractRead({
     address: config.contract.routerV2, // Replace with your contract address
@@ -51,82 +52,5 @@ export function useConversion(
   return formattedResult;
 }
 
-  
-
-// export function usePrices(pairAddress: string | null) {
-
-    
-//     const [prices, setPrices] = useState<PairSupply | null>(null);
-  
-    
-//     useEffect(() => {
-//       const fetchPrices = async () => {
-//         try {
-//             if (!pairAddress) return;
-//           const contractPair = new ethers.Contract(pairAddress, pairAbi, provider);
-          
-//           const totalReserves = await contractPair.getReserves();
-//           const token1 = Number(ethers.utils.formatUnits(totalReserves[0], "ether"));
-//           const token2 = Number(ethers.utils.formatUnits(totalReserves[1], "ether"));
-  
-//           setPrices({
-//             tokenOne: token1,
-//             tokenTwo: token2,
-//             ratio: Big(token1).div(token2).toNumber(),
-            
-//           });
-//         } catch (error) {
-//           console.error('Error fetching prices:', error);
-//         }
-//       };
-  
-//       fetchPrices();
-//     }, [pairAddress]);
-  
-//     console.log("Prices",prices);
-
-//     return prices;
-//   }
-
-
-
-
-
-
-// publicClient
-
-// export async function getConversion(
-//   amount: Amount,
-//   tokenTicker: string,
-//   supply1: string,
-//   supply2: string
-// ) {
-//   console.log("tokenFrom", amount.in, "tokenTicker", tokenTicker, "supply1", supply1, "supply2", supply2);
-  
-//   try {
-//     if (Number(amount.in) <= 0) return '0';
-
-//     let result;
-//     if (tokenTicker === "WETH") {
-//       result = await contract.getAmountOut(
-//         ethers.utils.parseEther(amount.in),
-//         ethers.utils.parseEther(supply1),
-//         ethers.utils.parseEther(supply2)
-//       );
-//     } else {
-//       result = await contract.getAmountOut(
-//         ethers.utils.parseEther(amount.in),
-//         ethers.utils.parseEther(supply2),
-//         ethers.utils.parseEther(supply1)
-//       );
-//     }
-
-//     return ethers.utils.formatEther(result);
-//   } catch (error) {
-//     console.error('Error fetching pair:', error);
-//     return '0';
-//   }
-// }
-  
   
   

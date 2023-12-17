@@ -24,9 +24,8 @@ export function useSwap({
 }) {
     const { address } = useAccount();
     const ethBalanceWei = ethers.BigNumber.from(ethBalance)
-    console.log("1232");
     const inWei = ethers.utils.parseEther(amount.length ? amount: "0");
-    console.log("asdasd");
+
 
     const contract = new ethers.Contract(tokenIn ?tokenIn?.address:"", erc20ABI , provider);
 
@@ -158,7 +157,7 @@ export function useSwap({
         } catch (error: any) {
             console.error(error.message || error);
         }
-    }, [address, amount, tokenIn, tokenOut]);
+    }, [address, contract, ethBalanceWei, inWei, tokenIn?.address, tokenIn?.ticker, tokenOut?.address, tokenOut?.ticker]);
 
     return swap;
 }

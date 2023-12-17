@@ -17,7 +17,7 @@ export type Tokens =  {
     name: string;
     address: string;
     decimals: number;
-} | null
+} 
 
 
 export const tokenList: Tokens[] =[

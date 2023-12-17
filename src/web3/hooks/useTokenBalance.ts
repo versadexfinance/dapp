@@ -5,7 +5,6 @@ import { config } from '@/web3/config';
 
 export function useTokenBalance(params : FetchBalanceArgs) {
     const { address } = useAccount();
-    console.log("params",params);
 
     
     
@@ -13,16 +12,13 @@ export function useTokenBalance(params : FetchBalanceArgs) {
         address: params.address,
         chainId: params.chainId,
         token:params.token,
-        watch: !!params,
+        watch: true,
     });
 
 
     if(params.token == config.contract.weth){
         return null
     }
-    console.log("data use token balance",data);
-
-    console.log("Token address",config.contract.versadex);
     
     if (!address) return { data: null, isError: false, isLoading: true };
 
