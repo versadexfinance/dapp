@@ -21,7 +21,6 @@ const SearchToken = (props: SearchTokenProps) => {
   const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState);
 
   const handleSelectedToken = (selectedToken: Tokens) => {
-    console.log("Selected Token: ", selectedToken);
   
     if (tokenOne?.address === selectedToken?.address || tokenTwo?.address === selectedToken?.address) {
       const tempToken = { ...tokenOne }; 
@@ -76,7 +75,9 @@ const SearchToken = (props: SearchTokenProps) => {
 
       <Stack gap={1}>
         {filteredTokens.map((token: Tokens) => (
-          <Flex css={{
+          <Flex 
+          onClick={()=>handleSelectedToken(token)} 
+          css={{
             borderRadius: '4px',
             padding: '8px',
             cursor: 'pointer',
@@ -86,12 +87,12 @@ const SearchToken = (props: SearchTokenProps) => {
           }} alignItems={'center'} justifyContent={'spaceBetween'} key={token.address}>
             {token && (
               <>
-              <Flex onClick={()=>handleSelectedToken(token)}  gap={1}>
+              <Flex  gap={1}>
                 <img width={"24px"}  height={"24px"} src={token.img} alt="" /> 
                 <Typography>{token.name}</Typography>
 
               </Flex>
-                <Typography>{token.ticker}</Typography>
+                <Typography>{token.displayTicker}</Typography>
               </>
             )}
           </Flex>

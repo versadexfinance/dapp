@@ -31,11 +31,11 @@ interface PriceImpactArgs {
 //       return '';
 //     }
 
-//     const tokenAPoolSizeBigNumber = BigNumber.from(ethers.utils.parseUnits(tokenAPoolSize));
-//     const tokenBPoolSizeBigNumber = BigNumber.from(ethers.utils.parseUnits(tokenBPoolSize));
+//     const tokenAPoolSizeBigNumber = BigNumber.from(tokenBPoolSize);
+//     const tokenBPoolSizeBigNumber = BigNumber.from(tokenBPoolSize);
 //     const constantProduct = tokenAPoolSizeBigNumber.mul(tokenBPoolSizeBigNumber);
 
-//     const newTokenAPoolSize = tokenAPoolSizeBigNumber.add(BigNumber.from(ethers.utils.parseUnits(inputAmount)));
+//     const newTokenAPoolSize = tokenAPoolSizeBigNumber.add(BigNumber.from(inputAmount));
 //     const newTokenBPoolSize = constantProduct.div(newTokenAPoolSize);
 
 //     const newOutputAmountBigNumber = tokenBPoolSizeBigNumber.sub(newTokenBPoolSize);
@@ -52,6 +52,55 @@ interface PriceImpactArgs {
 
 //   return calculatePriceImpact;
 // }
+
+
+
+import { useEffect, useState } from 'react';
+
+export function usePriceImpact({inputAmount, outputAmount, tokenAPoolSize, tokenBPoolSize}:PriceImpactArgs) {
+  const [priceImpact, setPriceImpact] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  console.log("Price impact params",inputAmount,outputAmount,tokenAPoolSize,tokenBPoolSize);
+  
+
+  useEffect(() => {
+    const calculatePriceImpact = () => {
+      try {
+        setIsLoading(true);
+        setIsError(false);
+
+        if (!inputAmount || !outputAmount || !tokenAPoolSize || !tokenBPoolSize) {
+          setPriceImpact(null);
+          return;
+        }
+
+        const tokenAPoolSizeInt = ethers.utils.parseUnits(tokenAPoolSize, 18);
+        const tokenBPoolSizeInt = ethers.utils.parseUnits(tokenBPoolSize, 18);
+
+        // console.log("Constant product tokenApPoolSize",tokenApPoolSize.toString());
+
+      const constantProductBN = BigNumber.from(tokenAPoolSizeInt).mul(BigNumber.from(tokenBPoolSizeInt));
+
+        console.log("Constant product",constantProductBN.toString());
+        
+
+        setPriceImpact(priceImpactPercentage);
+      } catch (error) {
+        console.error('Error calculating price impact:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    calculatePriceImpact();
+  }, [inputAmount, outputAmount, tokenAPoolSize, tokenBPoolSize]);
+
+  return priceImpact;
+  // return { priceImpact, isLoading, isError };
+}
 
 
 // export function usePriceImpact({

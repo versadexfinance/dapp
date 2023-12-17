@@ -7,6 +7,8 @@ import { ethers } from 'ethers';
 import { config } from '@/web3/config';
 import { Tokens } from '@/web3/types';
 import { routerAbi } from '@/web3/abis';
+import { useRecoilState } from 'recoil';
+import { maxSlippageState, transactionDeadlineState } from '@/pods/atoms/swap-selected-tokens.atom';
 
 const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth_goerli");
 
@@ -22,10 +24,13 @@ export function useSwap({
     tokenOut: Tokens;
     ethBalance: bigint;
 }) {
+    const [maxSlippage, setMaxSlippage] = useRecoilState(maxSlippageState);
+    const [transactionDeadline, setTransactionDeadline] = useRecoilState(transactionDeadlineState);
+    
     const { address } = useAccount();
     const ethBalanceWei = ethers.BigNumber.from(ethBalance)
     const inWei = ethers.utils.parseEther(amount.length ? amount: "0");
-
+    
 
     const contract = new ethers.Contract(tokenIn ?tokenIn?.address:"", erc20ABI , provider);
 
@@ -63,20 +68,13 @@ export function useSwap({
            
         
             if(tokenIn?.ticker === "WETH"){
-
                 const result = await writeContract({
                     address: config.contract.routerV2,
                     abi: routerAbi,
                     functionName: 'swapExactETHForTokens',
-                    args: ["0", [config.contract.weth, tokenOut?.address], address, Date.now() + 1000 * 60 * 10],            
+                    args: ["0", [config.contract.weth, tokenOut?.address], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
                     value: inWei.toBigInt()
                 });
-    
-
-                console.log(result);
-                
-                // await waitWriteContract();
-
             }else if(tokenOut?.ticker === "WETH"){
 
                 //Check Allowance

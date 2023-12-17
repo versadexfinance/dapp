@@ -9,4 +9,14 @@ export const tokenInState = atom({
 export const tokenOutState = atom({
     key: 'tokenOutState',
     default: tokenList[1],
-  });
+});
+
+export const maxSlippageState = atom({
+  key: 'maxSlippageState',
+  default: 0,
+});
+
+export const transactionDeadlineState = atom({
+  key: 'transactionDeadlineState',
+  default: 0,
+});

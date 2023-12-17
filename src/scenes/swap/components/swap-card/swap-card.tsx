@@ -9,6 +9,8 @@ import Button from '@/components/button';
 import InputConversion from '@/components/input-conversion/input-conversion';
 import CollapsibleCard from '@/components/collapsible-card';
 import { useAccount, useBalance } from 'wagmi';
+import { TiWarning } from "react-icons/ti";
+
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -24,18 +26,20 @@ import Modal from '@/components/modal/modal';
 import SearchToken from '../search-token';
 import { useRecoilState } from 'recoil';
 import { tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
-// import { usePriceImpact } from '@/web3/hooks/usePriceImpact';
+import { usePriceImpact } from '@/web3/hooks/usePriceImpact';
+import SwapSettings from '../swap-settings';
 
 const SwapCard = () => {
   const { address, isDisconnected } = useAccount();
 
   const { data: balanceData } = useBalance({
-    address: address
+    address: address,
+    watch: true
   });
   const [conversionRate, setConversionRate] = useState<string | null | 0>(null);
 
   const [amount, setAmount] = useState<Amount>({ in: '', out: '' });
-
+  const [settingOpen, setSettingOpen] = useState(false)
 
   const [tokenOne, setTokenOne] = useRecoilState(tokenInState);
   const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState);
@@ -87,7 +91,9 @@ const SwapCard = () => {
   useEffect(() => {
     async function calculateConversionRate() {
       if (reserves) {
-        let ratio:number = 0;
+        console.log("reserves", reserves);
+
+        let ratio: number = 0;
         if (tokenOne?.ticker == 'WETH') {
           ratio = reserves?.tokenTwo / reserves?.tokenOne;
         } else {
@@ -114,13 +120,14 @@ const SwapCard = () => {
     String(reserves?.tokenTwo ?? 0)
   );
 
-  const priceImpact = "0"
-  // usePriceImpact({
-  //   inputAmount: amount.in,
-  //   outputAmount: conversionResult || '0', // Provide a default value for outputAmount
-  //   tokenAPoolSize: String(reserves?.tokenOne ?? 0),
-  //   tokenBPoolSize: String(reserves?.tokenTwo ?? 0)
-  // });
+  
+
+ const priceImpact =  usePriceImpact({
+    inputAmount: amount.in,
+    outputAmount: conversionResult || '0', // Provide a default value for outputAmount
+    tokenAPoolSize: String(reserves?.tokenOne ?? 0),
+    tokenBPoolSize: String(reserves?.tokenTwo ?? 0)
+  });
 
   // function getConversionUnit = (token:Tokens) => {
 
@@ -139,16 +146,24 @@ const SwapCard = () => {
       {/* <h2>TOKEN ONE BALANCE: {tokenOneBalance?.data?.formatted}</h2>
       <h2>TOKEN TWO BALANCE: {tokenTwoBalance?.data?.formatted}</h2> */}
       <Container>
+        
         <img
+          onClick={()=>setSettingOpen(!settingOpen)}
           style={{
             position: 'absolute',
-            right: '16px'
+            right: '16px',
+            cursor: 'pointer',
+            
           }}
           src="/icons/setting.svg"
           width={24}
         />
 
-        <TabsComponent defaultTabLabel="Swap">
+       {settingOpen&& <SwapSettings closeSettings={()=>{
+          setSettingOpen(false)
+        }}/>}
+
+        <TabsComponent defaultTabLabel="Swap"> 
           <TabItem label="Swap">Tab 1</TabItem>
           <TabItem label="Cross Chain Swap">Tab 2</TabItem>
 
@@ -226,29 +241,41 @@ const SwapCard = () => {
                   alignItems={'center'}
                   justifyContent={'spaceBetween'}
                 >
-                  <CoinSelector
-                    css={{
-                      flex: 2,
-                      '@tablet': {
-                        flex: 1
-                      }
-                    }}
-                    tokenPosition='in'
-                  />
+                  <div style={{ flex: "1" }}>
+                    <CoinSelector
+                      css={{
+                        flex: 4,
+                        '@tablet': {
+                          flex: 3,
+                        }
+                      }}
+                      tokenPosition='in'
+                    />
 
-                  <InputConversion
-                    max={Number(balanceData?.formatted)}
-                    step={0.000000000000000001}
-                    placeholder="0"
-                    value={amount.in}
-                    onChange={changeAmount}
-                    type="number"
-                    label={`~ ${getPriceUsd(
-                      Number(
-                        tokenOne?.ticker == 'WETH' ? amount.in : conversionResult
-                      )
-                    )} USD`}
-                  />
+                  </div>
+                  <div style={{
+                    flex: "2"
+                  }}>
+                    <InputConversion
+                      css={{
+                        flex: 2,
+                        '@tablet': {
+                          flex: 1
+                        }
+                      }}
+                      step={0.000000000000000001}
+                      placeholder="0"
+                      value={amount.in}
+                      onChange={changeAmount}
+                      type="number"
+                      label={`~ ${getPriceUsd(
+                        Number(
+                          tokenOne?.ticker == 'WETH' ? amount.in : conversionResult
+                        )
+                      )} USD`}
+                    />
+                  </div>
+
                 </Flex>
               </Container>
               <Flex direction={'row'} alignItems={'center'}>
@@ -338,16 +365,24 @@ const SwapCard = () => {
                   gap={2}
                   justifyContent={'spaceBetween'}
                 >
-                  <CoinSelector
-                    css={{
-                      flex: 2,
-                      '@tablet': {
-                        flex: 1
-                      }
-                    }}
-                   tokenPosition='out'
-                  />
+                  <div style={{ flex: "1" }}>
+
+                    <CoinSelector
+                      css={{
+                        flex: 2,
+                        '@tablet': {
+                          flex: 1
+                        }
+                      }}
+                      tokenPosition='out'
+                    />
+                  </div>
                   {/* <pre>{amount.out}</pre> */}
+                  <div style={{
+                    flex: "2"
+                  }}>
+
+                  
                   <InputConversion
                     value={
                       conversionResult
@@ -362,6 +397,7 @@ const SwapCard = () => {
                       )
                     )} USD`}
                   />
+                  </div>
                 </Flex>
               </Container>
               <CollapsibleCard
@@ -378,8 +414,8 @@ const SwapCard = () => {
                     >
                       {
                         <Typography>
-                          1 {tokenOne && tokenOne.ticker} ~ {conversionRate}{' '}
-                          {tokenTwo && tokenTwo.ticker}
+                          1 {tokenOne && tokenOne.displayTicker} ~ {conversionRate}{' '}
+                          {tokenTwo && tokenTwo.displayTicker}
                         </Typography>
                       }
                       <Typography
@@ -404,14 +440,14 @@ const SwapCard = () => {
                           color: '#BFBFBF'
                         }}
                       >
-                        ${getPriceUsd(0 ?? 0)}
+                        ${roundToFirstNonZeroDecimal(getPriceUsd(String(gas?.gasFee ?? 0)))}
                       </Typography>
                     </Flex>
                   </Flex>
                 }
               >
                 <Stack gap={2}>
-                  <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
+                  {/* <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
                     <Typography
                       css={{
                         fontSize: '14px',
@@ -430,8 +466,8 @@ const SwapCard = () => {
                     >
                       {amount.in ?? 0} {tokenOne && tokenOne.ticker}
                     </Typography>
-                  </Flex>
-                  <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
+                  </Flex> */}
+                  {/* <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
                     <Typography
                       css={{
                         fontSize: '14px',
@@ -451,8 +487,8 @@ const SwapCard = () => {
                       {roundToFirstNonZeroDecimal(conversionResult) ?? 0}{' '}
                       {tokenTwo && tokenTwo.ticker}
                     </Typography>
-                  </Flex>
-                 
+                  </Flex> */}
+
                   <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
                     <Typography
                       css={{
@@ -502,7 +538,7 @@ const SwapCard = () => {
                         color: '#BFBFBF'
                       }}
                     >
-                      Estimated Gas fee
+                      Transaction fee
                     </Typography>
                     <Flex gap={1}>
                       <img src="/icons/signal-full-02.svg" />
@@ -513,7 +549,7 @@ const SwapCard = () => {
                           color: '#E1E1E1'
                         }}
                       >
-                        ${getPriceUsd(0 ?? 0)}
+                        ${roundToFirstNonZeroDecimal(getPriceUsd(String(gas?.gasFee ?? 0)))}
                       </Typography>
                       <Typography
                         css={{
@@ -522,7 +558,8 @@ const SwapCard = () => {
                           color: '#E1E1E1'
                         }}
                       >
-                        ~ {!gas ? '-' : roundToFirstNonZeroDecimal("0")} ETH
+                        ~ {roundToFirstNonZeroDecimal(String(gas?.gasFee))} ETH
+                        {/* {!gas ? '-' : roundToFirstNonZeroDecimal("0")} ETH */}
                       </Typography>
                     </Flex>
                   </Flex>
@@ -555,6 +592,16 @@ const SwapCard = () => {
             </Flex>
           </TabPanelItem>
         </TabsComponent>
+        {/* TOKEN ONE BALANCE: {tokenOneBalance?.data?.formatted} IN: {amount.in} */}
+        {(Number(tokenOneBalance ? tokenOneBalance.data?.value : balanceData?.value) < Number(amount.in)) && <Flex css={{
+          color: "$warning"
+        }}
+          gap={1}>
+          <TiWarning size={20} />
+          <Typography css={{ color: "$warning", fontSize: "14px" }} >
+            You lack sufficient ETH to cover the estimated gas costs for this transaction.
+          </Typography>
+        </Flex>}
       </Container>
       <Button
         css={{

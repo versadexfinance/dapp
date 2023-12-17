@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Select, { Props as SelectProps } from 'react-select';
 import { styled } from '@/styled';
 import Typography from '../typography';
 import { Flex, Stack } from '../box';
@@ -9,6 +8,7 @@ import { useRecoilState } from 'recoil';
 import { tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
 import Modal from '../modal/modal';
 import SearchToken from '@/scenes/swap/components/search-token';
+import { RxTriangleDown } from "react-icons/rx";
 
 type ToekenSelectProps = {
   tokenPosition: 'in' | 'out';
@@ -60,7 +60,11 @@ const CoinSelector = (props:ToekenSelectProps) => {
 
   return (
       <>
-       <Flex alignItems={'center'} gap={1} onClick={()=>setModalOpen(true)}>
+       <Flex css={{
+        cursor: 'pointer',
+       }} alignItems={'center'} justifyContent={"spaceBetween"} gap={1} onClick={()=>setModalOpen(true)}>
+        <Flex >
+
             <img
               src={props.tokenPosition == "in" ? tokenIn?.img:tokenOut?.img}
               alt={props.tokenPosition == "in" ? tokenIn?.ticker:tokenOut?.ticker}
@@ -90,6 +94,9 @@ const CoinSelector = (props:ToekenSelectProps) => {
                 {props.tokenPosition == "in" ? tokenIn?.name: tokenOut?.name}
               </Typography>
             </Stack>
+        </Flex>
+            <RxTriangleDown size={20} />
+
           </Flex>
 
 

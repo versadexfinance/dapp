@@ -29,7 +29,7 @@ export function useConversion(
     ethers.utils.parseEther(supply2).toBigInt(),
     ethers.utils.parseEther(supply1).toBigInt(),
   ];
-
+  
   const args: bigint[] = token.ticker === 'WETH' ? args1 : args2;
 
   const result = useContractRead({

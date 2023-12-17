@@ -9,79 +9,79 @@ import { Tokens } from '@/web3/types';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
-const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth_goerli");
-const contract = new ethers.Contract(config.contract.routerV2, routerAbi, provider);
-
-export async function getEstimatedGasFee(tokenIn: Tokens, tokenOut: Tokens, address:string) {
-    if (!address) return { data: null, isError: false, isLoading: true };
+// export async function getEstimatedGasFee(tokenIn: Tokens, tokenOut: Tokens, address:string) {
+//     if (!address) return { data: null, isError: false, isLoading: true };
     
-    console.log("ADDRESS",address);
+//     console.log("ADDRESS",address);
     
-    const gasPrice = await provider.getGasPrice();
-    let functionGasFees
-    if(tokenIn?.ticker == "WETH"){
-         functionGasFees = await  contract.estimateGas.swapExactETHForTokens(
-            "0",[config.contract.weth, config.contract.versadex], address, Date.now() + 1000 * 60 * 10, { value: "10000000000000000" }
-        )
-    }else{
+//     const gasPrice = await provider.getGasPrice();
+//     let functionGasFees
+//     if(tokenIn?.ticker == "WETH"){
+//          functionGasFees = await  contract.estimateGas.swapExactETHForTokens(
+//             "0",[config.contract.weth, config.contract.versadex], address, Date.now() + 1000 * 60 * 10, { value: "10000000000000000" }
+//         )
+//     }else{
 
-        functionGasFees = await  contract.estimateGas.swapExactETHForTokens(
-            "0",[config.contract.weth, config.contract.versadex], address, Date.now() + 1000 * 60 * 10, { value: "10000000000000000" }
-        )
-        //  functionGasFees = await  contract.estimateGas.swapExactTokensForETH(
-        //     "0",[config.contract.weth, config.contract.versadex], address, Date.now() + 1000 * 60 * 10
-        // )
-    }
+//         functionGasFees = await  contract.estimateGas.swapExactETHForTokens(
+//             "0",[config.contract.weth, config.contract.versadex], address, Date.now() + 1000 * 60 * 10, { value: "10000000000000000" }
+//         )
+//         //  functionGasFees = await  contract.estimateGas.swapExactTokensForETH(
+//         //     "0",[config.contract.weth, config.contract.versadex], address, Date.now() + 1000 * 60 * 10
+//         // )
+//     }
     
 
-console.log("FUNCTION GAS FEES",functionGasFees.toNumber());
+// console.log("FUNCTION GAS FEES",functionGasFees.toNumber());
 
 
-    const finalGasFee = gasPrice.mul(functionGasFees)
+//     const finalGasFee = gasPrice.mul(functionGasFees)
 
-    // console.log("data",data);
+//     // console.log("data",data);
 
-    // console.log("Token address",config.contract.versadex);
-    console.log("Precio ,",finalGasFee);
+//     // console.log("Token address",config.contract.versadex);
+//     console.log("Precio ,",finalGasFee);
         
     
 
-    const gasFeeEthPrice = ethers.utils.formatUnits(finalGasFee.toString(), "ether");
+//     const gasFeeEthPrice = ethers.utils.formatUnits(finalGasFee.toString(), "ether");
 
-    console.log("Precio en ETH",gasFeeEthPrice);
+//     console.log("Precio en ETH",gasFeeEthPrice);
 
-    return gasFeeEthPrice;
+//     return gasFeeEthPrice;
     
-    if (!address) return { data: Number(gasFeeEthPrice), isError: false, isLoading: true };    
-}
+//     if (!address) return { data: Number(gasFeeEthPrice), isError: false, isLoading: true };    
+// }
 
 
 
-export const useEstimatedGasFee = (tokenOne: Tokens, tokenTwo: Tokens, address: string) => {
-  const [gas, setGas] = useState<string | {
-    data: null;
-    isError: boolean;
-    isLoading: boolean;
-} >({ data: null, isError: false, isLoading: true });
 
-  // useEffect(() => {
-  //   const fetchGas = async () => {
-  //     const gasValue = await getEstimatedGasFee(tokenOne, tokenTwo, address);
-  //     setGas({
-  //       data: gasValue,
-  //       isError: false,
-  //       isLoading: false
-  //     });
-  //   };
 
-  //   fetchGas();
-  // }, [tokenOne, tokenTwo, address]);
+
+// export const useEstimatedGasFee = (tokenOne: Tokens, tokenTwo: Tokens, address: string) => {
+//   const [gas, setGas] = useState<string | {
+//     data: null;
+//     isError: boolean;
+//     isLoading: boolean;
+// } >({ data: null, isError: false, isLoading: true });
+
+//   // useEffect(() => {
+//   //   const fetchGas = async () => {
+//   //     const gasValue = await getEstimatedGasFee(tokenOne, tokenTwo, address);
+//   //     setGas({
+//   //       data: gasValue,
+//   //       isError: false,
+//   //       isLoading: false
+//   //     });
+//   //   };
+
+//   //   fetchGas();
+//   // }, [tokenOne, tokenTwo, address]);
 
   
-   console.log("GAS", gas);
+//    console.log("GAS", gas);
      
-  return gas;
-};
+//   return gas;
+// };
 
 
 
@@ -171,3 +171,152 @@ export const useEstimatedGasFee = (tokenOne: Tokens, tokenTwo: Tokens, address: 
   
   
   
+
+
+
+// export function useEstimatedGasFee(tokenIn: Tokens, tokenOut: Tokens, address: string) {
+//   const [gasFee, setGasFee] = useState<number | null>(null);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [isError, setIsError] = useState(false);
+
+//   useEffect(() => {
+//     const calculateGasFee = async () => {
+//       try {
+//         if (!address) {
+//           setGasFee(null);
+//           setIsLoading(true);
+//           setIsError(false);
+//           return;
+//         }
+
+//         console.log('ADDRESS', address);
+
+//         const gasPrice = await provider.getGasPrice();
+//         let functionGasFees;
+
+//         if (tokenIn?.ticker === 'WETH') {
+//           functionGasFees = await contract.estimateGas.swapExactETHForTokens(
+//             '0',
+//             [config.contract.weth, config.contract.versadex],
+//             address,
+//             Date.now() + 1000 * 60 * 10,
+//             { value: '10000000000000000' }
+//           );
+//         } else {
+//           functionGasFees = await contract.estimateGas.swapExactETHForTokens(
+//             '0',
+//             [config.contract.weth, config.contract.versadex],
+//             address,
+//             Date.now() + 1000 * 60 * 10,
+//             { value: '10000000000000000' }
+//           );
+//           // Uncomment the following block if you want to handle swapExactTokensForETH as well
+//           // functionGasFees = await contract.estimateGas.swapExactTokensForETH(
+//           //   '0',
+//           //   [config.contract.weth, config.contract.versadex],
+//           //   address,
+//           //   Date.now() + 1000 * 60 * 10
+//           // );
+//         }
+
+//         console.log('FUNCTION GAS FEES', functionGasFees.toNumber());
+
+//         const finalGasFee = gasPrice.mul(functionGasFees);
+
+//         console.log('Precio ,', finalGasFee);
+
+//         const gasFeeEthPrice = ethers.utils.formatUnits(finalGasFee.toString(), 'ether');
+
+//         console.log('Precio en ETH', gasFeeEthPrice);
+
+//         setGasFee(Number(gasFeeEthPrice));
+//         setIsError(false);
+//       } catch (error) {
+//         console.error('Error calculating gas fee:', error);
+//         setIsError(true);
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     calculateGasFee();
+//   }, [tokenIn, tokenOut, address]);
+
+//   return { gasFee, isLoading, isError };
+// }
+
+const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth_goerli");
+const contract = new ethers.Contract(config.contract.routerV2, routerAbi, provider);
+
+export function useEstimatedGasFee(tokenIn: Tokens, tokenOut: Tokens, address: string) {
+  const [gasFee, setGasFee] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const calculateGasFee = async () => {
+      try {
+        if (!address) {
+          setGasFee(null);
+          setIsLoading(false);
+          setIsError(false);
+          return;
+        }
+
+        console.log('ADDRESS', address);
+
+        const gasPrice = await provider.getGasPrice();
+        let functionGasFees;
+
+        if (tokenIn?.ticker === 'WETH') {
+          functionGasFees = await contract.estimateGas.swapExactETHForTokens(
+            '0',
+            [config.contract.weth, config.contract.versadex],
+            address,
+            Date.now() + 1000 * 60 * 10,
+            { value: '100000000000000000' }
+          );
+        } else {
+        //   functionGasFees = await contract.estimateGas.swapExactTokensForETH(
+        //     '0',
+        //     [config.contract.versadex, config.contract.weth],
+        //     address,
+        //     Date.now() + 1000 * 60 * 10
+        //   );
+
+        functionGasFees = await contract.estimateGas.swapExactETHForTokens(
+            '0',
+            [config.contract.weth, config.contract.versadex],
+            address,
+            Date.now() + 1000 * 60 * 10,
+            { value: '100000000000000000' }
+          );
+        }
+
+        console.log('FUNCTION GAS FEES', functionGasFees.toNumber());
+
+        const gasFeeWei = gasPrice.mul(functionGasFees);
+        console.log("Gas",gasPrice.toString());
+        
+
+        console.log('Gas Fee in Wei:', gasFeeWei.toString());
+
+        const gasFeeEthPrice = ethers.utils.formatUnits(gasFeeWei, 'ether');
+
+        console.log('Gas Fee in ETH:', gasFeeEthPrice);
+
+        setGasFee(Number(gasFeeEthPrice));
+        setIsError(false);
+      } catch (error) {
+        console.error('Error calculating gas fee:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    calculateGasFee();
+  }, [tokenIn, tokenOut, address]);
+
+  return { gasFee, isLoading, isError };
+}

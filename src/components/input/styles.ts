@@ -32,6 +32,17 @@ export const InputComponent = styled(InputBase, {
     fontWeight: 400,
     
   },
+  '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
+    appearance: 'none',
+    margin: 0
+  },
+  '&[type=number]': {
+    MozAppearance: 'textfield',
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    }
+  }
 });
 
 export const Container = styled('div', {
