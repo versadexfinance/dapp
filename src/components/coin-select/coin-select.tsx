@@ -66,6 +66,8 @@ const CoinSelector = (props:ToekenSelectProps) => {
         <Flex >
 
             <img
+              width={36}
+              height={36}
               src={props.tokenPosition == "in" ? tokenIn?.img:tokenOut?.img}
               alt={props.tokenPosition == "in" ? tokenIn?.ticker:tokenOut?.ticker}
               style={{ marginRight: '8px', height: '36px' }}

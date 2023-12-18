@@ -59,6 +59,12 @@ dependencies:
   react-select:
     specifier: 5.8.0
     version: 5.8.0(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
+  react-spinner:
+    specifier: ^0.2.7
+    version: 0.2.7(react@18.2.0)
+  react-spinners:
+    specifier: ^0.13.8
+    version: 0.13.8(react-dom@18.2.0)(react@18.2.0)
   recoil:
     specifier: 0.7.7
     version: 0.7.7(react-dom@18.2.0)(react@18.2.0)
@@ -5540,6 +5546,24 @@ packages:
       use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.45)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
+    dev: false
+
+  /react-spinner@0.2.7(react@18.2.0):
+    resolution: {integrity: sha512-9bIDWGIumXpM7xcas/qpikRZp7AGP1uehgxwTTj/5DL6SwWHMTLfuioYgX7bdeMgOiVEMvOgLyXU3fYKQc16IA==}
+    peerDependencies:
+      react: '>=0.12.1'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /react-spinners@0.13.8(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-3e+k56lUkPj0vb5NDXPVFAOkPC//XyhKPJjvcGjyMNPWsBKpplfeyialP74G7H7+It7KzhtET+MvGqbKgAqpZA==}
+    peerDependencies:
+      react: ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-style-singleton@2.2.1(@types/react@18.2.45)(react@18.2.0):

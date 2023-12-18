@@ -55,7 +55,7 @@ const SwapSettings = (props: SwapSettingsProps) => {
               setMaxSlippage("");
             }}
           >
-            Auto
+            AUTO
         </Typography>
       </Flex>
 

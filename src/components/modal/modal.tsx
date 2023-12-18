@@ -68,7 +68,9 @@ const Modal = ({ isOpen, onRequestClose, children }: ModalProps) => {
               right: 0,
               padding:"0 6px"
             }}>
-              <Flex alignItems={"center"} gap={1}>
+              <Flex alignItems={"center"} gap={1} css={{
+                cursor: 'pointer',
+              }}>
                 <Typography>
                   Close
                 </Typography>

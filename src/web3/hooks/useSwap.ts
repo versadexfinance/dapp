@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { erc20ABI, useAccount } from 'wagmi';
-import {  writeContract } from 'wagmi/actions';
+import {  waitForTransaction, writeContract } from 'wagmi/actions';
 import { ethers } from 'ethers';
 
 
@@ -8,28 +8,35 @@ import { config } from '@/web3/config';
 import { Tokens } from '@/web3/types';
 import { routerAbi } from '@/web3/abis';
 import { useRecoilState } from 'recoil';
-import { maxSlippageState, transactionDeadlineState } from '@/pods/atoms/swap-selected-tokens.atom';
+import { amountState, maxSlippageState, transactionDeadlineState } from '@/pods/atoms/swap-selected-tokens.atom';
 
 const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth_goerli");
 
 
 export function useSwap({
-    amount,
     tokenIn,
     tokenOut,
     ethBalance,
 }: {
-    amount: string;
     tokenIn: Tokens;
     tokenOut: Tokens;
     ethBalance: bigint;
 }) {
     const [maxSlippage, setMaxSlippage] = useRecoilState(maxSlippageState);
     const [transactionDeadline, setTransactionDeadline] = useRecoilState(transactionDeadlineState);
+    const [amount,setAmount ] = useRecoilState(amountState);
+    const [isApproving,setIsApproving ] = useState(false);
     
     const { address } = useAccount();
     const ethBalanceWei = ethers.BigNumber.from(ethBalance)
-    const inWei = ethers.utils.parseEther(amount.length ? amount: "0");
+    const inWei = ethers.utils.parseEther(amount.in.length ? amount.in: "0");
+    const outWei = ethers.utils.parseEther(amount.out.length ? amount.out: "0");
+    
+
+    const outSlippage = maxSlippage.length && maxSlippage != "0"? Number(amount.out) * (1-(Number(maxSlippage) / 100)):0
+
+    console.log("Out wei",amount.out);
+    console.log("Out wei slippage", outSlippage);
     
 
     const contract = new ethers.Contract(tokenIn ?tokenIn?.address:"", erc20ABI , provider);
@@ -62,17 +69,12 @@ export function useSwap({
 
             console.log("Balance token in",balanceTokenIn, "ETH",ethers.utils.formatEther(ethBalanceWei));
             
-
-
-
-           
-        
             if(tokenIn?.ticker === "WETH"){
                 const result = await writeContract({
                     address: config.contract.routerV2,
                     abi: routerAbi,
                     functionName: 'swapExactETHForTokens',
-                    args: ["0", [config.contract.weth, tokenOut?.address], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
+                    args: [ethers.utils.parseEther(outSlippage.toString()), [config.contract.weth, tokenOut?.address], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
                     value: inWei.toBigInt()
                 });
             }else if(tokenOut?.ticker === "WETH"){
@@ -86,7 +88,11 @@ export function useSwap({
                 
                 if(resultAllowance.lt(inWei)){
                     // No entrar si ya hay un aproval en curso
-                    const resultApprove = await writeContract({
+                    // setTimeout(() => {
+                    // }, 500);
+                    setIsApproving(true);    
+                    
+                    const {hash} = await writeContract({
                         address: tokenIn?.address as  `0x${string}`,
                         abi: erc20ABI,
                         functionName: 'approve',
@@ -95,32 +101,28 @@ export function useSwap({
 
                     //Rejectar si no se aprueba
                     // COmprobar estado de la transaccion
-                    console.log(resultApprove);
+                    
+                    const waitForTx =  await waitForTransaction({hash});
+
+                    setIsApproving(false);
+
+                    console.log("waitForTx",waitForTx);
+
                 }
 
+
+                //Slippage 0 - 100
+                console.log("Value with slippage", inWei.mul( ethers.BigNumber.from(1-(Number(maxSlippage) / 100))));
+                
                 if(resultAllowance.gte(inWei)){
                     const resultSwap = await writeContract({
                         address: config.contract.routerV2,
                         abi: routerAbi,
                         functionName: 'swapExactTokensForETH',
-                        //EL 0 deberia considerar slippage
-                        args: [inWei, "0", [ tokenIn?.address,config.contract.weth], address, Date.now() + 1000 * 60 * 10],            
+                        args: [inWei, ethers.utils.parseEther(outSlippage.toString()), [ tokenIn?.address,config.contract.weth], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
                     });
                     console.log("resultSwap",resultSwap);
                 }
-                // Solo en el caso de que el result allowance sea mayor o igual que in wei
-            
-        
-                
-
-
-                // const { wait: waitWriteContract } = await writeContract({
-                //     addressOrName: tokenIn?.address as  `0x${string}`,
-                //     functionName: 'swapTokensForExactETH',
-                //     args: [config.contract.routerV2, amountBN],
-                // });
-    
-                // await waitWriteContract();
             }else{
                 //Allowance token in
 
@@ -152,10 +154,12 @@ export function useSwap({
 
 
             // console.log(`Congrats! You got ${swappedAmount} ${tokenOut.toUpperCase()}.`);
+            return isApproving
         } catch (error: any) {
+            setIsApproving(false);
             console.error(error.message || error);
         }
     }, [address, contract, ethBalanceWei, inWei, tokenIn?.address, tokenIn?.ticker, tokenOut?.address, tokenOut?.ticker]);
 
-    return swap;
+    return {swap, isApproving};
 }

@@ -9,25 +9,24 @@ import Button from '@/components/button';
 import InputConversion from '@/components/input-conversion/input-conversion';
 import CollapsibleCard from '@/components/collapsible-card';
 import { useAccount, useBalance } from 'wagmi';
-import { TiWarning } from "react-icons/ti";
-
+import {PulseLoader} from "react-spinners"
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { usePair, usePrices } from '@/web3/hooks/usePair';
 import { useConversion } from '@/web3/hooks/useConversion';
 import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format';
-import { Amount, Tokens, tokenList } from '@/web3/types';
 import useEthPrice from '@/web3/hooks/useEthPrice';
 import { useEstimatedGasFee } from '@/web3/hooks/useGasPrice';
 import { useSwap } from '@/web3/hooks/useSwap';
 import { useTokenBalance } from '@/web3/hooks';
-import Modal from '@/components/modal/modal';
-import SearchToken from '../search-token';
 import { useRecoilState } from 'recoil';
-import { maxSlippageState, tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
+import { amountState, maxSlippageState, tokenInState, tokenOutState } from '@/pods/atoms/swap-selected-tokens.atom';
 import { usePriceImpact } from '@/web3/hooks/usePriceImpact';
 import SwapSettings from '../swap-settings';
+import { useAllowance } from '@/web3/hooks/useAllowance';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { ethers } from 'ethers';
 
 const SwapCard = () => {
   const { address, isDisconnected } = useAccount();
@@ -37,14 +36,16 @@ const SwapCard = () => {
     watch: true
   });
   const [conversionRate, setConversionRate] = useState<string | null | 0>(null);
+  
 
-  const [amount, setAmount] = useState<Amount>({ in: '', out: '' });
   const [settingOpen, setSettingOpen] = useState(false)
 
   const [tokenOne, setTokenOne] = useRecoilState(tokenInState);
   const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState);
-
+  const [amount, setAmount] = useRecoilState(amountState);
   const [maxSlippage, setMaxSlippage] = useRecoilState(maxSlippageState);
+
+  const { openConnectModal } = useConnectModal();
 
   const usePairResponse = usePair(
     tokenOne ? tokenOne.address : '',
@@ -53,17 +54,31 @@ const SwapCard = () => {
   const reserves = usePrices(usePairResponse);
   const ethPrice = useEthPrice();
 
-  const tokenOneBalance = useTokenBalance({
+
+  const getButtonString =() =>{
+    // if(isApproving){
+    //   return "APPROVING..."
+    // }
+    if(tokenOne.ticker != "WETH" && allowance.lt(ethers.utils.parseUnits( amount.in.length ? amount.in : "0",tokenOne.decimals) )){
+      return "APPROVE"
+    }
+    return "SWAP"
+  }
+
+  const tokenOneBalance =  useTokenBalance({
     address: address as `0x${string}`,
     token: tokenOne?.address as `0x${string}`,
     chainId: 5
   });
+
 
   const tokenTwoBalance = useTokenBalance({
     address: address as `0x${string}`,
     token: tokenTwo?.address as `0x${string}`,
     chainId: 5
   });
+
+  const allowance = useAllowance(address)
 
   function getPriceUsd(ethAmount: number): string | null | 0 | 1 {
     if (ethPrice) {
@@ -72,10 +87,9 @@ const SwapCard = () => {
     return '';
   }
 
-  const swap = useSwap({
+  const {swap, isApproving} = useSwap({
     tokenIn: tokenOne,
     tokenOut: tokenTwo,
-    amount: amount.in,
     ethBalance: balanceData?.value || BigInt(0)
   });
 
@@ -86,6 +100,9 @@ const SwapCard = () => {
   function switchTokens() {
     const one = tokenOne;
     const two = tokenTwo;
+    const oneAmount = amount.in;
+    const twoAmount = amount.out;
+    setAmount({ in: twoAmount, out: oneAmount });
     setTokenOne(two);
     setTokenTwo(one);
   }
@@ -122,13 +139,23 @@ const SwapCard = () => {
     String(reserves?.tokenTwo ?? 0)
   );
 
-  
+  useEffect(() => {
+    setAmount({ ...amount, out: conversionResult ?? "0"});
+  }, [conversionResult]);
+
+//  const priceImpact =  usePriceImpact({
+//     inputAmount: amount.in,
+//     outputAmount: conversionResult || '0', // Provide a default value for outputAmount
+//     tokenAPoolSize: String(reserves?.tokenOne ?? 0),
+//     tokenBPoolSize: String(reserves?.tokenTwo ?? 0)
+//   });
+
+
 
  const priceImpact =  usePriceImpact({
     inputAmount: amount.in,
-    outputAmount: conversionResult || '0', // Provide a default value for outputAmount
-    tokenAPoolSize: String(reserves?.tokenOne ?? 0),
-    tokenBPoolSize: String(reserves?.tokenTwo ?? 0)
+    tokenAPoolSize: reserves?.tokenOne.toString() ?? '0',
+    tokenBPoolSize: reserves?.tokenTwo.toString() ?? '0'
   });
 
   // function getConversionUnit = (token:Tokens) => {
@@ -508,7 +535,7 @@ const SwapCard = () => {
                         color: '#E1E1E1'
                       }}
                     >
-                      {maxSlippage == "" ? "Auto":maxSlippage + "%"} 
+                      {maxSlippage == "" ? "AUTO":maxSlippage + "%"} 
                     </Typography>
                   </Flex>
 
@@ -529,7 +556,7 @@ const SwapCard = () => {
                         color: '#E1E1E1'
                       }}
                     >
-                      {priceImpact ?? 0}%
+                      {roundToFirstNonZeroDecimal(priceImpact) ?? 0}%
                     </Typography>
                   </Flex>
                   <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
@@ -595,7 +622,7 @@ const SwapCard = () => {
           </TabPanelItem>
         </TabsComponent>
         {/* TOKEN ONE BALANCE: {tokenOneBalance?.data?.formatted} IN: {amount.in} */}
-        {(Number(tokenOneBalance ? tokenOneBalance.data?.value : balanceData?.value) < Number(amount.in)) && <Flex css={{
+        {/* {<Flex css={{
           color: "$warning"
         }}
           gap={1}>
@@ -603,8 +630,9 @@ const SwapCard = () => {
           <Typography css={{ color: "$warning", fontSize: "14px" }} >
             You lack sufficient ETH to cover the estimated gas costs for this transaction.
           </Typography>
-        </Flex>}
+        </Flex>} */}
       </Container>
+      {!isDisconnected?
       <Button
         css={{
           color: '#020202',
@@ -614,12 +642,29 @@ const SwapCard = () => {
           padding: '12px  40px'
         }}
         fullWidth
+        disabled = {isApproving}
         onClick={onSwap}
-        disabled={!address || isDisconnected}
+        
       >
-        {!isDisconnected ? 'SWAP' : 'CONNECT WALLET'}
+        {/* {ethers.utils.formatUnits( amount.in.length ?amount.in : "0",tokenOne.decimals)} */}
+          
+        {isApproving? <><PulseLoader color="#2D2C2C" size={10} />
+ </> :getButtonString()}
+      </Button>:<Button
+        css={{
+          color: '#020202',
+          fontSize: '16px',
+          lineHeight: '24px',
+          background: 'linear-gradient(90deg, #EBFE64 -25.87%, #8CEA69 100%)',
+          padding: '12px  40px'
+        }}
+        fullWidth
+        onClick={openConnectModal}
+        
+      >
+        CONNECT WALLET
       </Button>
-
+      }
     </Stack>
   );
 };

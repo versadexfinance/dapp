@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 
 export type Contract = 'factoryV2' | 'routerV2' | 'versadex' | 'weth';
 
@@ -39,3 +40,10 @@ export const tokenList: Tokens[] =[
     },
 
 ]
+
+
+///////////
+
+
+
+

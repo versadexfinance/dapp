@@ -4,7 +4,9 @@ import { useAccount, useBalance } from 'wagmi';
 import { config } from '@/web3/config';
 
 export function useTokenBalance(params : FetchBalanceArgs) {
-    const { address } = useAccount();
+
+
+    // if (!params.address) return { data: null, isError: false, isLoading: true };
 
     const { data, isError, isLoading } = useBalance({
         address: params.address,
@@ -18,7 +20,5 @@ export function useTokenBalance(params : FetchBalanceArgs) {
         return null
     }
     
-    if (!address) return { data: null, isError: false, isLoading: true };
-
     return { data, isError, isLoading };
 }

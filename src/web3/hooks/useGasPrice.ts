@@ -268,6 +268,10 @@ export function useEstimatedGasFee(tokenIn: Tokens, tokenOut: Tokens, address: s
         const gasPrice = await provider.getGasPrice();
         let functionGasFees;
 
+        // 1 VERSA = 100000000000
+        // 1 ETH  = 100000000000 wei
+
+
         if (tokenIn?.ticker === 'WETH') {
           functionGasFees = await contract.estimateGas.swapExactETHForTokens(
             '0',
@@ -289,13 +293,14 @@ export function useEstimatedGasFee(tokenIn: Tokens, tokenOut: Tokens, address: s
             [config.contract.weth, config.contract.versadex],
             address,
             Date.now() + 1000 * 60 * 10,
-            { value: '100000000000000000' }
+            { value: '' }
           );
         }
 
         console.log('FUNCTION GAS FEES', functionGasFees.toNumber());
 
         const gasFeeWei = gasPrice.mul(functionGasFees);
+
         console.log("Gas",gasPrice.toString());
         
 

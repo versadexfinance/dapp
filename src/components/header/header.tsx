@@ -51,7 +51,10 @@ const NavigationLinks = ({
       Swap
     </StyledNextLink>
     <StyledNextLink
-      href="liquidity-pool"
+      href=""
+      css={{
+        color: 'gray',
+      }}
       active={pathname === '/liquidity-pool'}
       shallow
     >
