@@ -78,7 +78,7 @@ const SwapCard = () => {
     chainId: 5
   });
 
-  const allowance = useAllowance(address)
+  const allowance = useAllowance(address as `0x${string}`)
 
   function getPriceUsd(ethAmount: number): string | null | 0 | 1 {
     if (ethPrice) {

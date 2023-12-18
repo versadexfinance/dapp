@@ -30,7 +30,7 @@ export function usePriceImpact({inputAmount, tokenAPoolSize, tokenBPoolSize}:Pri
         setIsError(false);
 
         if (!inputAmount || !tokenAPoolSize || !tokenBPoolSize) {
-          setPriceImpact(null);
+          setPriceImpact("");
           return;
         }
 
