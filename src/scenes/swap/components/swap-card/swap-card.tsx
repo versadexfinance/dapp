@@ -27,6 +27,7 @@ import SwapSettings from '../swap-settings';
 import { useAllowance } from '@/web3/hooks/useAllowance';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { ethers } from 'ethers';
+import { config } from '@/web3/config';
 
 const SwapCard = () => {
   const { address, isDisconnected } = useAccount();
@@ -43,7 +44,9 @@ const SwapCard = () => {
   const [tokenOne, setTokenOne] = useRecoilState(tokenInState);
   const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState);
   const [amount, setAmount] = useRecoilState(amountState);
+
   const [maxSlippage, setMaxSlippage] = useRecoilState(maxSlippageState);
+  const [buttonText, setButtonText] = useState("SWAP")
 
   const { openConnectModal } = useConnectModal();
 
@@ -55,15 +58,7 @@ const SwapCard = () => {
   const ethPrice = useEthPrice();
 
 
-  const getButtonString =() =>{
-    // if(isApproving){
-    //   return "APPROVING..."
-    // }
-    if(tokenOne.ticker != "WETH" && allowance.lt(ethers.utils.parseUnits( amount.in.length ? amount.in : "0",tokenOne.decimals) )){
-      return "APPROVE"
-    }
-    return "SWAP"
-  }
+  
 
   const tokenOneBalance =  useTokenBalance({
     address: address as `0x${string}`,
@@ -87,7 +82,8 @@ const SwapCard = () => {
     return '';
   }
 
-  const {swap, isApproving} = useSwap({
+  
+  const {swap, isApproving, contract} = useSwap({
     tokenIn: tokenOne,
     tokenOut: tokenTwo,
     ethBalance: balanceData?.value || BigInt(0)
@@ -97,12 +93,14 @@ const SwapCard = () => {
     swap();
   };
 
+  
+
   function switchTokens() {
     const one = tokenOne;
     const two = tokenTwo;
     const oneAmount = amount.in;
     const twoAmount = amount.out;
-    setAmount({ in: twoAmount, out: oneAmount });
+    setAmount({ in: twoAmount == "0" ? "":twoAmount , out: oneAmount });
     setTokenOne(two);
     setTokenTwo(one);
   }
@@ -143,25 +141,29 @@ const SwapCard = () => {
     setAmount({ ...amount, out: conversionResult ?? "0"});
   }, [conversionResult]);
 
-//  const priceImpact =  usePriceImpact({
-//     inputAmount: amount.in,
-//     outputAmount: conversionResult || '0', // Provide a default value for outputAmount
-//     tokenAPoolSize: String(reserves?.tokenOne ?? 0),
-//     tokenBPoolSize: String(reserves?.tokenTwo ?? 0)
-//   });
-
-
-
  const priceImpact =  usePriceImpact({
     inputAmount: amount.in,
     tokenAPoolSize: reserves?.tokenOne.toString() ?? '0',
     tokenBPoolSize: reserves?.tokenTwo.toString() ?? '0'
   });
 
-  // function getConversionUnit = (token:Tokens) => {
+  useEffect(() => {
+    const getButtonString = async () =>{
+      const resultAllowance = await contract.allowance(address, config.contract.routerV2)
+      if(  tokenOne.ticker != "WETH" && resultAllowance.lt(ethers.utils.parseUnits( amount.in.length ? amount.in : "0",tokenOne.decimals) ) ){
+        setButtonText("APPROVE")
+      }else{
+        setButtonText("SWAP")
+      }
 
-  // }
+    }
+    getButtonString();
 
+  }, [allowance,amount.in]);
+
+  
+
+  
   return (
     <Stack
       gap={3}
@@ -649,7 +651,8 @@ const SwapCard = () => {
         {/* {ethers.utils.formatUnits( amount.in.length ?amount.in : "0",tokenOne.decimals)} */}
           
         {isApproving? <><PulseLoader color="#2D2C2C" size={10} />
- </> :getButtonString()}
+ </> :  buttonText
+ }
       </Button>:<Button
         css={{
           color: '#020202',

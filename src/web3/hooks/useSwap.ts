@@ -9,6 +9,7 @@ import { Tokens } from '@/web3/types';
 import { routerAbi } from '@/web3/abis';
 import { useRecoilState } from 'recoil';
 import { amountState, maxSlippageState, transactionDeadlineState } from '@/pods/atoms/swap-selected-tokens.atom';
+import { useAllowance } from './useAllowance';
 
 const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth_goerli");
 
@@ -27,7 +28,9 @@ export function useSwap({
     const [amount,setAmount ] = useRecoilState(amountState);
     const [isApproving,setIsApproving ] = useState(false);
     
+
     const { address } = useAccount();
+    const allowance = useAllowance(address as `0x${string}`)
     const ethBalanceWei = ethers.BigNumber.from(ethBalance)
     const inWei = ethers.utils.parseEther(amount.in.length ? amount.in: "0");
     const outWei = ethers.utils.parseEther(amount.out.length ? amount.out: "0");
@@ -39,7 +42,7 @@ export function useSwap({
     console.log("Out wei slippage", outSlippage);
     
 
-    const contract = new ethers.Contract(tokenIn ?tokenIn?.address:"", erc20ABI , provider);
+    const contract = new ethers.Contract(tokenIn ? tokenIn?.address:"", erc20ABI , provider);
 
     const swap = useCallback(async () => {
         try {
@@ -104,7 +107,9 @@ export function useSwap({
                     
                     const waitForTx =  await waitForTransaction({hash});
 
-                    setIsApproving(false);
+                    if(allowance.lte(inWei)){
+                        setIsApproving(false);
+                    }
 
                     console.log("waitForTx",waitForTx);
 
@@ -159,7 +164,7 @@ export function useSwap({
             setIsApproving(false);
             console.error(error.message || error);
         }
-    }, [address, contract, ethBalanceWei, inWei, tokenIn?.address, tokenIn?.ticker, tokenOut?.address, tokenOut?.ticker]);
+    }, [address,allowance, contract, ethBalanceWei, inWei, tokenIn?.address, tokenIn?.ticker, tokenOut?.address, tokenOut?.ticker]);
 
-    return {swap, isApproving};
+    return {swap, isApproving, contract};
 }

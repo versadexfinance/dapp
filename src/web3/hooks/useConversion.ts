@@ -47,7 +47,6 @@ export function useConversion(
     return null;
   }, [result.status, result.data]);
 
-  console.log('result', formattedResult);
 
   return formattedResult;
 }
