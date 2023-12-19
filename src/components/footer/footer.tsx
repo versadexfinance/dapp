@@ -40,7 +40,7 @@ function Footer() {
                 color: '#009851'
               }}
             >
-              {String(blockNumberData)}
+              {String(blockNumberData??"Loading...")}
             </Typography>
             <img src="/icons/Ellipse.svg" />
           

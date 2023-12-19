@@ -8,12 +8,12 @@ import SwapCard from './components/swap-card';
 
 function Dashboard() {
   return (
-    <Layout>
+    <Layout >
       <Flex
         css={{
-          marginTop: '$8',
+          marginTop: '$4',
           flexDirection: 'column',
-          '@tablet': {
+          '@tabletLarge': {
             flexDirection: 'row',
             flex: 5
           }

@@ -1,22 +1,23 @@
-'use client';
+'use client'
 
-import React, { FC, ReactNode } from 'react';
-import { styled } from '@stitches/react';
-import * as Tabs from '@radix-ui/react-tabs';
+import React, { FC, ReactNode, useState } from 'react'
+import { styled } from '@stitches/react'
 
-const TabsRoot = styled(Tabs.Root, {
+import { TabsProps } from './interfaces'
+
+const TabsRoot = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  width: '100%'
-});
+  width: '100%',
+})
 
-const TabsList = styled(Tabs.List, {
+const TabsList = styled('div', {
   display: 'flex',
-  gap: '$2',
-  marginBottom: '16px'
-});
+  gap: 20,
+  marginBottom: '16px',
+})
 
-const TabsTrigger = styled(Tabs.Trigger, {
+const TabsTrigger = styled('span', {
   boxSizing: 'border-box',
   backgroundColor: 'transparent',
   border: 'none',
@@ -27,65 +28,57 @@ const TabsTrigger = styled(Tabs.Trigger, {
   fontWeight: 500,
   color: '#595959',
   '&:hover': {
-    color: 'white'
+    color: 'white',
   },
-  '&[data-state="active"]': {
-    color: 'white'
-  }
-});
+})
 
-const TabsContent = styled(Tabs.Content, {
+const TabsContent = styled('div', {
   padding: '16px',
   paddingLeft: '0px',
-  paddingRight: '0px'
-});
+  paddingRight: '0px',
+})
 
-interface TabsProps {
-  children: ReactNode;
-  defaultTabLabel: string;
-}
+const TabsComponent: FC<TabsProps> = ({ tabs }) => {
+  const [activeTab, setActiveTab] = useState<number>(0)
 
-const TabsComponent: FC<TabsProps> = ({ children, defaultTabLabel }) => {
+  const handleTabClick = (index: number) => {
+    setActiveTab(index)
+  }
+
   return (
-    <TabsRoot defaultValue={defaultTabLabel}>
+    <TabsRoot>
       <TabsList>
-        {React.Children.map(children, (child, index) => {
-          if (React.isValidElement(child) && child.type === TabItem) {
-            return (
-              <TabsTrigger key={index} value={child.props.label}>
-                {child.props.label}
-              </TabsTrigger>
-            );
-          }
-          return null;
+        {tabs.map((tab, index) => {
+          return (
+            <TabsTrigger
+              css={{
+                color: activeTab === index ? 'white' : '#595959',
+              }}
+              onClick={() => handleTabClick(index)}
+              key={index}
+            >
+              {tab.label}
+            </TabsTrigger>
+          )
         })}
       </TabsList>
 
-      {React.Children.map(children, (child, index) => {
-        if (React.isValidElement(child) && child.type === TabPanelItem) {
-          return (
-            <TabsContent key={index} value={child.props.label}>
-              {child.props.children}
-            </TabsContent>
-          );
-        }
-        return null;
-      })}
+      <TabsContent>{tabs[activeTab].content}</TabsContent>
     </TabsRoot>
-  );
-};
+  )
+}
 
-export default TabsComponent;
+export default TabsComponent
 
 interface TabItemProps {
-  label: string;
-  children: ReactNode;
+  label: string
+  children: ReactNode
 }
 
 export const TabItem: FC<TabItemProps> = ({ label, children }) => {
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
 export const TabPanelItem: FC<TabItemProps> = ({ children }) => {
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
