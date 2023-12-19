@@ -2,7 +2,7 @@ export const config = {
     contract: {
         factoryV2: '0xe025B985F5afEFF91C3FF8689Ecbeb05145D3872' as `0x${string}`,
         routerV2: '0x3F8679a14a1Ef7B036e528D4b2f2d569c60E5c23' as `0x${string}`,
-        versadex: '0xB86BA39646270B1B546165d14cEe005d5466b18B' as `0x${string}`,
+        versadex: '0xFe16e49f711E3dbE1fF33635E2B335cAc4CBF520' as `0x${string}`,
         weth: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'as  `0x${string}`
     }
 };

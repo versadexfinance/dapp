@@ -31,11 +31,11 @@ export const tokenList: Tokens[] =[
         "decimals": 18
     },
     {
-        "ticker": "VERSA",
-        "displayTicker": "VERSA",
+        "ticker": "VDX",
+        "displayTicker": "VDX",
         "img": "/img/logo.svg",
         "name": "Versadex",
-        "address": "0xB86BA39646270B1B546165d14cEe005d5466b18B",
+        "address": "0xFe16e49f711E3dbE1fF33635E2B335cAc4CBF520",
         "decimals": 18
     },
 
