@@ -1,10 +1,16 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {redirects : async () => [
+const nextConfig = {
+  redirects: async () => [
     {
-        source: '/',
-        destination: '/swap',
-        permanent: true,
-      }
-]}
+      source: '/',
+      destination: '/swap',
+      permanent: true,
+    },
+  ],
+  env: {
+    PROJECT_ID: process.env.PROJECT_ID,
+    PROJECT_NAME: process.env.PROJECT_NAME,
+  },
+}
 
 module.exports = nextConfig

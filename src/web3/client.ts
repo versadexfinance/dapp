@@ -10,9 +10,13 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     [publicProvider()]
   );
   
+
+  console.log(process.env.PROJECT_NAME);
+  console.log(process.env.PROJECT_ID);
+  
   const { connectors } = getDefaultWallets({
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID_sadasdsa',
+    appName: process.env.PROJECT_NAME ?? "x",
+    projectId:process.env.PROJECT_ID ?? "x", 
     chains
   });
   

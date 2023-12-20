@@ -58,10 +58,6 @@ const Html = ({ children }: HtmlProps) => {
           </RainbowKitProvider>
         </WagmiConfig>
       </body>
-      <script type="module">
-        {`import { Buffer } from "buffer";
-            window.buffer = Buffer;`}
-      </script>
     </html>
   )
 }
