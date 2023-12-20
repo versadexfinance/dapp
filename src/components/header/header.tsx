@@ -1,46 +1,49 @@
-'use client';
-import Image from 'next/image';
-import { Flex } from '@/components/box';
-import { ContainerHeader, ContainerHeaderNavbar } from './styles';
-import NextLink from '../next-link';
-import { styled } from '@/styled';
-import { usePathname } from 'next/navigation';
-import media from '@/styled/media';
-import { useMediaQuery } from 'usehooks-ts';
+'use client'
+import Image from 'next/image'
+import { Flex } from '@/components/box'
+import { ContainerHeader, ContainerHeaderNavbar } from './styles'
+import NextLink from '../next-link'
+import { styled } from '@/styled'
+import { usePathname } from 'next/navigation'
+import media from '@/styled/media'
+import { useMediaQuery } from 'usehooks-ts'
 // import { start } from 'repl';
-import ConnectWalletButton from '../connect-button/connect-button';
-import Link from 'next/link';
+import ConnectWalletButton from '../connect-button/connect-button'
+import Link from 'next/link'
 
 // Common components
 
 const StyledNextLink = styled(Link, {
-  fontSize: '18px',
+  fontSize: '16px',
   textDecoration: 'none',
   color: 'inherit',
   borderRadius: '4px',
   padding: '0.5rem 1rem',
+  '@mobile': {
+    fontSize: '18px',
+  },
 
   variants: {
     active: {
       true: {
         background: 'rgba(235, 254, 100, 0.10)',
-        color: '$primary'
-      }
-    }
-  }
-});
+        color: '$primary',
+      },
+    },
+  },
+})
 
 const NavigationLinks = ({
   gtThanTablet,
-  pathname
+  pathname,
 }: {
-  gtThanTablet: boolean;
-  pathname: string | null;
+  gtThanTablet: boolean
+  pathname: string | null
 }) => (
   <Flex
     fullWidth={!gtThanTablet}
     css={{
-      gap: gtThanTablet ? 4 : 0
+      gap: gtThanTablet ? 4 : 0,
     }}
     justifyContent={gtThanTablet ? 'start' : 'spaceBetween'}
   >
@@ -61,13 +64,13 @@ const NavigationLinks = ({
       Liquidity Pool
     </StyledNextLink>
   </Flex>
-);
+)
 
 // Refactored Header component
 
 const Header = () => {
-  const pathname = usePathname();
-  const gtThanTablet = useMediaQuery(media.tablet);
+  const pathname = usePathname()
+  const gtThanTablet = useMediaQuery(media.tablet)
 
   return (
     <ContainerHeader>
@@ -79,8 +82,8 @@ const Header = () => {
             '@tablet': {
               alignItems: 'center',
               justifyContent: 'start',
-              gap: 10
-            }
+              gap: 10,
+            },
           }}
         >
           <NextLink css={{ height: 7.5 }} href="/dashboard">
@@ -101,7 +104,7 @@ const Header = () => {
         )}
       </ContainerHeaderNavbar>
     </ContainerHeader>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

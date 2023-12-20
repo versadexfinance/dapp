@@ -1,24 +1,26 @@
 // Import necessary modules from Stitches
-import { styled } from '@/styled';
+import { styled } from '@/styled'
 
-import React from 'react';
-import { CoinImagePairProps } from './interfaces';
+import React from 'react'
+import { CoinImagePairProps } from './interfaces'
 
 // Styled components
 
 const Container = styled('div', {
   display: 'flex',
   width: 'min-content',
-  position: 'relative'
-});
+  position: 'relative',
+})
 
 const ImageCoin = styled('img', {
+  padding: '1px',
   borderRadius: '50%',
-  border: '1px solid black'
-});
+  background: '$bg',
+  border: '1px solid black',
+})
 
 const CoinImagePair = (props: CoinImagePairProps) => {
-  const { size, coin1_src, coin2_src } = props;
+  const { size, coin1_src, coin2_src } = props
 
   return (
     <Container>
@@ -30,7 +32,7 @@ const CoinImagePair = (props: CoinImagePairProps) => {
         css={{ marginLeft: '-20%' }} // Use margin-left instead of translateX
       />
     </Container>
-  );
-};
+  )
+}
 
-export default CoinImagePair;
+export default CoinImagePair

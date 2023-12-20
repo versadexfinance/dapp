@@ -1,22 +1,23 @@
 // import DashboardHeader from '@/pages/dashboard/components/dashboard-header';
-import React from 'react';
-import Layout from '../dashboard/components/layout';
+import React from 'react'
+import Layout from '../dashboard/components/layout'
 
-import { Flex } from '@/components/box';
-import SwapGraph from './components/swap-graph';
-import SwapCard from './components/swap-card';
+import { Flex } from '@/components/box'
+import SwapGraph from './components/swap-graph'
+import SwapCard from './components/swap-card'
 
 function Dashboard() {
   return (
-    <Layout >
+    <Layout>
       <Flex
         css={{
-          marginTop: '$4',
+          mt: '$1',
           flexDirection: 'column',
           '@tabletLarge': {
+            marginTop: '$4',
             flexDirection: 'row',
-            flex: 5
-          }
+            flex: 5,
+          },
         }}
         gap={8}
       >
@@ -24,7 +25,7 @@ function Dashboard() {
         <SwapGraph />
       </Flex>
     </Layout>
-  );
+  )
 }
 
-export default Dashboard;
+export default Dashboard

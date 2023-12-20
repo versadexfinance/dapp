@@ -1,6 +1,8 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import Button from '../button';
-import { TriangleDownIcon } from '@radix-ui/react-icons';
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Button from '../button'
+import { TriangleDownIcon } from '@radix-ui/react-icons'
+import { useMediaQuery } from 'usehooks-ts'
+import media from '@/styled/media'
 
 const CustomConnectButton = (props: any) => (
   <Button
@@ -11,7 +13,7 @@ const CustomConnectButton = (props: any) => (
       textTransform: 'capitalize',
       fontWeight: 300,
       borderRadius: '4px',
-      padding: '10px 16px'
+      padding: '10px 16px',
     }}
   >
     <div
@@ -19,14 +21,16 @@ const CustomConnectButton = (props: any) => (
         height: '20px',
         width: '20px',
         borderRadius: '50%',
-        background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)'
+        background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)',
       }}
     ></div>
     {props.children}
   </Button>
-);
+)
 
 const ConnectWalletButton = () => {
+  const gtThanMobile = useMediaQuery(media.mobile)
+
   return (
     <ConnectButton.Custom>
       {({
@@ -36,16 +40,16 @@ const ConnectWalletButton = () => {
         openChainModal,
         openConnectModal,
         authenticationStatus,
-        mounted
+        mounted,
       }) => {
         // Note: If your app doesn't use authentication, you
         // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading';
+        const ready = mounted && authenticationStatus !== 'loading'
         const connected =
           ready &&
           account &&
           chain &&
-          (!authenticationStatus || authenticationStatus === 'authenticated');
+          (!authenticationStatus || authenticationStatus === 'authenticated')
         return (
           <div
             {...(!ready && {
@@ -53,8 +57,8 @@ const ConnectWalletButton = () => {
               style: {
                 opacity: 0,
                 pointerEvents: 'none',
-                userSelect: 'none'
-              }
+                userSelect: 'none',
+              },
             })}
           >
             {(() => {
@@ -63,14 +67,14 @@ const ConnectWalletButton = () => {
                   <CustomConnectButton onClick={openConnectModal} type="button">
                     Connect
                   </CustomConnectButton>
-                );
+                )
               }
               if (chain.unsupported) {
                 return (
                   <button onClick={openChainModal} type="button">
                     Wrong network
                   </button>
-                );
+                )
               }
               return (
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -84,9 +88,9 @@ const ConnectWalletButton = () => {
                       bacjground: 'transparent !important',
                       borderRadius: '4px !important',
                       border: '1px solid #424242 !important',
-                      fontWeight: "500 !important",
+                      fontWeight: '500 !important',
                       padding: '10px 12px !important',
-                      fontSize: '16px !important'
+                      fontSize: '16px !important',
                     }}
                     type="button"
                   >
@@ -98,7 +102,7 @@ const ConnectWalletButton = () => {
                           height: 20,
                           borderRadius: 999,
                           overflow: 'hidden',
-                          marginRight: 4
+                          marginRight: gtThanMobile ? 4 : 0,
                         }}
                       >
                         {chain.iconUrl && (
@@ -110,7 +114,7 @@ const ConnectWalletButton = () => {
                         )}
                       </div>
                     )}
-                    {chain.name}
+                    {gtThanMobile && chain.name}
                     <TriangleDownIcon />
                   </Button>
                   <CustomConnectButton
@@ -120,23 +124,24 @@ const ConnectWalletButton = () => {
                       textTransform: 'capitalize',
                       fontWeight: 300,
                       borderRadius: '4px',
-                      padding: '10px 16px'
+                      padding: '10px 16px',
                     }}
                     onClick={openAccountModal}
                     type="button"
                   >
                     {account.displayName}
-                    {account.displayBalance
+
+                    {account.displayBalance && gtThanMobile
                       ? ` (${account.displayBalance})`
                       : ''}
                   </CustomConnectButton>
                 </div>
-              );
+              )
             })()}
           </div>
-        );
+        )
       }}
     </ConnectButton.Custom>
-  );
-};
-export default ConnectWalletButton;
+  )
+}
+export default ConnectWalletButton

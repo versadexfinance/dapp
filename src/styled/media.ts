@@ -3,7 +3,7 @@ const media = {
   phoneOnly: '(max-width: 599px)', // Small phones in portrait mode
   tabletPortrait: '(min-width: 600px) and (max-width: 767px)', // Tablets in portrait mode
   tabletLandscape: '(min-width: 768px) and (max-width: 1023px)', // Tablets in landscape mode
-  mobile: '(min-width: 320px)', // Mobile devices
+  mobile: '(min-width: 450px)', // Mobile devices
 
   // Larger device sizes
   desktopSmall: '(min-width: 1200px) and (max-width: 1279px)', // Small desktop screens

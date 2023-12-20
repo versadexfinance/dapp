@@ -27,7 +27,9 @@ export function useSwap({
     const [transactionDeadline, setTransactionDeadline] = useRecoilState(transactionDeadlineState);
     const [amount,setAmount ] = useRecoilState(amountState);
     const [isApproving,setIsApproving ] = useState(false);
-    
+    const [isLoading,setIsLoading ] = useState(false);
+    const [txHash,setTxHash ] = useState<{hash:string, typeTx:string}>({hash:"", typeTx:""});
+
 
     const { address } = useAccount();
     const allowance = useAllowance(address as `0x${string}`)
@@ -71,15 +73,18 @@ export function useSwap({
            
 
             console.log("Balance token in",balanceTokenIn, "ETH",ethers.utils.formatEther(ethBalanceWei));
-            
+            setIsLoading(true);
             if(tokenIn?.ticker === "WETH"){
-                const result = await writeContract({
+                const {hash} = await writeContract({
                     address: config.contract.routerV2,
                     abi: routerAbi,
                     functionName: 'swapExactETHForTokens',
                     args: [ethers.utils.parseEther(outSlippage.toString()), [config.contract.weth, tokenOut?.address], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
                     value: inWei.toBigInt()
                 });
+                setTxHash({hash:hash, typeTx:"swap"});
+
+
             }else if(tokenOut?.ticker === "WETH"){
 
                 //Check Allowance
@@ -105,13 +110,12 @@ export function useSwap({
                     //Rejectar si no se aprueba
                     // COmprobar estado de la transaccion
                     
-                    const waitForTx =  await waitForTransaction({hash});
-
+                    //  const waitForTx =  await waitForTransaction({hash});
+                    setTxHash({hash:hash, typeTx:"approve"}); 
                     if(allowance.lte(inWei)){
                         setIsApproving(false);
                     }
 
-                    console.log("waitForTx",waitForTx);
 
                 }
 
@@ -120,14 +124,14 @@ export function useSwap({
                 console.log("Value with slippage", inWei.mul( ethers.BigNumber.from(1-(Number(maxSlippage) / 100))));
                 
                 if(resultAllowance.gte(inWei)){
-                    const resultSwap = await writeContract({
+                    const {hash} = await writeContract({
                         address: config.contract.routerV2,
                         abi: routerAbi,
                         functionName: 'swapExactTokensForETH',
                         args: [inWei, ethers.utils.parseEther(outSlippage.toString()), [ tokenIn?.address,config.contract.weth], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
                     });
-                    console.log("resultSwap",resultSwap);
-                }
+                    // console.log("resultSwap",resultSwap);
+                    setTxHash({hash:hash, typeTx:"swap"});                }
             }else{
                 //Allowance token in
 
@@ -138,33 +142,17 @@ export function useSwap({
             }
 
 
-            // const { wait: waitSwap } = await writeContract({
-            //     addressOrName: config.contract.routerV2,
-            //     functionName: 'buy',
-            //     args: [0, amountBN],
-            // });
+            setIsLoading(false);
 
-            // await waitSwap();
-
-            // const pool = await readContract({
-            //     addressOrName: config.contract.TokenSwap,
-            //     functionName: 'pools',
-            //     args: [0],
-            // });
-
-            // const swappedAmount = new Big(amount)
-            //     .div(new Big(pool.exchageRate))
-            //     .times(PPM)
-            //     .toPrecision(2);
-
-
-            // console.log(`Congrats! You got ${swappedAmount} ${tokenOut.toUpperCase()}.`);
             return isApproving
         } catch (error: any) {
+            console.log("TX STATUS toastId catch!", error);
+            
             setIsApproving(false);
+            setIsLoading(false);
             console.error(error.message || error);
         }
-    }, [address,allowance, contract, ethBalanceWei, inWei, tokenIn?.address, tokenIn?.ticker, tokenOut?.address, tokenOut?.ticker]);
+    }, [address, allowance, contract, ethBalanceWei, inWei, tokenIn?.address, tokenIn?.ticker, tokenOut?.address, tokenOut?.ticker, isApproving, maxSlippage, outSlippage, transactionDeadline]);
 
-    return {swap, isApproving, contract};
+    return {swap, isApproving, contract, isLoading, txHash};
 }

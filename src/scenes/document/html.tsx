@@ -1,47 +1,46 @@
-'use client';
+'use client'
 
 // import { dir } from 'i18next';
-import { Poppins } from 'next/font/google';
+import { Poppins } from 'next/font/google'
 // eslint-disable-next-line import/order
-import { ReactNode } from 'react';
+import { ReactNode } from 'react'
 
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   style: ['normal'],
-  display: 'swap'
-});
+  display: 'swap',
+})
 
-import Head from 'next/head';
-import { RecoilRoot } from 'recoil';
+import Head from 'next/head'
+import { RecoilRoot } from 'recoil'
 
 // import useCurrentLocale from '@/pods/i18n/hooks/use-current-locale';
 // import { Locale } from '@/pods/i18n/interfaces';
-import { getCssText } from '@/styled/styled';
-import globalStyles from '@/styled/global-styles';
-import '@rainbow-me/rainbowkit/styles.css';
+import { getCssText } from '@/styled/styled'
+import globalStyles from '@/styled/global-styles'
+import '@rainbow-me/rainbowkit/styles.css'
 
-import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
+import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { WagmiConfig } from 'wagmi'
 
-import config from '@/web3/client';
+import config from '@/web3/client'
 interface HtmlProps {
-  children: ReactNode;
+  children: ReactNode
   // lng: Locale;
 }
 
 const Html = ({ children }: HtmlProps) => {
   // const locale = useCurrentLocale(lng);
-  globalStyles();
+  globalStyles()
   return (
     <html className={poppins.className}>
       <title> Versadex </title>
-      <Head>
+      <Head key={'123'}>
         <style
           id="stitches"
           dangerouslySetInnerHTML={{ __html: getCssText() }}
         />
-        
       </Head>
       <body>
         <WagmiConfig config={config.wagmiConfig}>
@@ -51,7 +50,7 @@ const Html = ({ children }: HtmlProps) => {
               accentColorForeground: '#0A0A0A',
               borderRadius: 'small',
               fontStack: 'system',
-              overlayBlur: 'small'
+              overlayBlur: 'small',
             })}
             chains={config.chains}
           >
@@ -60,7 +59,7 @@ const Html = ({ children }: HtmlProps) => {
         </WagmiConfig>
       </body>
     </html>
-  );
-};
+  )
+}
 
-export default Html;
+export default Html
