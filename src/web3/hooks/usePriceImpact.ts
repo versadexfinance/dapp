@@ -20,7 +20,6 @@ export function usePriceImpact({inputAmount, tokenAPoolSize, tokenBPoolSize}:Pri
   const [isError, setIsError] = useState(false);
   const [tokenIn, setTokenInState] = useRecoilState(tokenInState);
 
-  console.log("Price impact params",inputAmount,tokenAPoolSize,tokenBPoolSize);
   
 
   useEffect(() => {

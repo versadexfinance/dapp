@@ -17,7 +17,6 @@ export const formatNumber = (value:number, includeCommas:boolean = false) => {
     if(!Number(input)) return 0;
     // Parse the input as a floating-point number
     const number = parseFloat(input??'0');
-    console.log("input", number, "result",Math.max(2,1-Math.floor(Math.log(number)/Math.log(10))));
     
 
   

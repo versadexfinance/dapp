@@ -40,8 +40,7 @@ export function useSwap({
 
     const outSlippage = maxSlippage.length && maxSlippage != "0"? Number(amount.out) * (1-(Number(maxSlippage) / 100)):0
 
-    console.log("Out wei",amount.out);
-    console.log("Out wei slippage", outSlippage);
+    
     
 
     const contract = new ethers.Contract(tokenIn ? tokenIn?.address:"", erc20ABI , provider);
@@ -72,7 +71,6 @@ export function useSwap({
            
            
 
-            console.log("Balance token in",balanceTokenIn, "ETH",ethers.utils.formatEther(ethBalanceWei));
             setIsLoading(true);
             if(tokenIn?.ticker === "WETH"){
                 const {hash} = await writeContract({
@@ -92,7 +90,7 @@ export function useSwap({
                 const resultAllowance = await contract.allowance(address, config.contract.routerV2)
 
                 // Handlear qcuando falla el allowance
-                console.log("Allowance",resultAllowance.toString());
+                
                 
                 if(resultAllowance.lt(inWei)){
                     // No entrar si ya hay un aproval en curso
@@ -121,7 +119,6 @@ export function useSwap({
 
 
                 //Slippage 0 - 100
-                console.log("Value with slippage", inWei.mul( ethers.BigNumber.from(1-(Number(maxSlippage) / 100))));
                 
                 if(resultAllowance.gte(inWei)){
                     const {hash} = await writeContract({
@@ -130,7 +127,6 @@ export function useSwap({
                         functionName: 'swapExactTokensForETH',
                         args: [inWei, ethers.utils.parseEther(outSlippage.toString()), [ tokenIn?.address,config.contract.weth], address, Date.now() + Number(transactionDeadline) * 60 * 10],            
                     });
-                    // console.log("resultSwap",resultSwap);
                     setTxHash({hash:hash, typeTx:"swap"});                }
             }else{
                 //Allowance token in
@@ -146,7 +142,6 @@ export function useSwap({
 
             return isApproving
         } catch (error: any) {
-            console.log("TX STATUS toastId catch!", error);
             
             setIsApproving(false);
             setIsLoading(false);

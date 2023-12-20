@@ -65,7 +65,6 @@ export function usePrices(pairAddress: string | null) {
       fetchPrices();
     }, [pairAddress]);
   
-    console.log("Prices",prices);
 
     return prices;
   }

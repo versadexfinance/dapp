@@ -160,7 +160,6 @@ const SwapCard = () => {
         </Flex>,
       )
     }
-    console.log('TX STATUS toastId', toastId)
 
     if (txStatus === 'success') {
       toast.update(toastId.current, {
@@ -226,8 +225,6 @@ const SwapCard = () => {
   useEffect(() => {
     async function calculateConversionRate() {
       if (reserves) {
-        console.log('reserves', reserves)
-
         let ratio: number = 0
         if (tokenOne?.ticker == 'WETH') {
           ratio = reserves?.tokenTwo / reserves?.tokenOne
