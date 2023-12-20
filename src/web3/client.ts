@@ -11,8 +11,6 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   );
   
 
-  console.log(process.env.PROJECT_NAME);
-  console.log(process.env.PROJECT_ID);
   
   const { connectors } = getDefaultWallets({
     appName: process.env.PROJECT_NAME ?? "x",

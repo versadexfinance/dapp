@@ -113,15 +113,6 @@ const SwapCard = () => {
   const toastId = useRef<any>(null)
 
   useEffect(() => {
-    console.log(
-      'TX STATUS',
-      txStatus,
-      'isApproving',
-      isApproving,
-      'typeTx',
-      txHash.typeTx,
-    )
-
     if (
       txStatus !== 'success' &&
       txStatus !== 'loading' &&
