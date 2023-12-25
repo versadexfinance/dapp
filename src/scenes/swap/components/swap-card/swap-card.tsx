@@ -2,7 +2,7 @@
 
 import { Flex, Stack } from '@/components/box'
 import { Container } from './styles'
-import TabsComponent, { TabItem, TabPanelItem } from '@/components/tabs/tabs'
+import TabsComponent from '@/components/tabs/tabs'
 import Typography from '@/components/typography'
 import CoinSelector from '@/components/coin-select'
 import Button from '@/components/button'
@@ -11,7 +11,14 @@ import CollapsibleCard from '@/components/collapsible-card'
 import { useAccount, useBalance, useWaitForTransaction } from 'wagmi'
 import { PulseLoader } from 'react-spinners'
 
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import Image from 'next/image'
 import { usePair, usePrices } from '@/web3/hooks/usePair'
 import { useConversion } from '@/web3/hooks/useConversion'
@@ -34,8 +41,10 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { ethers } from 'ethers'
 import { config } from '@/web3/config'
 import { Tab } from '@/components/tabs/interfaces'
-import { toast, Id } from 'react-toastify'
+import { toast } from 'react-toastify'
 import CoinImagePair from '@/components/coin-image-pair/coin-image-pair'
+import { motion } from 'framer-motion'
+import Modal from '@/components/modal/modal'
 
 const SwapCard = () => {
   const { address, isDisconnected } = useAccount()
@@ -44,7 +53,9 @@ const SwapCard = () => {
     address: address,
     watch: true,
   })
-  const [conversionRate, setConversionRate] = useState<string | null | 0>(null)
+  const [conversionRateOld, setConversionRate] = useState<string | null | 0>(
+    null,
+  )
 
   const [settingOpen, setSettingOpen] = useState(false)
 
@@ -213,25 +224,22 @@ const SwapCard = () => {
     setTokenTwo(one)
   }
 
-  useEffect(() => {
-    async function calculateConversionRate() {
-      if (reserves) {
-        let ratio: number = 0
-        if (tokenOne?.ticker == 'WETH') {
-          ratio = reserves?.tokenTwo / reserves?.tokenOne
-        } else {
-          ratio = reserves?.tokenOne / reserves?.tokenTwo
-        }
-        const rounded = roundToFirstNonZeroDecimal(String(ratio))
-        setConversionRate(rounded ?? null)
+  const conversionRate = useMemo(() => {
+    if (reserves) {
+      let ratio = 0
+      if (tokenOne?.ticker == 'WETH') {
+        ratio = reserves.tokenTwo / reserves.tokenOne
+      } else {
+        ratio = reserves.tokenOne / reserves.tokenTwo
       }
+      return roundToFirstNonZeroDecimal(String(ratio)) ?? null
     }
-    calculateConversionRate()
+    return null
   }, [tokenOne, reserves])
 
   const gas = useEstimatedGasFee(tokenOne, tokenTwo, address as string)
 
-  async function changeAmount(e: ChangeEvent<HTMLInputElement>) {
+  function changeAmount(e: ChangeEvent<HTMLInputElement>) {
     const inAmount = e.target.value
     setAmount({ in: inAmount, out: '' })
   }
@@ -674,8 +682,14 @@ const SwapCard = () => {
       }}
     >
       <Container>
-        <img
+        <motion.img
           onClick={() => setSettingOpen(!settingOpen)}
+          whileHover={{ scale: 1.2, rotate: 15 }}
+          whileTap={{
+            scale: 0.8,
+            rotate: 90,
+            borderRadius: '100%',
+          }}
           style={{
             position: 'absolute',
             right: '16px',
@@ -684,14 +698,18 @@ const SwapCard = () => {
           src="/icons/setting.svg"
           width={24}
         />
-
-        {settingOpen && (
+        <Modal
+          isOpen={settingOpen}
+          onRequestClose={() => {
+            setSettingOpen(false)
+          }}
+        >
           <SwapSettings
             closeSettings={() => {
               setSettingOpen(false)
             }}
           />
-        )}
+        </Modal>
 
         <TabsComponent tabs={tabs} />
       </Container>

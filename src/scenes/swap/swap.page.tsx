@@ -1,4 +1,3 @@
-// import DashboardHeader from '@/pages/dashboard/components/dashboard-header';
 import React from 'react'
 import Layout from '../dashboard/components/layout'
 

@@ -37,8 +37,7 @@ export const tokenList: Tokens[] =[
         "name": "Versadex",
         "address": "0xFe16e49f711E3dbE1fF33635E2B335cAc4CBF520",
         "decimals": 18
-    },
-
+    }
 ]
 
 

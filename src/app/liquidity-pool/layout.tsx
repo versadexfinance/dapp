@@ -1,1 +1,1 @@
-export { default } from '@/scenes/document/layout';
+export { default } from '@/scenes/document/layout'

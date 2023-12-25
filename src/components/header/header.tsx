@@ -6,10 +6,10 @@ import NextLink from '../next-link'
 import { styled } from '@/styled'
 import { usePathname } from 'next/navigation'
 import media from '@/styled/media'
-import { useMediaQuery } from 'usehooks-ts'
 // import { start } from 'repl';
 import ConnectWalletButton from '../connect-button/connect-button'
 import Link from 'next/link'
+import { Fragment } from 'react'
 
 // Common components
 
@@ -33,20 +33,18 @@ const StyledNextLink = styled(Link, {
   },
 })
 
-const NavigationLinks = ({
-  gtThanTablet,
-  pathname,
-}: {
-  gtThanTablet: boolean
-  pathname: string | null
-}) => (
-  <Flex
-    fullWidth={!gtThanTablet}
-    css={{
-      gap: gtThanTablet ? 4 : 0,
-    }}
-    justifyContent={gtThanTablet ? 'start' : 'spaceBetween'}
-  >
+const ResponsiveNavLinksContainer = styled(Flex, {
+  gap: 1,
+  width: '100%',
+  justifyContent: 'space-between',
+  '@tablet': {
+    gap: 4,
+    justifyContent: 'start',
+  },
+})
+
+const NavigationLinks = ({ pathname }: { pathname: string | null }) => (
+  <ResponsiveNavLinksContainer>
     <StyledNextLink href="dashboard" active={pathname === '/dashboard'} shallow>
       Dashboard
     </StyledNextLink>
@@ -63,14 +61,26 @@ const NavigationLinks = ({
     >
       Liquidity Pool
     </StyledNextLink>
-  </Flex>
+  </ResponsiveNavLinksContainer>
 )
 
 // Refactored Header component
+const HiddenOnMobile = styled(Flex, {
+  display: 'none',
+  '@tablet': {
+    display: 'block',
+  },
+})
+
+const HiddenOnDesktop = styled(Flex, {
+  display: 'block',
+  '@tablet': {
+    display: 'none',
+  },
+})
 
 const Header = () => {
   const pathname = usePathname()
-  const gtThanTablet = useMediaQuery(media.tablet)
 
   return (
     <ContainerHeader>
@@ -89,19 +99,21 @@ const Header = () => {
           <NextLink css={{ height: 7.5 }} href="/dashboard">
             <Image src="/img/logo.svg" alt="logo" width={50} height={40} />
           </NextLink>
-          {!gtThanTablet && <Flex>{<ConnectWalletButton />}</Flex>}
-          {gtThanTablet && (
-            <NavigationLinks gtThanTablet={gtThanTablet} pathname={pathname} />
-          )}
+          <HiddenOnMobile>
+            <NavigationLinks pathname={pathname} />
+          </HiddenOnMobile>
+          <HiddenOnDesktop>
+            <Flex>{<ConnectWalletButton />}</Flex>{' '}
+          </HiddenOnDesktop>
         </Flex>
-        {gtThanTablet && (
+        <HiddenOnDesktop>
+          <NavigationLinks pathname={pathname} />
+        </HiddenOnDesktop>
+        <HiddenOnMobile>
           <Flex>
             <ConnectWalletButton />
           </Flex>
-        )}
-        {!gtThanTablet && (
-          <NavigationLinks gtThanTablet={gtThanTablet} pathname={pathname} />
-        )}
+        </HiddenOnMobile>
       </ContainerHeaderNavbar>
     </ContainerHeader>
   )

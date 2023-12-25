@@ -1,8 +1,12 @@
+'use client'
+
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Button from '../button'
 import { TriangleDownIcon } from '@radix-ui/react-icons'
 import { useMediaQuery } from 'usehooks-ts'
 import media from '@/styled/media'
+
+import { Flex } from '../box'
 
 const CustomConnectButton = (props: any) => (
   <Button
@@ -50,12 +54,13 @@ const ConnectWalletButton = () => {
           account &&
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated')
+
         return (
           <div
             {...(!ready && {
               'aria-hidden': true,
               style: {
-                opacity: 0,
+                display: 'hidden',
                 pointerEvents: 'none',
                 userSelect: 'none',
               },
@@ -71,13 +76,18 @@ const ConnectWalletButton = () => {
               }
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button">
+                  <Button
+                    css={{ background: '$error', color: '$bg-dark-0' }}
+                    onClick={openChainModal}
+                    size="md"
+                    type="button"
+                  >
                     Wrong network
-                  </button>
+                  </Button>
                 )
               }
               return (
-                <div style={{ display: 'flex', gap: 8 }}>
+                <Flex css={{ gap: 8 }}>
                   <Button
                     onClick={openChainModal}
                     css={{
@@ -85,7 +95,7 @@ const ConnectWalletButton = () => {
                       alignItems: 'center !important',
                       color: 'white !important',
                       textTransform: 'capitalize !important ',
-                      bacjground: 'transparent !important',
+                      background: 'transparent !important',
                       borderRadius: '4px !important',
                       border: '1px solid #424242 !important',
                       fontWeight: '500 !important',
@@ -135,7 +145,7 @@ const ConnectWalletButton = () => {
                       ? ` (${account.displayBalance})`
                       : ''}
                   </CustomConnectButton>
-                </div>
+                </Flex>
               )
             })()}
           </div>

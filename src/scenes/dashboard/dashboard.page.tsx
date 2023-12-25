@@ -1,13 +1,12 @@
+import React from 'react'
+import DashboardHeader from './components/dashboard-header'
 
-import React from 'react';
-import DashboardHeader from './components/dashboard-header';
-
-import MyPositions from './components/my-positions';
-import { Flex, Stack } from '@/components/box';
-import TopPoolsTable from './components/top-pools-table';
-import { mockPoolTableRow } from './components/top-pools-table/interfaces';
-import RecentTransactions from './components/recent-transactions';
-import Layout from './components/layout';
+import MyPositions from './components/my-positions'
+import { Flex, Stack } from '@/components/box'
+import TopPoolsTable from './components/top-pools-table'
+import { mockPoolTableRow } from './components/top-pools-table/interfaces'
+import RecentTransactions from './components/recent-transactions'
+import Layout from './components/layout'
 
 function Dashboard() {
   return (
@@ -25,8 +24,8 @@ function Dashboard() {
           flexDirection: 'column',
           '@tablet': {
             flexDirection: 'row',
-            flex: 5
-          }
+            flex: 5,
+          },
         }}
       >
         <Stack
@@ -37,8 +36,8 @@ function Dashboard() {
 
             '@tablet': {
               flexDirection: 'column',
-              flex: 6
-            }
+              flex: 6,
+            },
           }}
         >
           <MyPositions />
@@ -53,7 +52,7 @@ function Dashboard() {
         </Stack>
       </Flex>
     </Layout>
-  );
+  )
 }
 
-export default Dashboard;
+export default Dashboard
