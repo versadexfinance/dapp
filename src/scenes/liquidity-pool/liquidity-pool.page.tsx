@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import Layout from '../dashboard/components/layout'
+import Layout from '../dashboard/layout'
 
 function LiquidityPoolPage() {
   return (

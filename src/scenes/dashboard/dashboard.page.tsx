@@ -6,11 +6,10 @@ import { Flex, Stack } from '@/components/box'
 import TopPoolsTable from './components/top-pools-table'
 import { mockPoolTableRow } from './components/top-pools-table/interfaces'
 import RecentTransactions from './components/recent-transactions'
-import Layout from './components/layout'
 
 function Dashboard() {
   return (
-    <Layout>
+    <>
       <DashboardHeader
         totalValue={19697.26}
         lpTokensvalue={19697.26}
@@ -51,7 +50,7 @@ function Dashboard() {
           <RecentTransactions />
         </Stack>
       </Flex>
-    </Layout>
+    </>
   )
 }
 

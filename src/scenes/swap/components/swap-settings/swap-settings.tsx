@@ -32,21 +32,20 @@ const SwapSettings = (props: SwapSettingsProps) => {
     <Stack
       ref={ref}
       gap={2}
-      css={
-        {
-          // background: '#131313',
-          // transition: 'all 0.3s ease',
-          // border: '1px solid #424242',
-          // padding: '16px',
-          // borderRadius: '8px',
-          // width: 'fit-content',
-          // // position: 'absolute',
-          // right: 16,
-          // top: 71,
-          // background: 'Green',
-          // zIndex: 100,
-        }
-      }
+      css={{
+        // background: '#131313',
+        // transition: 'all 0.3s ease',
+        // border: '1px solid #424242',
+        // padding: '16px',
+        // borderRadius: '8px',
+        // width: 'fit-content',
+        // // position: 'absolute',
+        // right: 16,
+        // top: 71,
+        // background: 'Green',
+        // zIndex: 100,
+        minWidth: '320px',
+      }}
     >
       <Typography
         css={{

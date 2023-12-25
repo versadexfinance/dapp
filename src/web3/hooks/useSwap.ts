@@ -15,7 +15,7 @@ import {
 import { useAllowance } from './useAllowance'
 
 const provider = new ethers.providers.JsonRpcProvider(
-  'https://rpc.ankr.com/eth_goerli',
+  'https://eth-goerli.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
 )
 
 export function useSwap({
