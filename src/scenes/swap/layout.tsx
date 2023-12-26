@@ -36,7 +36,7 @@ const Container = styled(Flex, {
   width: '100%',
   maxWidth: 380,
   mx: 'auto',
-  py: 4,
+  p: 2,
 })
 
 const Layout = ({ children }: LayoutProps) => {

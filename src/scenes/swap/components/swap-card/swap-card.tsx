@@ -150,13 +150,17 @@ const SwapCard = () => {
                 color: '#BFBFBF',
               }}
             >
-              {roundToFirstNonZeroDecimal(amount.in)} {tokenOne?.displayTicker}
-              {txHash.typeTx != 'approve' && (
-                <>
-                  {' > '} {roundToFirstNonZeroDecimal(amount.out)}
-                  {tokenTwo?.displayTicker}
-                </>
-              )}
+              <Flex alignItems={'center'} gap={1}>
+                {roundToFirstNonZeroDecimal(amount.in)}{' '}
+                {tokenOne?.displayTicker}
+                {txHash.typeTx != 'approve' && (
+                  <>
+                    <img src="/icons/arrow-right.svg" alt="" />
+                    <span>{roundToFirstNonZeroDecimal(amount.out)}</span>
+                    <span>{tokenTwo?.displayTicker}</span>
+                  </>
+                )}
+              </Flex>
             </Typography>
           </Stack>
         </Flex>,
@@ -184,14 +188,17 @@ const SwapCard = () => {
                   color: '#BFBFBF',
                 }}
               >
-                {roundToFirstNonZeroDecimal(amount.in)}
-                {tokenOne?.displayTicker}
-                {txHash.typeTx != 'approve' && (
-                  <>
-                    {' > '} {roundToFirstNonZeroDecimal(amount.out)}
-                    {tokenTwo?.displayTicker}
-                  </>
-                )}
+                <Flex alignItems={'center'} gap={1}>
+                  {roundToFirstNonZeroDecimal(amount.in)}
+                  {tokenOne?.displayTicker}
+                  {txHash.typeTx != 'approve' && (
+                    <>
+                      <img src="/icons/arrow-right.svg" alt="" />
+                      <span>{roundToFirstNonZeroDecimal(amount.out)}</span>
+                      <span>{tokenTwo?.displayTicker}</span>
+                    </>
+                  )}
+                </Flex>
               </Typography>
             </Stack>
           </Flex>
