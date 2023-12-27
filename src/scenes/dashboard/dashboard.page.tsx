@@ -35,7 +35,7 @@ function Dashboard() {
 
             '@tablet': {
               flexDirection: 'column',
-              flex: 6,
+              flex: 8,
             },
           }}
         >
@@ -46,7 +46,7 @@ function Dashboard() {
             items={mockPoolTableRow}
           />
         </Stack>
-        <Stack css={{ flex: 2 }}>
+        <Stack css={{ flex: 3 }}>
           <RecentTransactions />
         </Stack>
       </Flex>

@@ -1,95 +1,115 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import axios from "axios"
 import Typography from '@/components/typography';
 
 import { Flex, Stack } from '../../../../components/box';
 
 import { Container } from '../position-card/styles';
 import CoinImagePair from '@/components/coin-image-pair/coin-image-pair';
+import { useAccount } from 'wagmi';
+import { Tokens, Transaction, tokenList } from '@/web3/types';
+import Link from 'next/link';
+import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format';
 
 const NoTransactions = () => {
   return (
-    <Stack css={{ width: '268px' }} alignItems={'center'} gap={3}>
-      <Stack css={{ width: '146px' }} gap={2}>
-        <img src="/sk/Green.svg" />
-        <img src="/sk/Yellow.svg" />
+    <Stack css={{
+      margin: "auto",
+      marginTop: "10em",
+
+    }}>
+
+      <Stack css={{ width: '268px' }} alignItems={'center'} gap={3}>
+        <Stack css={{ width: '146px' }} gap={2}>
+          <img src="/sk/Green.svg" />
+          <img src="/sk/Yellow.svg" />
+        </Stack>
+
+        <Typography
+          css={{
+            fontSize: '12px',
+            textAlign: 'center',
+            color: '#BFBFBF'
+          }}
+        >
+          No recent transactions found, make a swap or create an LP position.
+        </Typography>
       </Stack>
 
-      <Typography
-        css={{
-          fontSize: '12px',
-          textAlign: 'center',
-          color: '#BFBFBF'
-        }}
-      >
-        No recent transactions found, make a swap or create an LP position.
-      </Typography>
     </Stack>
   );
 };
-
-// const RecentTransactionItem = (props:any) => {
-//   const [isHovered, setIsHovered] = useState(false);
-
-//   return (
-//     <Flex
-//       alignItems="center"
-//       gap="2"
-//       justifyContent="center"
-//       direction="row"
-//       css={{
-//         position: 'relative',
-//         width: 'fit-content',
-//         backgroundColor: '$background',
-//         p: 4,
-//         borderRadius: '$2'
-//       }}
-//       onMouseOver={() => setIsHovered(true)}
-//       onMouseOut={() => setIsHovered(false)}
-//     >
-//       <Image
-//         alt="Product"
-//         width="75"
-//         height="60"
-//         src={isHovered ? props.image.hover : props.image.default}
-//         style={{
-//           transition: 'opacity 0.3s ease-in-out',
-//           opacity: isHovered ? 0.8 : 1
-//         }}
-//       />
-//       <Stack>
-//         <Typography css={{ fontWeight: '$400' }}>{props.name}</Typography>
-//         <Typography
-//           css={{
-//             fontWeight: '$500',
-//             mb: '$0',
-//             textTransform: 'uppercase',
-//             fontSize: '$2'
-//           }}
-//         >
-//           {props.price.original.toLocaleString('es-ES', {
-//             minimumFractionDigits: 2
-//           })}
-//           €
-//         </Typography>
-//         <Typography>
-//           {/* {props.price.discount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}€ */}
-//         </Typography>
-//       </Stack>
-//     </Flex>
-//   );
-// };
-
 const TransactionItem = ({
-  icon,
+  tx,
   lastItem
 }: {
-  icon: string;
+  tx: Transaction;
   lastItem?: boolean;
 }) => {
+  const [icon, setIcon] = useState("/icons/circle-arrow-reload.svg")
+  const [text, setText] = useState("Transaction")
+  const [subText, setSubText] = useState("")
+
+  const [tokenIn, setTokenIn] = useState<Tokens>(null)
+  const [tokenOut, setTokenOut] = useState<Tokens>(null)
+
+  function getIcon(type, status) {
+
+  }
+
+
+  useEffect(() => {
+    if (!tx.data) return
+
+    if (tx.data.in?.tokenAddress) {
+      let foundTokenIn = tokenList.find(t => {
+        return t.address == tx.data.in.tokenAddress
+      })
+      setTokenIn(foundTokenIn)
+    }
+
+    if (tx.data.out?.tokenAddress) {
+      let foundTokenOut = tokenList.find(t => {
+        return t.address == tx.data.out.tokenAddress
+      })
+      setTokenOut(foundTokenOut)
+    }
+
+    if (tx.data.approve) {
+      let foundTokenApprove = tokenList.find(t => {
+        return t.address == tx.data.approve.tokenAddress
+      })
+      setTokenIn(foundTokenApprove)
+    }
+
+
+    if (tx.type == "approve") {
+      setIcon("/icons/coins-01.svg")
+      setText("Approved")
+    }
+
+    if (tx.type == "swap") {
+      setText("Swapped")
+    }
+
+    if (tx.status == "failed") {
+      setIcon("/icons/alert-02.svg")
+      setText("Failed Transaction")
+      if (tx.type == "approve") {
+        setSubText("Attempted Approval")
+      }
+      if (tx.type == "swap") {
+        setSubText("Attempted Swap")
+      }
+    }
+
+
+  }, [])
+
+
   return (
     <Flex
       gap={1}
@@ -122,35 +142,68 @@ const TransactionItem = ({
           src={icon}
         />
       </Flex>
-      <Stack gap={1}>
-        <Flex gap={1}>
-          <Typography
-            css={{
-              fontSize: '16px',
-              lineHeight: '20px'
-            }}
-          >
-            Swapped
-          </Typography>
-          <CoinImagePair
-            coin1_src="/img/DAI.png"
-            coin2_src="/img/ETH.png"
-            size={16}
+      <Stack fullWidth={true} gap={1} css={{
+        marginRight: "10px"
+      }}>
+        <Flex gap={1} css={{
+          flexWrap: "wrap"
+        }}
+          justifyContent={'spaceBetween'}>
+          <Flex>
+            <Typography
+              css={{
+                fontSize: '15px',
+                lineHeight: '20px'
+              }}
+            >
+              {text}
+            </Typography>
+            {subText && <Typography
+              css={{
+                fontSize: '15px',
+                lineHeight: '20px',
+                color: "#AFAFAF",
+                marginLeft: "1em"
+              }}
+            >
+              ~{subText}
+            </Typography>}
+          </Flex>
+          {tx.type == "swap" ? <Flex><CoinImagePair
+            coin1_src={tokenIn?.img}
+            coin2_src={tokenOut?.img}
+            size={20}
           />
-          <Typography>100 ETH</Typography>
-          <img src="/icons/arrow-right.svg" alt="" />
-          <Typography>99.98 DAI</Typography>
+            <Typography css={{
+              fontSize: "14px"
+            }}>{roundToFirstNonZeroDecimal(tx?.data?.in?.amount)} {tokenIn?.displayTicker}</Typography>
+            <img src="/icons/arrow-right.svg" alt="" />
+            <Typography css={{
+              fontSize: "14px"
+            }}>{roundToFirstNonZeroDecimal(tx?.data?.out?.amount)} {tokenIn?.displayTicker}</Typography></Flex> : tx.status !="failed" && tx.type == "approve"?
+            <Flex
+              gap={1}
+            >
+              <img src={tokenIn?.img} width="20" height="20" alt="" />
+              <Typography css={{
+                fontSize: "14px"
+              }}>{roundToFirstNonZeroDecimal(tx?.data?.approve.amount)} {tokenIn?.displayTicker}</Typography>
+            </Flex>:<></>
+          }
         </Flex>
-        <Flex justifyContent={'spaceBetween'}>
-          <Typography
+        <Flex justifyContent={'spaceBetween'} alignItems={'center'} >
+          {<Typography
             css={{
               fontSize: '12px',
               lineHeight: '14px',
               color: '#BFBFBF'
             }}
           >
-            Ethereum
-          </Typography>
+            {tx.status != "failed" || tx.type == "swap" ?  (tx.status == "failed" ? "":"Ethereum") : <Flex gap={1} alignItems={'center'}> <img src={tokenIn?.img} width="20" height="20" alt="" />
+              <Typography css={{
+                fontSize: "14px"
+              }}>{roundToFirstNonZeroDecimal(tx?.data?.approve?.amount)} {tokenIn?.displayTicker}</Typography> </Flex>}
+          </Typography>}
           <Typography
             css={{
               fontSize: '12px',
@@ -158,7 +211,9 @@ const TransactionItem = ({
               color: '$primary'
             }}
           >
-            0x3b6c...a6f7
+            <Link target='_blank' href={"https://goerli.etherscan.io/tx/" + tx.txHash}>
+              {`${tx.txHash.substring(0, 4 + 2)}...${tx.txHash.substring(tx.txHash.length - 4)}`}
+            </Link>
           </Typography>
         </Flex>
       </Stack>
@@ -167,6 +222,26 @@ const TransactionItem = ({
 };
 
 const RecentTransactions = () => {
+  const { address, isDisconnected } = useAccount()
+  const [userTransactions, setUserTransactions] = useState<any>([])
+
+  useEffect(() => {
+
+    const fetchTransactions = async () => {
+      if (address) {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/transaction?address=${address}`);
+          setUserTransactions(response.data);
+        } catch (error) {
+          console.error('Error fetching transactions:', error);
+        }
+      }
+    };
+
+    fetchTransactions();
+  }, [address]);
+
+
   return (
     <Container css={{ flex: '1' }}>
       <Typography
@@ -183,18 +258,27 @@ const RecentTransactions = () => {
           flex: '1',
           gap: '16px',
           // marginBottom: '3em',
-          display: 'flex'
+          display: 'flex',
+          maxHeight: "42em",
+          overflowY: "scroll"
           // alignItems: 'center',
           // justifyContent: 'center'
         }}
       >
-        {false && <NoTransactions />}
-        <TransactionItem icon={'/icons/circle-arrow-reload.svg'} />
+        {/* <TransactionItem icon={'/icons/circle-arrow-reload.svg'} />
         <TransactionItem icon={'/icons/circle-arrow-reload.svg'} />
         <TransactionItem icon={'/icons/resources-add.svg'} />
         <TransactionItem icon={'/icons/resources-remove.svg'} />
         <TransactionItem icon={'/icons/coins-01.svg'} />
-        <TransactionItem icon={'/icons/alert-02.svg'} lastItem={true} />
+        <TransactionItem icon={'/icons/alert-02.svg'} lastItem={true} /> */}
+        {userTransactions.length ?
+          userTransactions.map((tx, idx) => {
+
+            return tx.data && <TransactionItem tx={tx} lastItem={idx == userTransactions.length - 1 ? true : false} />
+          })
+
+
+          : <NoTransactions />}
       </Stack>
     </Container>
   );

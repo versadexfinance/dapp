@@ -217,7 +217,7 @@ const SwapCard = () => {
     }
   }, [txStatus, isApproving])
 
-  const onSwap = () => {
+  const onSwap = async () => {
     swap()
   }
 

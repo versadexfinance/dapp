@@ -2,9 +2,9 @@ import { useCallback, useState } from 'react'
 import { erc20ABI, useAccount } from 'wagmi'
 import { waitForTransaction, writeContract } from 'wagmi/actions'
 import { ethers } from 'ethers'
-
+import axios from 'axios'
 import { config } from '@/web3/config'
-import { Tokens } from '@/web3/types'
+import { Tokens, Transaction } from '@/web3/types'
 import { routerAbi } from '@/web3/abis'
 import { useRecoilState } from 'recoil'
 import {
@@ -17,6 +17,15 @@ import { useAllowance } from './useAllowance'
 const provider = new ethers.providers.JsonRpcProvider(
   'https://eth-goerli.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
 )
+
+const logTransaction = async (transaction: Transaction) => {
+
+  try {
+    await axios.post('http://localhost:3000/api/transaction', transaction)
+  } catch (error) {
+    console.error('Error logging transaction:', error)
+  }
+}
 
 export function useSwap({
   tokenIn,
@@ -98,6 +107,28 @@ export function useSwap({
           ],
           value: inWei.toBigInt(),
         })
+
+        const transactionDetails: Transaction = {
+          data: {
+            in: {
+              tokenAddress: tokenIn.address,
+              amount: amount.in,
+            },
+            out: {
+              tokenAddress: tokenOut.address,
+              amount: amount.out,
+            },
+          },
+          type: 'swap',
+          fromAddress: address,
+          txHash: hash,
+          status: 'pending',
+          initiatedAt: new Date(),
+        }
+
+        // Log the transaction
+        await logTransaction(transactionDetails)
+
         setTxHash({ hash: hash, typeTx: 'swap' })
       } else if (tokenOut?.ticker === 'WETH') {
         //Check Allowance
@@ -121,6 +152,23 @@ export function useSwap({
             functionName: 'approve',
             args: [config.contract.routerV2, inWei.toBigInt()],
           })
+
+          const transactionDetails: Transaction = {
+            data: {
+              approve: {
+                amount: ethers.utils.formatEther(inWei.toBigInt().toString()),
+                tokenAddress: tokenIn.address,
+              },
+            },
+            type: 'approve',
+            fromAddress: address,
+            txHash: hash,
+            status: 'pending',
+            initiatedAt: new Date(),
+          }
+
+          // Log the transaction
+          await logTransaction(transactionDetails)
 
           //Rejectar si no se aprueba
           // COmprobar estado de la transaccion
@@ -147,6 +195,27 @@ export function useSwap({
               Date.now() + Number(transactionDeadline) * 60 * 10,
             ],
           })
+          const transactionDetails: Transaction = {
+            data: {
+              in: {
+                tokenAddress: tokenIn.address,
+                amount: amount.in,
+              },
+              out: {
+                tokenAddress: tokenOut.address,
+                amount: amount.out,
+              },
+            },
+            type: 'swap',
+            fromAddress: address,
+            txHash: hash,
+            status: 'pending',
+            initiatedAt: new Date(),
+          }
+
+          // Log the transaction
+          await logTransaction(transactionDetails)
+
           setTxHash({ hash: hash, typeTx: 'swap' })
         }
       } else {

@@ -24,13 +24,13 @@ const CoinImagePair = (props: CoinImagePairProps) => {
 
   return (
     <Container>
-      <ImageCoin src={coin1_src} width={size} height={size} />
-      <ImageCoin
+      {coin1_src?.length&&<ImageCoin src={coin1_src} width={size} height={size} />}
+      {coin2_src?.length&&<ImageCoin
         src={coin2_src}
         width={size}
         height={size}
         css={{ marginLeft: '-20%' }} // Use margin-left instead of translateX
-      />
+      />}
     </Container>
   )
 }
