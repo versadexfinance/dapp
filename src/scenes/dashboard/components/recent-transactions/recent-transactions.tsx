@@ -230,7 +230,7 @@ const RecentTransactions = () => {
     const fetchTransactions = async () => {
       if (address) {
         try {
-          const response = await axios.get(`http://localhost:3000/api/transaction?address=${address}`);
+          const response = await axios.get(`https://app.versadex.finance/api/transaction?address=${address}`);
           setUserTransactions(response.data);
         } catch (error) {
           console.error('Error fetching transactions:', error);

@@ -21,7 +21,7 @@ const provider = new ethers.providers.JsonRpcProvider(
 const logTransaction = async (transaction: Transaction) => {
 
   try {
-    await axios.post('http://localhost:3000/api/transaction', transaction)
+    await axios.post('https://app.versadex.finance/api/transaction', transaction)
   } catch (error) {
     console.error('Error logging transaction:', error)
   }
