@@ -1,14 +1,9 @@
 'use client'
 
 import { Flex } from '@/components/box'
-import Header from '@/components/header'
-import {  styled } from '@/styled'
-import config from '@/web3/client'
-import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { ReactNode } from 'react'
-import { RecoilRoot } from 'recoil'
-import { WagmiConfig } from 'wagmi'
 
+import { styled } from '@/styled'
+import { ReactNode } from 'react'
 
 // import { Flex } from '@/components/box';
 // import Header from '@/components/header';
@@ -45,23 +40,7 @@ const Container = styled(Flex, {
 })
 
 const Layout = ({ children }: LayoutProps) => {
-  return <Container mounted={'true'}>
-          <WagmiConfig config={config.wagmiConfig}>
-          <RainbowKitProvider
-            theme={darkTheme({
-              accentColor: '#EBFE64',
-              accentColorForeground: '#0A0A0A',
-              borderRadius: 'small',
-              fontStack: 'system',
-              overlayBlur: 'small',
-            })}
-            chains={config.chains}
-          >
-            <RecoilRoot>{children}</RecoilRoot>
-          </RainbowKitProvider>
-        </WagmiConfig>
-    
-    </Container>
+  return <Container mounted={'true'}>{children}</Container>
 }
 
 export default Layout

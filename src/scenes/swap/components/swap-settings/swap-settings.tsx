@@ -102,7 +102,7 @@ const SwapSettings = (props: SwapSettingsProps) => {
         rightElement={<Typography>%</Typography>}
         type="number"
         pattern="[0-9]*"
-        inputMode="numeric"
+        inputMode="decimal"
         placeholder="0.5"
       />
 
@@ -116,7 +116,7 @@ const SwapSettings = (props: SwapSettingsProps) => {
         rightElement={<Typography>minutes</Typography>}
         type="number"
         pattern="[0-9]*"
-        inputMode="numeric"
+        inputMode="decimal"
         placeholder="10"
       />
     </Stack>

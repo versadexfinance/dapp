@@ -21,7 +21,7 @@ const InputConversion = forwardRef<HTMLInputElement, InputProps>(
     <Container disabled={disabled} tabIndex={-1} error={error}>
       <InputComponent
         pattern="[0-9]*"
-        inputMode="numeric"
+        inputMode="decimal"
         type="number"
         disabled={disabled}
         ref={ref}

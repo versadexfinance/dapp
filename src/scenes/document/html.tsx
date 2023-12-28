@@ -25,6 +25,7 @@ import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { WagmiConfig } from 'wagmi'
 
 import config from '@/web3/client'
+import TransactionStatusProvider from '@/components/transaction-status-provider/transaction-status-provider'
 interface HtmlProps {
   children: ReactNode
   // lng: Locale;
@@ -54,7 +55,9 @@ const Html = ({ children }: HtmlProps) => {
             })}
             chains={config.chains}
           >
-            <RecoilRoot>{children}</RecoilRoot>
+            <RecoilRoot>
+              <TransactionStatusProvider>{children}</TransactionStatusProvider>
+            </RecoilRoot>
           </RainbowKitProvider>
         </WagmiConfig>
       </body>

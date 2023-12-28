@@ -11,6 +11,7 @@ import {
   amountState,
   maxSlippageState,
   transactionDeadlineState,
+  transactionState,
 } from '@/pods/atoms/swap-selected-tokens.atom'
 import { useAllowance } from './useAllowance'
 
@@ -19,9 +20,8 @@ const provider = new ethers.providers.JsonRpcProvider(
 )
 
 const logTransaction = async (transaction: Transaction) => {
-
   try {
-    await axios.post('https://app.versadex.finance/api/transaction', transaction)
+    await axios.post(`${process.env.API_URL}/transaction`, transaction)
   } catch (error) {
     console.error('Error logging transaction:', error)
   }
@@ -40,6 +40,8 @@ export function useSwap({
   const [transactionDeadline, setTransactionDeadline] = useRecoilState(
     transactionDeadlineState,
   )
+
+  // const [transaction, setTransaction] = useRecoilState(transactionState)
   const [amount, setAmount] = useRecoilState(amountState)
   const [isApproving, setIsApproving] = useState(false)
   const [isLoading, setIsLoading] = useState(false)

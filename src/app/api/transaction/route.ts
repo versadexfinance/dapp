@@ -6,28 +6,28 @@ import { ethers } from 'ethers'
 let client
 let db
 
- type Transaction = {
-    type: 'swap' | 'add_liquidity' | 'remove_liquidity' | 'approve'
-    data: {
-      in?: {
-        tokenAddress: string
-        amount: string
-      }
-      out?: {
-        tokenAddress: string
-        amount: string
-      }
-      approve?: {
-        tokenAddress: string
-        amount: string
-      }
+type Transaction = {
+  type: 'swap' | 'add_liquidity' | 'remove_liquidity' | 'approve'
+  data: {
+    in?: {
+      tokenAddress: string
+      amount: string
     }
-    amount?: string
-    fromAddress: string
-    txHash: string
-    status: 'pending' | 'completed' | 'failed'
-    initiatedAt: Date
+    out?: {
+      tokenAddress: string
+      amount: string
+    }
+    approve?: {
+      tokenAddress: string
+      amount: string
+    }
   }
+  amount?: string
+  fromAddress: string
+  txHash: string
+  status: 'pending' | 'completed' | 'failed'
+  initiatedAt: Date
+}
 
 async function connectToDatabase() {
   if (!client) {
@@ -42,68 +42,38 @@ const provider = new ethers.providers.JsonRpcProvider(
   'https://eth-goerli.g.alchemy.com/v2/FPLZvzEhuo4jMdGjuTqWrtAsaFUpID3t',
 )
 
-async function checkTransactionStatus(db, txHash) {
-
-  try {
-
-    const txResult = await provider.waitForTransaction(txHash)
-
-    if (txResult) {
-       const result = await db
-      .collection('transactions')
-      .updateOne({ txHash }, { $set: {status:txResult.status == 1 ? "completed" : "failed"} })
-
-      return result
-    }
-  } catch (error) {
-    console.error('Error fetching transaction: ', error)
-  }
-}
-
-// Polling function
-
-
 export async function POST(req: Request) {
-  
-
-
   const body = await req.json()
 
-  if(!body.txHash){
+  if (!body.txHash) {
     return NextResponse.json({
       message: 'No hash found',
-      error: "No hash found",
+      error: 'No hash found',
     })
   }
 
   try {
     const db = await connectToDatabase()
 
-    // const { txHash, type, fromAddress, toAddress } = body
-
-    // Record the transaction in the database
-
     await db.collection('transactions').insertOne({
-      ...body
+      ...body,
     } as Transaction)
 
-    // const etherscanResponse = await axios.get(
-    //   `https://api-goerli.etherscan.io/api?module=transaction&action=getstatus&txhash=${body.txHash}&apikey=${process.env.ETHERSCAN_API_KEY}`,
-    // )
+    const txResult = await provider.waitForTransaction(body.txHash)
 
+    if (txResult) {
+      const result = await db
+        .collection('transactions')
+        .updateOne(
+          { txHash: body.txHash },
+          { $set: { status: txResult.status == 1 ? 'completed' : 'failed' } },
+        )
 
-    // console.log('etherscanResponse', etherscanResponse.data)
-
-    // const transactionStatus = etherscanResponse.data.result
-
-   
-
-    const result = checkTransactionStatus(db, body.txHash)
-
-    return NextResponse.json({
-      message: 'Transaction status updated',
-      data: result,
-    })
+      return NextResponse.json({
+        message: 'Transaction status updated',
+        data: result,
+      })
+    }
   } catch (error) {
     return NextResponse.json({
       message: 'Error tracking transaction',

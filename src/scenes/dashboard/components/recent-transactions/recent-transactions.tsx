@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import axios from "axios"
-import Typography from '@/components/typography';
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import Typography from '@/components/typography'
 
-import { Flex, Stack } from '../../../../components/box';
+import { Flex, Stack } from '../../../../components/box'
 
-import { Container } from '../position-card/styles';
-import CoinImagePair from '@/components/coin-image-pair/coin-image-pair';
-import { useAccount } from 'wagmi';
-import { Tokens, Transaction, tokenList } from '@/web3/types';
-import Link from 'next/link';
-import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format';
+import { Container } from '../position-card/styles'
+import CoinImagePair from '@/components/coin-image-pair/coin-image-pair'
+import { useAccount } from 'wagmi'
+import { Tokens, Transaction, tokenList } from '@/web3/types'
+import Link from 'next/link'
+import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format'
 
 const NoTransactions = () => {
   return (
-    <Stack css={{
-      margin: "auto",
-      marginTop: "10em",
-
-    }}>
-
+    <Stack
+      css={{
+        margin: 'auto',
+        marginTop: '10em',
+      }}
+    >
       <Stack css={{ width: '268px' }} alignItems={'center'} gap={3}>
         <Stack css={{ width: '146px' }} gap={2}>
           <img src="/sk/Green.svg" />
@@ -32,34 +32,30 @@ const NoTransactions = () => {
           css={{
             fontSize: '12px',
             textAlign: 'center',
-            color: '#BFBFBF'
+            color: '#BFBFBF',
           }}
         >
           No recent transactions found, make a swap or create an LP position.
         </Typography>
       </Stack>
-
     </Stack>
-  );
-};
+  )
+}
 const TransactionItem = ({
   tx,
-  lastItem
+  lastItem,
 }: {
-  tx: Transaction;
-  lastItem?: boolean;
+  tx: Transaction
+  lastItem?: boolean
 }) => {
-  const [icon, setIcon] = useState("/icons/circle-arrow-reload.svg")
-  const [text, setText] = useState("Transaction")
-  const [subText, setSubText] = useState("")
+  const [icon, setIcon] = useState('/icons/circle-arrow-reload.svg')
+  const [text, setText] = useState('Transaction')
+  const [subText, setSubText] = useState('')
 
   const [tokenIn, setTokenIn] = useState<Tokens>(null)
   const [tokenOut, setTokenOut] = useState<Tokens>(null)
 
-  function getIcon(type, status) {
-
-  }
-
+  function getIcon(type, status) {}
 
   useEffect(() => {
     if (!tx.data) return
@@ -85,30 +81,26 @@ const TransactionItem = ({
       setTokenIn(foundTokenApprove)
     }
 
-
-    if (tx.type == "approve") {
-      setIcon("/icons/coins-01.svg")
-      setText("Approved")
+    if (tx.type == 'approve') {
+      setIcon('/icons/coins-01.svg')
+      setText('Approved')
     }
 
-    if (tx.type == "swap") {
-      setText("Swapped")
+    if (tx.type == 'swap') {
+      setText('Swapped')
     }
 
-    if (tx.status == "failed") {
-      setIcon("/icons/alert-02.svg")
-      setText("Failed Transaction")
-      if (tx.type == "approve") {
-        setSubText("Attempted Approval")
+    if (tx.status == 'failed') {
+      setIcon('/icons/alert-02.svg')
+      setText('Failed Transaction')
+      if (tx.type == 'approve') {
+        setSubText('Attempted Approval')
       }
-      if (tx.type == "swap") {
-        setSubText("Attempted Swap")
+      if (tx.type == 'swap') {
+        setSubText('Attempted Swap')
       }
     }
-
-
   }, [])
-
 
   return (
     <Flex
@@ -117,7 +109,7 @@ const TransactionItem = ({
       css={{
         padding: '16px 0',
         borderBottom: !lastItem ? '1px solid #1F1F1F' : 'none',
-        paddingBottom: '32px'
+        paddingBottom: '32px',
       }}
     >
       <Flex
@@ -128,7 +120,7 @@ const TransactionItem = ({
           // padding: '4px',
           alignItems: 'center',
           borderRadius: '50%',
-          justifyContent: 'center'
+          justifyContent: 'center',
           // padding: '4px'
         }}
       >
@@ -137,110 +129,161 @@ const TransactionItem = ({
           width={'16px'}
           style={{
             margin: '4px',
-            background: '#252811'
+            background: '#252811',
           }}
           src={icon}
         />
       </Flex>
-      <Stack fullWidth={true} gap={1} css={{
-        marginRight: "10px"
-      }}>
-        <Flex gap={1} css={{
-          flexWrap: "wrap"
+      <Stack
+        fullWidth={true}
+        gap={1}
+        css={{
+          marginRight: '10px',
         }}
-          justifyContent={'spaceBetween'}>
+      >
+        <Flex
+          gap={1}
+          css={{
+            flexWrap: 'wrap',
+          }}
+          justifyContent={'spaceBetween'}
+        >
           <Flex>
             <Typography
               css={{
                 fontSize: '15px',
-                lineHeight: '20px'
+                lineHeight: '20px',
               }}
             >
               {text}
             </Typography>
-            {subText && <Typography
+            {subText && (
+              <Typography
+                css={{
+                  fontSize: '15px',
+                  lineHeight: '20px',
+                  color: '#AFAFAF',
+                  marginLeft: '1em',
+                }}
+              >
+                ~{subText}
+              </Typography>
+            )}
+          </Flex>
+          {tx.type == 'swap' ? (
+            <Flex>
+              <CoinImagePair
+                coin1_src={tokenIn?.img}
+                coin2_src={tokenOut?.img}
+                size={20}
+              />
+              <Typography
+                css={{
+                  fontSize: '14px',
+                }}
+              >
+                {roundToFirstNonZeroDecimal(tx?.data?.in?.amount)}{' '}
+                {tokenIn?.displayTicker}
+              </Typography>
+              <img src="/icons/arrow-right.svg" alt="" />
+              <Typography
+                css={{
+                  fontSize: '14px',
+                }}
+              >
+                {roundToFirstNonZeroDecimal(tx?.data?.out?.amount)}{' '}
+                {tokenIn?.displayTicker}
+              </Typography>
+            </Flex>
+          ) : tx.status != 'failed' && tx.type == 'approve' ? (
+            <Flex gap={1}>
+              <img src={tokenIn?.img} width="20" height="20" alt="" />
+              <Typography
+                css={{
+                  fontSize: '14px',
+                }}
+              >
+                {roundToFirstNonZeroDecimal(tx?.data?.approve.amount)}{' '}
+                {tokenIn?.displayTicker}
+              </Typography>
+            </Flex>
+          ) : (
+            <></>
+          )}
+        </Flex>
+        <Flex justifyContent={'spaceBetween'} alignItems={'center'}>
+          {
+            <Typography
               css={{
-                fontSize: '15px',
-                lineHeight: '20px',
-                color: "#AFAFAF",
-                marginLeft: "1em"
+                fontSize: '12px',
+                lineHeight: '14px',
+                color: '#BFBFBF',
               }}
             >
-              ~{subText}
-            </Typography>}
-          </Flex>
-          {tx.type == "swap" ? <Flex><CoinImagePair
-            coin1_src={tokenIn?.img}
-            coin2_src={tokenOut?.img}
-            size={20}
-          />
-            <Typography css={{
-              fontSize: "14px"
-            }}>{roundToFirstNonZeroDecimal(tx?.data?.in?.amount)} {tokenIn?.displayTicker}</Typography>
-            <img src="/icons/arrow-right.svg" alt="" />
-            <Typography css={{
-              fontSize: "14px"
-            }}>{roundToFirstNonZeroDecimal(tx?.data?.out?.amount)} {tokenIn?.displayTicker}</Typography></Flex> : tx.status !="failed" && tx.type == "approve"?
-            <Flex
-              gap={1}
-            >
-              <img src={tokenIn?.img} width="20" height="20" alt="" />
-              <Typography css={{
-                fontSize: "14px"
-              }}>{roundToFirstNonZeroDecimal(tx?.data?.approve.amount)} {tokenIn?.displayTicker}</Typography>
-            </Flex>:<></>
+              {tx.status != 'failed' || tx.type == 'swap' ? (
+                tx.status == 'failed' ? (
+                  ''
+                ) : (
+                  'Ethereum'
+                )
+              ) : (
+                <Flex gap={1} alignItems={'center'}>
+                  {' '}
+                  <img src={tokenIn?.img} width="20" height="20" alt="" />
+                  <Typography
+                    css={{
+                      fontSize: '14px',
+                    }}
+                  >
+                    {roundToFirstNonZeroDecimal(tx?.data?.approve?.amount)}{' '}
+                    {tokenIn?.displayTicker}
+                  </Typography>{' '}
+                </Flex>
+              )}
+            </Typography>
           }
-        </Flex>
-        <Flex justifyContent={'spaceBetween'} alignItems={'center'} >
-          {<Typography
-            css={{
-              fontSize: '12px',
-              lineHeight: '14px',
-              color: '#BFBFBF'
-            }}
-          >
-            {tx.status != "failed" || tx.type == "swap" ?  (tx.status == "failed" ? "":"Ethereum") : <Flex gap={1} alignItems={'center'}> <img src={tokenIn?.img} width="20" height="20" alt="" />
-              <Typography css={{
-                fontSize: "14px"
-              }}>{roundToFirstNonZeroDecimal(tx?.data?.approve?.amount)} {tokenIn?.displayTicker}</Typography> </Flex>}
-          </Typography>}
           <Typography
             css={{
               fontSize: '12px',
               lineHeight: '14px',
-              color: '$primary'
+              color: '$primary',
             }}
           >
-            <Link target='_blank' href={"https://goerli.etherscan.io/tx/" + tx.txHash}>
-              {`${tx.txHash.substring(0, 4 + 2)}...${tx.txHash.substring(tx.txHash.length - 4)}`}
+            <Link
+              target="_blank"
+              href={'https://goerli.etherscan.io/tx/' + tx.txHash}
+            >
+              {`${tx.txHash.substring(0, 4 + 2)}...${tx.txHash.substring(
+                tx.txHash.length - 4,
+              )}`}
             </Link>
           </Typography>
         </Flex>
       </Stack>
     </Flex>
-  );
-};
+  )
+}
 
 const RecentTransactions = () => {
   const { address, isDisconnected } = useAccount()
   const [userTransactions, setUserTransactions] = useState<any>([])
 
   useEffect(() => {
-
     const fetchTransactions = async () => {
       if (address) {
         try {
-          const response = await axios.get(`https://app.versadex.finance/api/transaction?address=${address}`);
-          setUserTransactions(response.data);
+          const response = await axios.get(
+            `${process.env.API_URL}/transaction?address=${address}`,
+          )
+          setUserTransactions(response.data)
         } catch (error) {
-          console.error('Error fetching transactions:', error);
+          console.error('Error fetching transactions:', error)
         }
       }
-    };
+    }
 
-    fetchTransactions();
-  }, [address]);
-
+    fetchTransactions()
+  }, [address])
 
   return (
     <Container css={{ flex: '1' }}>
@@ -248,7 +291,7 @@ const RecentTransactions = () => {
         css={{
           fontSize: '20px',
           lineHeight: '24px',
-          color: '#BFBFBF'
+          color: '#BFBFBF',
         }}
       >
         Recent transactions
@@ -259,8 +302,8 @@ const RecentTransactions = () => {
           gap: '16px',
           // marginBottom: '3em',
           display: 'flex',
-          maxHeight: "42em",
-          overflowY: "scroll"
+          maxHeight: '42em',
+          overflowY: 'scroll',
           // alignItems: 'center',
           // justifyContent: 'center'
         }}
@@ -271,17 +314,23 @@ const RecentTransactions = () => {
         <TransactionItem icon={'/icons/resources-remove.svg'} />
         <TransactionItem icon={'/icons/coins-01.svg'} />
         <TransactionItem icon={'/icons/alert-02.svg'} lastItem={true} /> */}
-        {userTransactions.length ?
+        {userTransactions.length ? (
           userTransactions.map((tx, idx) => {
-
-            return tx.data && <TransactionItem tx={tx} lastItem={idx == userTransactions.length - 1 ? true : false} />
+            return (
+              tx.data && (
+                <TransactionItem
+                  tx={tx}
+                  lastItem={idx == userTransactions.length - 1 ? true : false}
+                />
+              )
+            )
           })
-
-
-          : <NoTransactions />}
+        ) : (
+          <NoTransactions />
+        )}
       </Stack>
     </Container>
-  );
-};
+  )
+}
 
-export default RecentTransactions;
+export default RecentTransactions
