@@ -2,6 +2,7 @@ import { MongoClient } from 'mongodb'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { ethers } from 'ethers'
+import path from 'path'
 
 let client
 let db
@@ -31,7 +32,10 @@ type Transaction = {
 
 async function connectToDatabase() {
   if (!client) {
-    client = new MongoClient(process.env.MONGO_URI)
+    client = new MongoClient(
+      process.env.MONGO_URI +
+        path.join(process.cwd(), 'resources', 'mongodb.crt'),
+    )
     await client.connect()
     db = client.db('Versadex')
   }
@@ -44,6 +48,10 @@ const provider = new ethers.providers.JsonRpcProvider(
 
 export async function POST(req: Request) {
   const body = await req.json()
+  console.log(
+    process.env.MONGO_URI +
+      path.join(process.cwd(), 'resources', 'mongodb.crt'),
+  )
 
   if (!body.txHash) {
     return NextResponse.json({
