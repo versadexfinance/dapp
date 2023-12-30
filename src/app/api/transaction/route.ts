@@ -32,7 +32,19 @@ type Transaction = {
 
 async function connectToDatabase() {
   if (!client) {
-    client = new MongoClient(process.env.MONGO_URI)
+    const caCertificate = process.env.CA_CERT
+
+    const tlsOptions = {
+      ca: [caCertificate], // Pass the CA certificate as an array of strings
+      rejectUnauthorized: false,
+    }
+
+    const options = {
+      tls: true,
+      ...tlsOptions,
+    }
+
+    client = new MongoClient(process.env.MONGO_URI, options)
     await client.connect()
     db = client.db('Versadex')
   }
@@ -45,10 +57,7 @@ const provider = new ethers.providers.JsonRpcProvider(
 
 export async function POST(req: Request) {
   const body = await req.json()
-  console.log(
-    process.env.MONGO_URI +
-      path.join(process.cwd(), 'resources', 'mongodb.crt'),
-  )
+  console.log(process.env.MONGO_URI)
 
   if (!body.txHash) {
     return NextResponse.json({

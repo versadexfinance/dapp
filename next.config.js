@@ -35,6 +35,7 @@ const nextConfig = {
     PROJECT_NAME: process.env.PROJECT_NAME,
     PROJECT_DESCRIPTION: process.env.PROJECT_DESCRIPTION,
     API_URL: process.env.API_URL,
+    CA_CERT: process.env.CA_CERT,
   },
 }
 
