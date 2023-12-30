@@ -117,105 +117,11 @@ const SwapCard = () => {
         contract: null,
         isLoading,
         txHash,
+        amountIn: amount.in,
+        amountOut: amount.out,
       })
     }
   }, [txHash, isLoading, isApproving])
-
-  // const toastId = useRef<any>(null)
-
-  // useEffect(() => {
-  //   if (
-  //     txStatus !== 'success' &&
-  //     txStatus !== 'loading' &&
-  //     txStatus !== 'error'
-  //   ) {
-  //     return
-  //   }
-
-  //   if (txStatus === 'loading') {
-  //     toastId.current = toast.loading(
-  //       <Flex alignItems={'center'}>
-  //         <CoinImagePair
-  //           coin1_src={tokenOne.img}
-  //           coin2_src={tokenTwo.img}
-  //           size={32}
-  //         />
-  //         <Stack alignItems={'start'}>
-  //           <Typography>
-  //             {txHash.typeTx == 'approve' ? 'Approving...' : 'Swaping..'}.
-  //           </Typography>
-  //           <Typography
-  //             css={{
-  //               fontSize: '12px',
-  //               color: '#BFBFBF',
-  //             }}
-  //           >
-  //             <Flex alignItems={'center'} gap={1}>
-  //               {roundToFirstNonZeroDecimal(amount.in)}{' '}
-  //               {tokenOne?.displayTicker}
-  //               {txHash.typeTx != 'approve' && (
-  //                 <>
-  //                   <img src="/icons/arrow-right.svg" alt="" />
-  //                   <span>{roundToFirstNonZeroDecimal(amount.out)}</span>
-  //                   <span>{tokenTwo?.displayTicker}</span>
-  //                 </>
-  //               )}
-  //             </Flex>
-  //           </Typography>
-  //         </Stack>
-  //       </Flex>,
-  //     )
-  //   }
-
-  //   if (txStatus === 'success') {
-  //     toast.update(toastId.current, {
-  //       render: (
-  //         <Flex alignItems={'center'}>
-  //           <CoinImagePair
-  //             coin1_src={tokenOne.img}
-  //             coin2_src={tokenTwo.img}
-  //             size={32}
-  //           />
-  //           <Stack alignItems={'start'}>
-  //             <Typography>
-  //               {txHash.typeTx == 'approve'
-  //                 ? 'Approval succesful!'
-  //                 : 'Swap successful!'}
-  //             </Typography>
-  //             <Typography
-  //               css={{
-  //                 fontSize: '12px',
-  //                 color: '#BFBFBF',
-  //               }}
-  //             >
-  //               <Flex alignItems={'center'} gap={1}>
-  //                 {roundToFirstNonZeroDecimal(amount.in)}
-  //                 {tokenOne?.displayTicker}
-  //                 {txHash.typeTx != 'approve' && (
-  //                   <>
-  //                     <img src="/icons/arrow-right.svg" alt="" />
-  //                     <span>{roundToFirstNonZeroDecimal(amount.out)}</span>
-  //                     <span>{tokenTwo?.displayTicker}</span>
-  //                   </>
-  //                 )}
-  //               </Flex>
-  //             </Typography>
-  //           </Stack>
-  //         </Flex>
-  //       ),
-  //       type: 'success',
-  //       isLoading: false,
-  //       autoClose: 5000,
-  //     })
-  //   } else if (txStatus === 'error') {
-  //     toast.update(toastId.current, {
-  //       render: 'Transaction failed',
-  //       type: 'error',
-  //       isLoading: false,
-  //       autoClose: 5000,
-  //     })
-  //   }
-  // }, [txStatus, isApproving])
 
   const onSwap = async () => {
     swap()

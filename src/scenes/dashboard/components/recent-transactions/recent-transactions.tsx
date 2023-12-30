@@ -192,7 +192,7 @@ const TransactionItem = ({
                 }}
               >
                 {roundToFirstNonZeroDecimal(tx?.data?.out?.amount)}{' '}
-                {tokenIn?.displayTicker}
+                {tokenOut?.displayTicker}
               </Typography>
             </Flex>
           ) : tx.status != 'failed' && tx.type == 'approve' ? (

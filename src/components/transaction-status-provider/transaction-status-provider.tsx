@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Flex, Stack } from '../box'
 import CoinImagePair from '../coin-image-pair/coin-image-pair'
 import Typography from '../typography'
@@ -12,23 +12,73 @@ import {
   transactionHashState,
   transactionState,
 } from '@/pods/atoms/swap-selected-tokens.atom'
-import { useWaitForTransaction } from 'wagmi'
+import { useAccount, useWaitForTransaction } from 'wagmi'
 import { ToastContainer, toast } from 'react-toastify'
 import { useEffectOnce } from 'usehooks-ts'
 import axios from 'axios'
+import { Tokens, tokenList } from '@/web3/types'
 
 function TransactionStatusProvider({ children }) {
   const [tokenOne, setTokenOne] = useRecoilState(tokenInState)
   const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState)
+
+  const [tokenOneLocal, setTokenOneLocal] = useState<Tokens>(null)
+  const [tokenTwoLocal, setTokenTwoLocal] = useState<Tokens>(null)
+
   const [amount, setAmount] = useRecoilState(amountState)
   const [txHash, setTransactionHash] = useRecoilState(transactionHashState)
   const [transaction, setTransaction] = useRecoilState(transactionState)
+  const { address } = useAccount()
 
-  //   useEffectOnce(() => {
-  //     axios.get(`/api/transaction/${txHash.hash}`).then((res) => {
+  useEffectOnce(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.API_URL}/transaction?address=${address}&status=pending`,
+        )
 
-  //     })
-  //   })
+        setTransaction({
+          txHash: {
+            hash: response.data[0].txHash,
+            typeTx: response.data[0].type,
+          },
+          contract: null,
+          isApproving: true,
+          isLoading: true,
+          amountIn:
+            response.data[0].type == 'approve'
+              ? response.data[0].data.approve.amount
+              : response.data[0].data.in.amount,
+          amountOut:
+            response.data[0].type == 'approve'
+              ? response.data[0].data.approve.amount
+              : response.data[0].data.out.amount,
+        })
+        setTokenOneLocal(
+          tokenList.find(
+            t =>
+              t.address ==
+              (response.data[0].type == 'approve'
+                ? response.data[0].data.approve.tokenAddress
+                : response.data[0].data.in.tokenAddress),
+          ),
+        )
+        setTokenTwoLocal(
+          tokenList.find(
+            t =>
+              t.address ==
+              (response.data[0].type == 'approve'
+                ? response.data[0].data.approve.tokenAddress
+                : response.data[0].data.out.tokenAddress),
+          ),
+        )
+      } catch (error) {
+        // Handle the error
+      }
+    }
+
+    fetchData()
+  })
 
   const {
     data,
@@ -64,7 +114,7 @@ function TransactionStatusProvider({ children }) {
             <Typography>
               {transaction.txHash.typeTx == 'approve'
                 ? 'Approving...'
-                : 'Swaping..'}
+                : 'Swapping..'}
               .
             </Typography>
             <Typography
@@ -74,13 +124,21 @@ function TransactionStatusProvider({ children }) {
               }}
             >
               <Flex alignItems={'center'} gap={1}>
-                {roundToFirstNonZeroDecimal(amount.in)}{' '}
-                {tokenOne?.displayTicker}
+                {roundToFirstNonZeroDecimal(
+                  Number(amount.in) ? amount.in : transaction.amountIn,
+                )}{' '}
+                {tokenOne?.displayTicker ?? tokenOneLocal?.displayTicker}
                 {transaction.txHash.typeTx != 'approve' && (
                   <>
                     <img src="/icons/arrow-right.svg" alt="" />
-                    <span>{roundToFirstNonZeroDecimal(amount.out)}</span>
-                    <span>{tokenTwo?.displayTicker}</span>
+                    <span>
+                      {roundToFirstNonZeroDecimal(
+                        Number(amount.out) ? amount.out : transaction.amountOut,
+                      )}
+                    </span>
+                    <span>
+                      {tokenTwo?.displayTicker ?? tokenTwoLocal.displayTicker}
+                    </span>
                   </>
                 )}
               </Flex>
@@ -112,13 +170,23 @@ function TransactionStatusProvider({ children }) {
                 }}
               >
                 <Flex alignItems={'center'} gap={1}>
-                  {roundToFirstNonZeroDecimal(amount.in)}
-                  {tokenOne?.displayTicker}
+                  {roundToFirstNonZeroDecimal(
+                    Number(amount.in) ? amount.in : transaction.amountIn,
+                  )}
+                  {tokenOne?.displayTicker ?? tokenOneLocal?.displayTicker}
                   {transaction.txHash.typeTx != 'approve' && (
                     <>
                       <img src="/icons/arrow-right.svg" alt="" />
-                      <span>{roundToFirstNonZeroDecimal(amount.out)}</span>
-                      <span>{tokenTwo?.displayTicker}</span>
+                      <span>
+                        {roundToFirstNonZeroDecimal(
+                          Number(amount.out)
+                            ? amount.out
+                            : transaction.amountOut,
+                        )}
+                      </span>
+                      <span>
+                        {tokenTwo?.displayTicker ?? tokenTwoLocal.displayTicker}
+                      </span>
                     </>
                   )}
                 </Flex>

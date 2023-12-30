@@ -36,6 +36,8 @@ export const transactionState = atom({
     contract: null,
     isLoading: false,
     txHash: { hash: '', typeTx: '' },
+    amountIn: '',
+    amountOut: '',
   },
 })
 

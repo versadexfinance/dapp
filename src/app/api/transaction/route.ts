@@ -33,7 +33,7 @@ async function connectToDatabase() {
   if (!client) {
     client = new MongoClient(process.env.MONGO_URI)
     await client.connect()
-    db = client.db('transactions') // Replace with your database name
+    db = client.db('Versadex')
   }
   return db
 }
@@ -85,11 +85,25 @@ export async function POST(req: Request) {
 export async function GET(req: NextRequest) {
   const queryParams = req.nextUrl.searchParams
   try {
-    const db = await connectToDatabase()
+    const find: {
+      fromAddress?: string
+      status?: string
+    } = {}
 
+    const db = await connectToDatabase()
+    const address = queryParams.get('address')
+    const status = queryParams.get('status')
+
+    if (address) {
+      find.fromAddress = address
+    }
+
+    if (status) {
+      find.status = status
+    }
     const transactions = await db
       .collection('transactions')
-      .find({ fromAddress: queryParams.get('address') })
+      .find(find)
       .sort({ initiatedAt: -1 })
       .toArray()
 
