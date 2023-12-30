@@ -32,10 +32,7 @@ type Transaction = {
 
 async function connectToDatabase() {
   if (!client) {
-    client = new MongoClient(
-      process.env.MONGO_URI +
-        path.join(process.cwd(), 'resources', 'mongodb.crt'),
-    )
+    client = new MongoClient(process.env.MONGO_URI)
     await client.connect()
     db = client.db('Versadex')
   }
