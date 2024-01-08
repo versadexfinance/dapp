@@ -5,7 +5,7 @@ import Typography from '@/components/typography'
 import Input from '@/components/input'
 import { Tokens } from '@/web3/types'
 import { useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { RecoilState, useRecoilState } from 'recoil'
 import {
   tokenInState,
   tokenOutState,
@@ -14,14 +14,16 @@ import {
 type SearchTokenProps = {
   tokens: Tokens[]
   tokenPosition: 'in' | 'out'
+  recoilInState: RecoilState<Tokens>
+  recoilOutState: RecoilState<Tokens>
   closeModal: () => void
 }
 
 const SearchToken = (props: SearchTokenProps) => {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const [tokenOne, setTokenOne] = useRecoilState(tokenInState)
-  const [tokenTwo, setTokenTwo] = useRecoilState(tokenOutState)
+  const [tokenOne, setTokenOne] = useRecoilState(props.recoilInState)
+  const [tokenTwo, setTokenTwo] = useRecoilState(props.recoilOutState)
 
   const handleSelectedToken = (selectedToken: Tokens) => {
     if (

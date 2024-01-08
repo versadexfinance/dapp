@@ -19,7 +19,7 @@ function Footer() {
         maxWidth: 380,
         margin: 'auto',
         padding: 20,
-        py: 10,
+        // py: 10,
       }}
       justifyContent={'spaceBetween'}
       alignItems={'center'}

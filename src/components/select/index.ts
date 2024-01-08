@@ -1,1 +1,1 @@
-export { default } from './drop-down';
+export { default } from './select'

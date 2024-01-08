@@ -77,11 +77,8 @@ const Modal = ({ isOpen, onRequestClose: close, children }: ModalProps) => {
           >
             <ModalContent
               initial={{ translateY: '100%' }}
-              animate={{ translateY: gtThanTablet ? '0%' : '50%' }}
+              animate={{ translateY: gtThanTablet ? '0%' : '0%' }}
               exit={{ y: '-100%', transition: { duration: 4 } }}
-              css={{
-                minHeight: '500px',
-              }}
               onClick={e => {
                 e.stopPropagation()
               }}

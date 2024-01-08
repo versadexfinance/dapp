@@ -1,30 +1,46 @@
-'use client';
-import { ReactNode, forwardRef } from 'react';
+'use client'
+import { ReactNode, forwardRef } from 'react'
 
-import { ComponentProps, VariantProps } from '@/styled';
+import { ComponentProps, VariantProps } from '@/styled'
 
-import { InputBaseProps } from './input-base';
-import { Container, InputComponent } from './styles';
+import { InputBaseProps } from './input-base'
+import { Container, InputComponent } from './styles'
 
 export interface InputProps
   extends Omit<InputBaseProps, 'size'>,
     Pick<ComponentProps<typeof Container>, 'error'>,
     VariantProps<typeof InputComponent> {
-  rightElement?: ReactNode;
-  leftElement?: ReactNode;
-  disabled?: boolean;
+  rightElement?: ReactNode
+  leftElement?: ReactNode
+  disabled?: boolean
+  cssContainer?: any
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ rightElement, leftElement, disabled = false, error, ...props }, ref) => (
-    <Container disabled={disabled} tabIndex={-1} error={error}>
+  (
+    {
+      rightElement,
+      leftElement,
+      disabled = false,
+      error,
+      cssContainer,
+      ...props
+    },
+    ref,
+  ) => (
+    <Container
+      disabled={disabled}
+      tabIndex={-1}
+      error={error}
+      css={cssContainer}
+    >
       {leftElement}
       <InputComponent disabled={disabled} ref={ref} {...props} />
       {rightElement}
     </Container>
-  )
-);
+  ),
+)
 
-Input.displayName = 'Input';
+Input.displayName = 'Input'
 
-export default Input;
+export default Input

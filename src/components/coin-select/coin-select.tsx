@@ -83,6 +83,8 @@ const CoinSelector = (props: ToekenSelectProps) => {
         >
           <SearchToken
             tokens={tokenList}
+            recoilInState={tokenInState}
+            recoilOutState={tokenOutState}
             tokenPosition={props.tokenPosition}
             closeModal={() => {
               setModalOpen(false)

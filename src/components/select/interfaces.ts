@@ -1,11 +1,6 @@
-
-interface Option {
-  label: string;
-  value: string;
-  selectable: boolean;
-}
-
-interface DropdownProps {
-  options: Option[];
-  onSelect: (value: string) => void;
+export interface Option {
+  label?: string
+  value?: string
+  selectable?: boolean
+  img?: string
 }

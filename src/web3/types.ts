@@ -19,6 +19,24 @@ export type Tokens = {
   decimals: number
 }
 
+export type Chain = {
+  img: string
+  name: string
+  chainId: number
+}
+
+export type Crypto = {
+  ath: number
+  atl: number
+  current_price: number
+  id: string
+  name: string
+  symbol: string
+  high_24h: number
+  low_24h: number
+  owned: number
+}
+
 export type Transaction = {
   type: 'swap' | 'add_liquidity' | 'remove_liquidity' | 'approve'
   data: {
@@ -58,6 +76,19 @@ export const tokenList: Tokens[] = [
     name: 'Versadex',
     address: '0xFe16e49f711E3dbE1fF33635E2B335cAc4CBF520',
     decimals: 18,
+  },
+]
+
+export const CHAINS: Chain[] = [
+  {
+    img: '/img/eth-chain.png',
+    name: 'Ethereum Chain',
+    chainId: 18,
+  },
+  {
+    img: '/img/ETH.png',
+    name: 'Ethereum Chain 2',
+    chainId: 18,
   },
 ]
 

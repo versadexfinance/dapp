@@ -20,6 +20,7 @@ const Container = styled('div', {
   transition: 'all 0.5s ease-in-out',
   display: 'flex',
   flexDirection: 'column',
+
   opacity: 0,
   variants: {
     mounted: {

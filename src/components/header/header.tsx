@@ -45,18 +45,19 @@ const ResponsiveNavLinksContainer = styled(Flex, {
 
 const NavigationLinks = ({ pathname }: { pathname: string | null }) => (
   <ResponsiveNavLinksContainer>
-    <StyledNextLink href="dashboard" active={pathname === '/dashboard'} shallow>
+    <StyledNextLink
+      href="/dashboard"
+      active={pathname === '/dashboard'}
+      shallow
+    >
       Dashboard
     </StyledNextLink>
-    <StyledNextLink href="swap" active={pathname === '/swap'} shallow>
+    <StyledNextLink href="/swap" active={pathname === '/swap'} shallow>
       Swap
     </StyledNextLink>
     <StyledNextLink
-      href=""
-      css={{
-        color: 'gray',
-      }}
-      active={pathname === '/liquidity-pool'}
+      href="/liquidity-pool"
+      active={pathname.includes('/liquidity-pool') == true}
       shallow
     >
       Liquidity Pool
