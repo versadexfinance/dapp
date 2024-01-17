@@ -4,7 +4,7 @@ import Typography from '../typography'
 import { Flex, Stack } from '../box'
 import { TriangleDownIcon } from '@radix-ui/react-icons'
 import { Tokens, tokenList } from '@/web3/types'
-import { useRecoilState } from 'recoil'
+import { RecoilState, useRecoilState } from 'recoil'
 import {
   tokenInState,
   tokenOutState,
@@ -16,29 +16,35 @@ import { AnimatePresence } from 'framer-motion'
 
 type ToekenSelectProps = {
   tokenPosition: 'in' | 'out'
+  disabled?: boolean
+  stateTokenIn: RecoilState<Tokens>
+  stateTokenOut: RecoilState<Tokens>
 }
 
 const CoinSelector = (props: ToekenSelectProps) => {
-  const [tokenIn, setTokenInState] = useRecoilState(tokenInState)
-  const [tokenOut, setTokenOutState] = useRecoilState(tokenOutState)
+  const [tokenIn, setTokenInState] = useRecoilState(props.stateTokenIn)
+  const [tokenOut, setTokenOutState] = useRecoilState(props.stateTokenOut)
   const [modalOpen, setModalOpen] = useState(false)
 
   return (
     <>
       <Flex
         css={{
-          cursor: 'pointer',
+          cursor: props.disabled ? 'inherit' : 'pointer',
         }}
         alignItems={'center'}
         justifyContent={'spaceBetween'}
         gap={1}
-        onClick={() => setModalOpen(true)}
+        onClick={() => !props.disabled && setModalOpen(true)}
       >
         <Flex>
           <img
             width={36}
             height={36}
-            src={props.tokenPosition == 'in' ? tokenIn?.img : tokenOut?.img}
+            src={
+              (props.tokenPosition == 'in' ? tokenIn?.img : tokenOut?.img) ??
+              '/img/default-token.png'
+            }
             alt={
               props.tokenPosition == 'in' ? tokenIn?.ticker : tokenOut?.ticker
             }
@@ -71,7 +77,7 @@ const CoinSelector = (props: ToekenSelectProps) => {
             </Typography>
           </Stack>
         </Flex>
-        <RxTriangleDown size={20} />
+        {!props.disabled && <RxTriangleDown size={20} />}
       </Flex>
 
       <AnimatePresence>

@@ -48,14 +48,11 @@ const SearchToken = (props: SearchTokenProps) => {
     const { address, ticker, name } = token
     const searchTermLower = searchTerm.toLowerCase()
 
-    if (props.tokenPosition == 'in') {
-      if (tokenOne?.address == token?.address) {
-        return false
-      }
-    } else {
-      if (tokenTwo?.address == token.address) {
-        return false
-      }
+    if (
+      tokenOne?.address == token?.address ||
+      tokenTwo?.address == token.address
+    ) {
+      return false
     }
 
     return (
@@ -66,7 +63,12 @@ const SearchToken = (props: SearchTokenProps) => {
   })
 
   return (
-    <Stack gap={2}>
+    <Stack
+      gap={2}
+      css={{
+        minHeight: '400px',
+      }}
+    >
       <Typography
         css={{
           fontSize: '18px',
@@ -103,7 +105,7 @@ const SearchToken = (props: SearchTokenProps) => {
             justifyContent={'spaceBetween'}
             key={token.address}
           >
-            {token && (
+            {token ? (
               <>
                 <Flex gap={1}>
                   <img width={'24px'} height={'24px'} src={token.img} alt="" />
@@ -111,6 +113,26 @@ const SearchToken = (props: SearchTokenProps) => {
                 </Flex>
                 <Typography>{token.displayTicker}</Typography>
               </>
+            ) : (
+              <Flex gap={1}>
+                <div
+                  style={{
+                    height: '20px',
+                    width: '20px',
+                    borderRadius: '50%',
+                    background:
+                      'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)',
+                  }}
+                ></div>{' '}
+                <Typography
+                  css={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                  }}
+                >
+                  Select a token
+                </Typography>
+              </Flex>
             )}
           </Flex>
         ))}

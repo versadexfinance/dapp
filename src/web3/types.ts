@@ -52,12 +52,29 @@ export type Transaction = {
       tokenAddress: string
       amount: string
     }
+    lp?: {
+      token_0: `0x${string}`
+      token_1: `0x${string}`
+      tvl: string
+    }
   }
   amount?: string
   fromAddress: string
   txHash: string
   status: 'pending' | 'completed' | 'failed'
   initiatedAt: Date
+}
+
+export type Pool_V2 = {
+  token_0: string
+  token_1: string
+  pairAddress: string
+  txHash: string
+  fee: number
+  fromAddress?: string
+  stakers?: string[]
+  initiatedAt: Date
+  version: 'v2'
 }
 
 export const tokenList: Tokens[] = [
@@ -77,19 +94,40 @@ export const tokenList: Tokens[] = [
     address: '0xFe16e49f711E3dbE1fF33635E2B335cAc4CBF520',
     decimals: 18,
   },
+  // {
+  //   ticker: 'UNI',
+  //   displayTicker: 'UNI',
+  //   img: '/img/UNI.png',
+  //   name: 'UNI Token',
+  //   address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+  //   decimals: 18,
+  // },
+  // {
+  //   ticker: 'DAI',
+  //   displayTicker: 'DAI',
+  //   img: '/img/DAI.png',
+  //   name: 'Dai Stablecoin',
+  //   address: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  //   decimals: 18,
+  // },
+  // {
+  //   ticker: 'USDC',
+  //   displayTicker: 'USDC',
+  //   img: '/img/USDC.png',
+  //   name: 'USD Coin',
+  //   address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  //   decimals: 6,
+  // },
 ]
 
 export const CHAINS: Chain[] = [
   {
     img: '/img/eth-chain.png',
-    name: 'Ethereum Chain',
-    chainId: 18,
-  },
-  {
-    img: '/img/ETH.png',
-    name: 'Ethereum Chain 2',
-    chainId: 18,
+    name: 'Goerli Ethereum Chain',
+    chainId: 5,
   },
 ]
+
+export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 ///////////

@@ -1,11 +1,11 @@
-
 interface Option {
-  label: string;
-  value: string;
-  selectable: boolean;
+  label: string
+  value: string
+  img?: string
+  selectable: boolean
 }
 
 interface DropdownProps {
-  options: Option[];
-  onSelect: (value: string) => void;
+  options: Option[]
+  onSelect: (value: string) => void
 }

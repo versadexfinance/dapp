@@ -26,8 +26,10 @@ function TransactionStatusProvider({ children }) {
   const [tokenTwoLocal, setTokenTwoLocal] = useState<Tokens>(null)
 
   const [amount, setAmount] = useRecoilState(amountState)
+
   const [txHash, setTransactionHash] = useRecoilState(transactionHashState)
   const [transaction, setTransaction] = useRecoilState(transactionState)
+
   const { address } = useAccount()
 
   useEffectOnce(() => {

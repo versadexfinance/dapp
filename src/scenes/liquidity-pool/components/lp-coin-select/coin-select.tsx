@@ -17,7 +17,7 @@ import { Flex, Stack } from '@/components/box'
 import Typography from '@/components/typography'
 import CardContainer from '@/components/card-container/card-container'
 
-const LpPairTokenSelect = () => {
+const LpPairTokenSelect = ({ isIncrease }: { isIncrease?: boolean }) => {
   const [pairOne, setPairOneState] = useRecoilState(lpPairOneState)
   const [pairTwo, setPairTwoState] = useRecoilState(lpPairTwoState)
   const [modalOpen, setModalOpen] = useState(false)
@@ -27,15 +27,16 @@ const LpPairTokenSelect = () => {
     <Flex gap={2} alignItems={'center'}>
       <CardContainer
         css={{
-          cursor: 'pointer',
+          cursor: 'not-allowed',
           flex: 1,
+          opacity: '0.5',
         }}
         alignItems={'center'}
         justifyContent={'spaceBetween'}
         gap={1}
         onClick={() => {
-          setPosition('in')
-          setModalOpen(true)
+          // setPosition('in')
+          // setModalOpen(true)
         }}
       >
         <Flex alignItems={'center'} gap={1}>
@@ -75,39 +76,56 @@ const LpPairTokenSelect = () => {
       <CardContainer
         css={{
           flex: 1,
-          cursor: 'pointer',
+          cursor: isIncrease == true ? 'not-allowed' : 'pointer',
+          opacity: isIncrease == true ? '0.5' : '1',
         }}
         alignItems={'center'}
         justifyContent={'spaceBetween'}
         gap={1}
         onClick={() => {
           setPosition('out')
-          setModalOpen(true)
+
+          if (!isIncrease) {
+            setModalOpen(true)
+          }
         }}
       >
         <Flex alignItems={'center'} gap={1}>
-          <img
-            width={26}
-            height={26}
-            src={pairTwo?.img}
-            alt={pairTwo?.ticker}
-            style={{ marginRight: '8px', height: '26px' }}
-          />
-          <Stack
-            css={{
-              gap: '4px',
-            }}
-          >
+          {pairTwo ? (
+            <>
+              <img
+                width={26}
+                height={26}
+                src={pairTwo?.img}
+                alt={pairTwo?.ticker}
+                style={{ marginRight: '8px', height: '26px' }}
+              />
+              <Stack
+                css={{
+                  gap: '4px',
+                }}
+              >
+                <Typography
+                  css={{
+                    fontSize: '20px',
+                    lineHeight: '24px',
+                    color: 'white', // Add text color
+                  }}
+                >
+                  {pairTwo?.displayTicker}
+                </Typography>
+              </Stack>
+            </>
+          ) : (
             <Typography
               css={{
-                fontSize: '20px',
-                lineHeight: '24px',
-                color: 'white', // Add text color
+                fontSize: '18px',
+                fontWeight: '600',
               }}
             >
-              {pairTwo?.displayTicker}
+              Select a token
             </Typography>
-          </Stack>
+          )}
         </Flex>
         <RxTriangleDown size={20} />
       </CardContainer>

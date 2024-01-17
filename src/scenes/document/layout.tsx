@@ -31,7 +31,9 @@ const Container = styled('div', {
   },
   width: '100%',
   maxWidth: 380,
+
   mx: 'auto',
+
   py: 4,
 })
 

@@ -1,6 +1,6 @@
 import { readContract } from 'wagmi/actions'
 import { ethers, BigNumber, BigNumberish } from 'ethers'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { routerAbi } from '@/web3/abis'
 import { config } from '@/web3/config'
 import { Tokens } from '../types' // Assuming this is the correct import for your Tokens type
@@ -41,13 +41,15 @@ export function useConversion(
   token: Tokens,
   supply1: string,
   supply2: string,
+  outIsIn?: boolean,
 ): string | null {
   const [conversionRate, setConversionRate] = useState<string | null>(null)
 
   useEffect(() => {
-    // Ensure the amount is valid and greater than zero
-    const amountIn = ethers.utils.parseEther(amount.in || '0')
-    if (amountIn.isZero() || amountIn.lt(ethers.utils.parseEther('0.0001'))) {
+    const amountIn = outIsIn
+      ? ethers.utils.parseEther(amount.out || '0')
+      : ethers.utils.parseEther(amount.in || '0')
+    if (amountIn.isZero()) {
       setConversionRate(null)
       return
     }
@@ -59,6 +61,35 @@ export function useConversion(
       .then(rate => setConversionRate(rate))
       .catch(() => setConversionRate(null))
   }, [amount, token, supply1, supply2])
+
+  return conversionRate
+}
+
+export function useConversionRatio(
+  amount: Amount,
+  token: Tokens,
+  ratio: number,
+
+  outIsIn?: boolean,
+): string | null {
+  const [conversionRate, setConversionRate] = useState<string | null>(null)
+
+  useEffect(() => {
+    const amountIn = outIsIn
+      ? amount.out
+        ? String(Number(amount.out) * ratio)
+        : '0'
+      : amount.in
+        ? String(Number(amount.in) * ratio)
+        : '0'
+
+    if (amountIn === '0') {
+      setConversionRate(null)
+      return
+    }
+
+    setConversionRate(amountIn)
+  }, [amount, token, ratio])
 
   return conversionRate
 }

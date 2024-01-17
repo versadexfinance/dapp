@@ -42,10 +42,10 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { ethers } from 'ethers'
 import { config } from '@/web3/config'
 import { Tab } from '@/components/tabs/interfaces'
-import { toast } from 'react-toastify'
-import CoinImagePair from '@/components/coin-image-pair/coin-image-pair'
+
 import { motion } from 'framer-motion'
 import Modal from '@/components/modal/modal'
+import { NULL_ADDRESS } from '@/web3/types'
 
 const SwapCard = () => {
   const { address, isDisconnected } = useAccount()
@@ -71,7 +71,8 @@ const SwapCard = () => {
     tokenOne ? tokenOne.address : '',
     tokenTwo ? tokenTwo.address : '',
   )
-  const reserves = usePrices(usePairResponse)
+
+  const reserves = usePrices(usePairResponse, tokenOne, tokenTwo)
   const ethPrice = useEthPrice()
 
   const tokenOneBalance = useTokenBalance({
@@ -274,6 +275,8 @@ const SwapCard = () => {
             >
               <div style={{ flex: '1' }}>
                 <CoinSelector
+                  stateTokenIn={tokenInState}
+                  stateTokenOut={tokenOutState}
                   css={{
                     flex: 4,
                     '@tablet': {
@@ -295,7 +298,7 @@ const SwapCard = () => {
                       flex: 1,
                     },
                   }}
-                  step={0.000000000000000001}
+                  step={0.01}
                   placeholder="0"
                   value={amount.in}
                   onChange={changeAmount}
@@ -388,6 +391,8 @@ const SwapCard = () => {
             >
               <div style={{ flex: '1' }}>
                 <CoinSelector
+                  stateTokenIn={tokenInState}
+                  stateTokenOut={tokenOutState}
                   css={{
                     flex: 2,
                     '@tablet': {
@@ -406,10 +411,9 @@ const SwapCard = () => {
                   value={
                     conversionResult
                       ? roundToFirstNonZeroDecimal(conversionResult)
-                      : 'loading'
+                      : '-'
                   }
                   readOnly
-                  step={0.00000000001}
                   label={`~ ${getPriceUsd(
                     Number(
                       tokenOne?.ticker == 'WETH' ? amount.in : conversionResult,
@@ -555,6 +559,32 @@ const SwapCard = () => {
               </Flex>
             </Stack>
           </CollapsibleCard>
+          {usePairResponse === NULL_ADDRESS && (
+            <Flex as={Flex} alignItems={'center'} gap={1}>
+              <img
+                width={15}
+                height={15}
+                src="/icons/warning.svg"
+                alt=""
+                style={
+                  {
+                    // marginTop: '8px',
+                  }
+                }
+              />
+              <Typography
+                css={{
+                  color: '#FFDA85',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  lineHeight: '24px',
+                }}
+              >
+                There is no liquidity for the pair {tokenOne.displayTicker} /{' '}
+                {tokenTwo.displayTicker}.
+              </Typography>
+            </Flex>
+          )}
         </Stack>
       ),
     },
@@ -636,7 +666,12 @@ const SwapCard = () => {
             padding: '12px  40px',
           }}
           fullWidth
-          disabled={isApproving || isLoading || txLoading}
+          disabled={
+            isApproving ||
+            isLoading ||
+            txLoading ||
+            usePairResponse === NULL_ADDRESS
+          }
           onClick={onSwap}
         >
           {isApproving || isLoading || txLoading ? (

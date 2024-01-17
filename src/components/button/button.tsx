@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import { styled } from '@/styled/styled';
+import { styled } from '@/styled/styled'
 
-import { BaseButton } from './base-button';
-import { sizeVariant, variantVariant } from './styles';
+import { BaseButton } from './base-button'
+import { sizeVariant, variantVariant } from './styles'
 
 const Button = styled(BaseButton, {
   defaultVariants: {
     variant: 'solid',
-    size: 'md'
+    size: 'md',
   },
   variants: {
     variant: variantVariant,
     fullWidth: {
       true: {
-        width: '100%'
-      }
+        width: '100%',
+      },
     },
     rounded: {
       true: {
         borderRadius: '50%',
         dimensions: 12,
-        px: 0
-      }
+        px: 0,
+      },
     },
-    size: sizeVariant
+    size: sizeVariant,
   },
   overflow: 'hidden',
   whiteSpace: 'nowrap',
@@ -42,8 +42,8 @@ const Button = styled(BaseButton, {
   height: 'fit-content',
 
   '&:not(:disabled)': {
-    cursor: 'pointer'
-  }
-});
+    cursor: 'pointer',
+  },
+})
 
-export default Button;
+export default Button

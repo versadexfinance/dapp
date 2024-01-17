@@ -5,8 +5,9 @@ import { config } from '@/web3/config'
 
 import Big from 'big.js'
 import { useContractRead } from 'wagmi'
+import { Tokens } from '../types'
 
-type PairSupply = {
+export type PairSupply = {
   tokenOne: number
   tokenTwo: number
   ratio: number
@@ -20,7 +21,7 @@ export function usePair(address1: string, address2: string) {
     abi: factoryAbi,
     functionName: 'getPair',
     args: [address1, address2],
-    watch: true,
+    // watch: true,
   })
 
   useEffect(() => {
@@ -32,20 +33,28 @@ export function usePair(address1: string, address2: string) {
   return pair
 }
 
-export function usePrices(pairAddress: string | null) {
+export function usePrices(
+  pairAddress: string | null,
+  tokenIn: Tokens,
+  tokenOut: Tokens,
+) {
   const [prices, setPrices] = useState<PairSupply | null>(null)
 
   const { data: totalReserves } = useContractRead({
     address: pairAddress as `0x{${string}}`,
     abi: pairAbi,
     functionName: 'getReserves',
-    watch: pairAddress != null,
+    watch: false,
   })
 
   useEffect(() => {
-    if (totalReserves && pairAddress) {
-      const token1 = Number(ethers.utils.formatUnits(totalReserves[0], 'ether')) // Adjust based on the token's decimals
-      const token2 = Number(ethers.utils.formatUnits(totalReserves[1], 'ether')) // Adjust based on the token's decimals
+    if (totalReserves && pairAddress && tokenIn && tokenOut) {
+      const token1 = Number(
+        ethers.utils.formatUnits(totalReserves[0], tokenIn.decimals),
+      ) // Adjust based on the token's decimals
+      const token2 = Number(
+        ethers.utils.formatUnits(totalReserves[1], tokenOut.decimals),
+      ) // Adjust based on the token's decimals
 
       setPrices({
         tokenOne: token1,
@@ -53,7 +62,7 @@ export function usePrices(pairAddress: string | null) {
         ratio: Big(token1).div(token2).toNumber(),
       })
     }
-  }, [totalReserves, pairAddress])
+  }, [totalReserves, pairAddress, tokenIn, tokenOut])
 
   return prices
 }

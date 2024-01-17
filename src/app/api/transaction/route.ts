@@ -3,6 +3,7 @@ import { MongoClient } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { ethers } from 'ethers'
 import path from 'path'
+import { Pool_V2 } from '@/web3/types'
 
 let client
 let db
@@ -56,8 +57,9 @@ const provider = new ethers.providers.JsonRpcProvider(
 )
 
 export async function POST(req: Request) {
-  const body = await req.json()
-  console.log(process.env.MONGO_URI)
+  const fullBody = await req.json()
+  const body = fullBody.transaction
+  const poolBody = fullBody.pool
 
   if (!body.txHash) {
     return NextResponse.json({
@@ -78,10 +80,39 @@ export async function POST(req: Request) {
     if (txResult) {
       const result = await db
         .collection('transactions')
-        .updateOne(
+        .updateMany(
           { txHash: body.txHash },
           { $set: { status: txResult.status == 1 ? 'completed' : 'failed' } },
         )
+
+      if (txResult.status == 1 && body.type == 'add_liquidity') {
+        const existingPool = await db
+          .collection('pools')
+          .findOne({ pairAddress: poolBody.pairAddress })
+
+        // if the pool already exists, append address to stakers array if its not already in the stakes array
+        if (existingPool) {
+          await db
+            .collection('pools')
+            .updateOne(
+              { pairAddress: poolBody.pairAddress },
+              { $addToSet: { stakers: poolBody.fromAddress } },
+            )
+        }
+
+        // if the pool doesn't exist, create it
+        if (!existingPool) {
+          const newPool = {
+            ...poolBody,
+            stakers: [poolBody.fromAddress],
+          }
+          delete newPool.fromAddress
+
+          await db.collection('pools').insertOne({
+            ...newPool,
+          } as Pool_V2)
+        }
+      }
 
       return NextResponse.json({
         message: 'Transaction status updated',

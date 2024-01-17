@@ -67,7 +67,7 @@ const CustomSingleValue = (props: SingleValueProps<Option, false>) => (
   <components.SingleValue {...props}>
     <Flex gap={1}>
       <img
-        src={props.data.img}
+        src={props.data?.img}
         style={{ width: 24, height: 24, marginRight: 10 }}
         alt={props.data.label}
       />

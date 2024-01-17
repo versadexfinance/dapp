@@ -26,6 +26,7 @@ import { WagmiConfig } from 'wagmi'
 
 import config from '@/web3/client'
 import TransactionStatusProvider from '@/components/transaction-status-provider/transaction-status-provider'
+import MyLpsProvider from '@/components/my-lps-provider/my-lps-provider'
 interface HtmlProps {
   children: ReactNode
   // lng: Locale;
@@ -56,7 +57,9 @@ const Html = ({ children }: HtmlProps) => {
             chains={config.chains}
           >
             <RecoilRoot>
-              <TransactionStatusProvider>{children}</TransactionStatusProvider>
+              <TransactionStatusProvider>
+                <MyLpsProvider>{children}</MyLpsProvider>
+              </TransactionStatusProvider>
             </RecoilRoot>
           </RainbowKitProvider>
         </WagmiConfig>

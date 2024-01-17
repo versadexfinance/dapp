@@ -87,20 +87,7 @@ const MyPositions = props => {
         gap={3}
         fullWidth
       >
-        <div
-          style={{
-            flex: 1,
-          }}
-        >
-          <PositionCard />
-        </div>
-        <div
-          style={{
-            flex: 1,
-          }}
-        >
-          <PositionCard />
-        </div>
+        {props.children}
       </Flex>
     </Stack>
   )

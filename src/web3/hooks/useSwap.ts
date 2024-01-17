@@ -21,7 +21,10 @@ const provider = new ethers.providers.JsonRpcProvider(
 
 const logTransaction = async (transaction: Transaction) => {
   try {
-    axios.post(`${process.env.API_URL}/transaction`, transaction)
+    axios.post(`${process.env.API_URL}/transaction`, {
+      transaction,
+      pool: null,
+    })
   } catch (error) {
     console.error('Error logging transaction:', error)
   }

@@ -6,6 +6,7 @@ import { Flex, Stack } from '@/components/box'
 import TopPoolsTable from './components/top-pools-table'
 import { mockPoolTableRow } from './components/top-pools-table/interfaces'
 import RecentTransactions from './components/recent-transactions'
+import PositionCard from './components/position-card'
 
 function Dashboard() {
   return (
@@ -32,20 +33,36 @@ function Dashboard() {
           css={{
             // marginTop: '40px',
             flexDirection: 'row-reverse',
-
+            filter: 'blur(2px)',
             '@tablet': {
               flexDirection: 'column',
               flex: 8,
             },
           }}
         >
-          <MyPositions />
+          <MyPositions>
+            <div
+              style={{
+                flex: 1,
+              }}
+            >
+              {/* <PositionCard /> */}
+            </div>
+            <div
+              style={{
+                flex: 1,
+              }}
+            >
+              {/* <PositionCard /> */}
+            </div>
+          </MyPositions>
 
           <TopPoolsTable
             headers={['Pool', 'TVL', '24h volume', 'APR']}
             items={mockPoolTableRow}
           />
         </Stack>
+
         <Stack css={{ flex: 3 }}>
           <RecentTransactions />
         </Stack>

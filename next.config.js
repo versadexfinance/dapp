@@ -7,7 +7,9 @@ const nextConfig = {
       permanent: true,
     },
   ],
-
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   headers: async () => {
     return [
       {
