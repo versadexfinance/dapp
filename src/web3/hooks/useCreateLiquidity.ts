@@ -88,16 +88,6 @@ export function useCreateLiquidity({
   //     : amount.in,
   // ).toLocaleString('fullwide', { useGrouping: false })
 
-  // console.log(
-  //   'Slippage LOGGED',
-  //   maxSlippage.length
-  //     ? (Number(amount.in) * (100 - Number(20))) / 100 + ''
-  //     : amount.in,
-  // )
-
-  // console.log(amount.in, inSlippage, 'inSlippage WTF')
-  // console.log(amount.out, outSlippage, 'outSlippage')
-
   // [TODO] Check if tokenIn is WETH or viceversa
 
   // const contractTokenIn = new ethers.Contract(
