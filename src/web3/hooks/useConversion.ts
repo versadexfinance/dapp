@@ -77,10 +77,10 @@ export function useConversionRatio(
   useEffect(() => {
     const amountIn = outIsIn
       ? amount.out
-        ? String(Number(amount.out) * ratio)
+        ? String((Number(amount.out) * ratio).toFixed(token?.decimals))
         : '0'
       : amount.in
-        ? String(Number(amount.in) * ratio)
+        ? String((Number(amount.in) * ratio).toFixed(token?.decimals))
         : '0'
 
     if (amountIn === '0') {

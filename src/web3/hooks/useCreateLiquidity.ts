@@ -1,21 +1,17 @@
 import { useCallback, useState } from 'react'
 import { erc20ABI, useAccount, useBalance } from 'wagmi'
-import { waitForTransaction, writeContract } from 'wagmi/actions'
+import { writeContract } from 'wagmi/actions'
 import { ethers } from 'ethers'
 import axios from 'axios'
 import { config } from '@/web3/config'
 import { Pool_V2, Tokens, Transaction } from '@/web3/types'
 import { routerAbi } from '@/web3/abis'
 import { useRecoilState } from 'recoil'
+import { transactionDeadlineState } from '@/pods/atoms/swap-selected-tokens.atom'
 import {
-  amountState,
-  maxSlippageState,
-  transactionDeadlineState,
-  transactionState,
-} from '@/pods/atoms/swap-selected-tokens.atom'
-import { useAllowance } from './useAllowance'
-import { lpAmountState } from '@/pods/atoms/liquidity-pool-form.atom'
-import { useTokenBalance } from '.'
+  lpAmountState,
+  lpsUpdatedState,
+} from '@/pods/atoms/liquidity-pool-form.atom'
 import { useTokenAllowance } from './useTokenAllowance'
 
 const provider = new ethers.providers.JsonRpcProvider(
@@ -44,6 +40,7 @@ export function useCreateLiquidity({
   pairAddress: string
 }) {
   // const [maxSlippage, setMaxSlippage] = useRecoilState(maxSlippageState)
+  const [lpsUpdated, setLpsUpdated] = useRecoilState(lpsUpdatedState)
 
   const maxSlippage = '10'
 
@@ -260,7 +257,7 @@ export function useCreateLiquidity({
           }
 
           await logTransaction(transactionDetails, pool)
-
+          setLpsUpdated(!lpsUpdated)
           setTxHash({ hash: hash, typeTx: 'add_liquidity' })
         }
       } else {

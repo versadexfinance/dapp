@@ -34,6 +34,11 @@ export const myLpsState = atom({
   default: [],
 })
 
+export const lpsUpdatedState = atom({
+  key: 'lpsUpdatedState',
+  default: false,
+})
+
 export const removeLiquidityAmountState = atom({
   key: 'removeLiquidityAmountState',
   default: {

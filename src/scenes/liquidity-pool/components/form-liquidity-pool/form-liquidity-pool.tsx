@@ -32,10 +32,10 @@ import AddLiquidityModal from '../add-liquidity-modal'
 import { usePair, usePrices } from '@/web3/hooks/usePair'
 import { useCreateLiquidity } from '@/web3/hooks/useCreateLiquidity'
 import { useTokenBalance } from '@/web3/hooks'
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount, useBalance, useWaitForTransaction } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format'
-import { useConversion, useConversionRatio } from '@/web3/hooks/useConversion'
+import { useConversionRatio } from '@/web3/hooks/useConversion'
 import { PulseLoader } from 'react-spinners'
 
 export type AppProps = {
@@ -166,6 +166,19 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
     }
   }, [lastUpdated, conversionResultETHtoToken, conversionResultTokenToEth])
 
+  // useEffect(() => {
+  //   if (txHash.hash.length > 0) {
+  //     setTransaction({
+  //       isApproving,
+  //       contract: null,
+  //       isLoading,
+  //       txHash,
+  //       amountIn: amount.in,
+  //       amountOut: amount.out,
+  //     })
+  //   }
+  // }, [txHash, isLoading, isApproving])
+
   // Handler functions
   const handleInChange = e => {
     if (
@@ -226,6 +239,14 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
     // tokenInBalance: tokenOneBalance,
     // tokenOutBalance: tokenTwoBalance,
     pairAddress: usePairResponse,
+  })
+  const {
+    data,
+    isError,
+    isLoading: txLoading,
+    status: txStatus,
+  } = useWaitForTransaction({
+    hash: txHash.hash as `0x${string}`,
   })
 
   const onClickCreateliquidity = async () => {
@@ -710,10 +731,10 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
           padding: '12px  40px',
         }}
         fullWidth
-        disabled={isApproving || isLoading}
+        disabled={isApproving || isLoading || txLoading}
         onClick={() => onClickCreateliquidity()}
       >
-        {isApproving || isLoading ? (
+        {isApproving || isLoading || txLoading ? (
           <PulseLoader color="#2D2C2C" size={10} />
         ) : allowanceOut?.lt(
             ethers.utils.parseUnits(

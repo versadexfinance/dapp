@@ -13,6 +13,7 @@ import {
 } from '@/pods/atoms/swap-selected-tokens.atom'
 import { useTokenAllowance } from './useTokenAllowance'
 import { PairSupply } from './usePair'
+import { lpsUpdatedState } from '@/pods/atoms/liquidity-pool-form.atom'
 
 const provider = new ethers.providers.JsonRpcProvider(
   'https://eth-goerli.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
@@ -51,6 +52,8 @@ export function useRemoveLiquidity({
     transactionDeadlineState,
   )
 
+  const [lpsUpdated, setLpsUpdated] = useRecoilState(lpsUpdatedState)
+
   // const [transaction, setTransaction] = useRecoilState(transactionState)
   const [isApproving, setIsApproving] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -87,39 +90,61 @@ export function useRemoveLiquidity({
 
     if (token1 && reserves && token1.address === config.contract.weth) {
       ercToken = token2.address
+
       amountEthReceive = ethers.utils.parseUnits(
-        String(reserves?.tokenOne * poolShare * (range / 100) ?? 0),
+        String(
+          (reserves?.tokenOne * poolShare * (range / 100)).toFixed(
+            token1?.decimals,
+          ) ?? 0,
+        ),
         token1.decimals,
       )
       amountErcReceive = ethers.utils.parseUnits(
-        String(reserves?.tokenTwo * poolShare * (range / 100) ?? 0),
+        String(
+          (reserves?.tokenTwo * poolShare * (range / 100)).toFixed(
+            token2.decimals,
+          ) ?? 0,
+        ),
         token2.decimals,
       )
     } else if (token2 && reserves && token2.address === config.contract.weth) {
       ercToken = token1.address
+      console.log(String(reserves?.tokenOne * poolShare * (range / 100)))
       amountEthReceive = ethers.utils.parseUnits(
-        String(reserves?.tokenTwo * poolShare * (range / 100)),
+        String(
+          (reserves?.tokenTwo * poolShare * (range / 100)).toFixed(
+            token2.decimals,
+          ),
+        ),
         token2.decimals,
       )
       amountErcReceive = ethers.utils.parseUnits(
-        String(reserves?.tokenOne * poolShare * (range / 100)),
+        String(
+          (reserves?.tokenOne * poolShare * (range / 100)).toFixed(
+            token1.decimals,
+          ),
+        ),
         token1.decimals,
       )
     } else {
       return
     }
 
-    const ercSlippage = Number(
-      maxSlippage.length
-        ? (Number(amountErcReceive) * (100 - Number(maxSlippage))) / 100 + ''
-        : amountErcReceive,
-    ).toLocaleString('fullwide', { useGrouping: false })
+    console.log('amountEthReceive', amountEthReceive.toString())
+    console.log('amountErcReceive', amountErcReceive.toString())
 
-    const ethSlippage = Number(
-      maxSlippage.length
-        ? (Number(amountEthReceive) * (100 - Number(maxSlippage))) / 100 + ''
-        : amountEthReceive,
-    ).toLocaleString('fullwide', { useGrouping: false })
+    const ercSlippage = amountErcReceive
+      .mul(100 - Number(maxSlippage))
+      .div(100)
+      .toString()
+
+    const ethSlippage = amountEthReceive
+      .mul(100 - Number(maxSlippage))
+      .div(100)
+      .toString()
+
+    console.log('ercSlippage', ercSlippage.toString())
+    console.log('ethSlippage', ethSlippage.toString())
 
     // [TODO] Check if token1 is WETH or viceversa
 
@@ -213,6 +238,8 @@ export function useRemoveLiquidity({
             status: 'pending',
             initiatedAt: new Date(),
           }
+
+          setLpsUpdated(!lpsUpdated)
 
           const pool: Pool_V2 = {
             pairAddress: pairAddress,

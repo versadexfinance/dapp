@@ -16,7 +16,7 @@ import Typography from '@/components/typography'
 import useEthPrice from '@/web3/hooks/useEthPrice'
 import { usePair, usePrices } from '@/web3/hooks/usePair'
 import { useTokenBalance } from '@/web3/hooks'
-import { useAccount } from 'wagmi'
+import { useAccount, useWaitForTransaction } from 'wagmi'
 import CoinImagePair from '@/components/coin-image-pair/coin-image-pair'
 import RangeSlider from '@/components/range-slider'
 import Button from '@/components/button'
@@ -164,17 +164,26 @@ function LiquidityPoolPage({ params }) {
     .mul(range)
     .div(100) //liquidity pool balance
 
-  const { removeLiquidity, isLoading, isApproving } = useRemoveLiquidity({
-    token1: pairOne,
-    token2: pairTwo,
-    liquidityWei: liquidity.toString(),
-    range,
-    pairAddress: params.pairAddress,
-    reserves,
-    poolShare,
-  })
+  const { removeLiquidity, isLoading, isApproving, txHash } =
+    useRemoveLiquidity({
+      token1: pairOne,
+      token2: pairTwo,
+      liquidityWei: liquidity.toString(),
+      range,
+      pairAddress: params.pairAddress,
+      reserves,
+      poolShare,
+    })
 
   const tokenAllowance = useTokenAllowance(address, params.pairAddress)
+  const {
+    data,
+    isError: txError,
+    isLoading: txLoading,
+    status: txStatus,
+  } = useWaitForTransaction({
+    hash: txHash.hash as `0x${string}`,
+  })
 
   const handleCLick = async () => {
     await removeLiquidity()
@@ -451,17 +460,17 @@ function LiquidityPoolPage({ params }) {
           background: 'linear-gradient(90deg, #EBFE64 -25.87%, #8CEA69 100%)',
           padding: '12px  40px',
         }}
-        disabled={isLoading || isApproving || liquidity.isZero()}
+        disabled={isLoading || isApproving || liquidity.isZero() || txLoading}
         fullWidth
         onClick={() => {
           handleCLick()
         }}
       >
-        {isApproving || isLoading ? (
+        {isApproving || isLoading || txLoading ? (
           <PulseLoader color="#2D2C2C" size={10} />
         ) : liquidity.isZero() ? (
           'Select amount'
-        ) : tokenAllowance.lte(liquidity) ? (
+        ) : tokenAllowance.lt(liquidity) ? (
           'Approve'
         ) : (
           'Remove'

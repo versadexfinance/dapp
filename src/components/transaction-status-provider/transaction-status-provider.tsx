@@ -17,6 +17,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useEffectOnce } from 'usehooks-ts'
 import axios from 'axios'
 import { Tokens, tokenList } from '@/web3/types'
+import { lpsUpdatedState } from '@/pods/atoms/liquidity-pool-form.atom'
 
 function TransactionStatusProvider({ children }) {
   const [tokenOne, setTokenOne] = useRecoilState(tokenInState)
@@ -26,13 +27,14 @@ function TransactionStatusProvider({ children }) {
   const [tokenTwoLocal, setTokenTwoLocal] = useState<Tokens>(null)
 
   const [amount, setAmount] = useRecoilState(amountState)
+  const [lpsUpdated, setLpsUpdated] = useRecoilState(lpsUpdatedState)
 
   const [txHash, setTransactionHash] = useRecoilState(transactionHashState)
   const [transaction, setTransaction] = useRecoilState(transactionState)
 
   const { address } = useAccount()
 
-  useEffectOnce(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -80,7 +82,7 @@ function TransactionStatusProvider({ children }) {
     }
 
     fetchData()
-  })
+  }, [lpsUpdated])
 
   const {
     data,
