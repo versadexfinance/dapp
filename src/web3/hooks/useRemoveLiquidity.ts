@@ -109,7 +109,6 @@ export function useRemoveLiquidity({
       )
     } else if (token2 && reserves && token2.address === config.contract.weth) {
       ercToken = token1.address
-      console.log(String(reserves?.tokenOne * poolShare * (range / 100)))
       amountEthReceive = ethers.utils.parseUnits(
         String(
           (reserves?.tokenTwo * poolShare * (range / 100)).toFixed(
@@ -130,9 +129,6 @@ export function useRemoveLiquidity({
       return
     }
 
-    console.log('amountEthReceive', amountEthReceive.toString())
-    console.log('amountErcReceive', amountErcReceive.toString())
-
     const ercSlippage = amountErcReceive
       .mul(100 - Number(maxSlippage))
       .div(100)
@@ -142,17 +138,6 @@ export function useRemoveLiquidity({
       .mul(100 - Number(maxSlippage))
       .div(100)
       .toString()
-
-    console.log('ercSlippage', ercSlippage.toString())
-    console.log('ethSlippage', ethSlippage.toString())
-
-    // [TODO] Check if token1 is WETH or viceversa
-
-    // const contracttoken1 = new ethers.Contract(
-    //   token1 ? token1?.address : '',
-    //   erc20ABI,
-    //   provider,
-    // )
 
     const contractPairAddress = new ethers.Contract(
       pairAddress as `0x${string}`,

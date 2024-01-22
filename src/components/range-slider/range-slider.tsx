@@ -43,6 +43,9 @@ const StyledSlider = styled('input', {
 function RangeSlider({ value, onChange }) {
   return (
     <StyledSlider
+      css={{
+        width: '100%',
+      }}
       type="range"
       min="0"
       max="100"
@@ -52,4 +55,4 @@ function RangeSlider({ value, onChange }) {
   )
 }
 
-export default RangeSlider
+export default styled(RangeSlider, {})

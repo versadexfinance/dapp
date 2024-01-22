@@ -8,17 +8,29 @@ import Button from '@/components/button'
 import Link from 'next/link'
 import { styled } from '@/styled'
 
-const StyledLink = styled(Link, {})
+const StyledLink = styled(Link, {
+  fontWeight: 500,
+  textTransform: 'capitalize',
+  display: 'flex',
+  borderRadius: '4px',
+  alignItems: 'center',
+  fontSize: '16px',
+  gap: '0.5em',
+  fontHeight: '20px',
+  color: '#020202',
+  lineHeight: '24px',
+  width: 'auto',
+  background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)',
+  padding: '12px  12px',
+  '@mobile': {
+    padding: '12px  40px',
+  },
+})
 
 const MyPositions = props => {
   return (
     <Stack gap={props.button == 'add-liquidity' ? 4 : 2} css={{}}>
-      <Flex
-        gap={4}
-        justifyContent={'spaceBetween'}
-        alignItems={'center'}
-        fullWidth
-      >
+      <Flex justifyContent={'spaceBetween'} alignItems={'center'} fullWidth>
         <Typography
           css={{
             fontSize: '20px',
@@ -47,24 +59,7 @@ const MyPositions = props => {
             New Position
           </Button>
         ) : (
-          <StyledLink
-            css={{
-              // backgroundColor: 'transparent',
-              fontWeight: 500,
-              textTransform: 'capitalize',
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '16px',
-              gap: '0.5em',
-              fontHeight: '20px',
-              color: '#020202',
-              lineHeight: '24px',
-              width: 'auto',
-              background: 'linear-gradient(90deg, #EBFE64 0%, #8CEA69 100%)',
-              padding: '12px  40px',
-            }}
-            href={'/liquidity-pool/create'}
-          >
+          <StyledLink href={'/liquidity-pool/create'}>
             <>
               <img
                 src="/icons/resources-add-black.svg"

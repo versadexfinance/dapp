@@ -18,8 +18,9 @@ const StyledNextLink = styled(Link, {
   textDecoration: 'none',
   color: 'inherit',
   borderRadius: '4px',
-  padding: '0.5rem 1rem',
+  padding: '0.375rem 0.75rem',
   '@mobile': {
+    padding: '0.5rem 1rem',
     fontSize: '18px',
   },
 

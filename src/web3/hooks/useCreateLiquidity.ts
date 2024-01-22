@@ -72,37 +72,6 @@ export function useCreateLiquidity({
     chainId: 5,
   })
 
-  // parseFloat(
-  //   maxSlippage.length
-  //     ? (Number(amount.out) * (100 - parseFloat(maxSlippage))) / 100 + ''
-  //     : amount.out,
-  // ).toLocaleString('fullwide', { useGrouping: false })
-
-  // const inSlippage =
-  // parseFloat(
-  //   maxSlippage.length
-  //     ? (Number(amount.in) * (100 - parseFloat(maxSlippage))) / 100 + ''
-  //     : amount.in,
-  // ).toLocaleString('fullwide', { useGrouping: false })
-
-  // console.log(
-  //   'Slippage LOGGED',
-  //   maxSlippage.length
-  //     ? (Number(amount.in) * (100 - Number(20))) / 100 + ''
-  //     : amount.in,
-  // )
-
-  // console.log(amount.in, inSlippage, 'inSlippage WTF')
-  // console.log(amount.out, outSlippage, 'outSlippage')
-
-  // [TODO] Check if tokenIn is WETH or viceversa
-
-  // const contractTokenIn = new ethers.Contract(
-  //   tokenIn ? tokenIn?.address : '',
-  //   erc20ABI,
-  //   provider,
-  // )
-
   const contractTokenOut = new ethers.Contract(
     tokenOut ? tokenOut?.address : '',
     erc20ABI,
@@ -111,6 +80,9 @@ export function useCreateLiquidity({
 
   const createLiquidity = useCallback(async () => {
     try {
+      if (txHash.hash.length) {
+        setTxHash({ hash: '', typeTx: '' })
+      }
       const outSlippage = ethers.utils
         .parseUnits(amount.out.length ? amount.out : '0', tokenOut.decimals)
         .mul(100 - Number(maxSlippage))
@@ -140,7 +112,6 @@ export function useCreateLiquidity({
         tokenOut?.decimals,
       )
 
-      // const tokenInBalance = (await contractTokenIn.balanceOf(address)) ?? '0'
       const tokenOutBalance = (await contractTokenOut.balanceOf(address)) ?? '0'
 
       const balanceInWei = ethers.utils.parseUnits(
@@ -151,12 +122,6 @@ export function useCreateLiquidity({
         tokenOutBalance.toString() ?? '0',
         tokenOut.decimals,
       )
-      //let balanceTokenIn = ethers.BigNumber.from(0)
-
-      //
-
-      //balanceTokenIn = ethers.BigNumber.from(balance ?? 0) // Wei
-      //balanceTokenI = ethers.BigNumber.from(balance ?? 0) // Wei
 
       if (balanceInWei.lt(inWei)) {
         return
@@ -183,6 +148,7 @@ export function useCreateLiquidity({
             functionName: 'approve',
             args: [config.contract.routerV2, outWei.toString()],
           })
+          setTxHash({ hash: hash, typeTx: 'approve' })
 
           const transactionDetails: Transaction = {
             data: {
@@ -200,7 +166,6 @@ export function useCreateLiquidity({
 
           await logTransaction(transactionDetails)
 
-          setTxHash({ hash: hash, typeTx: 'approve' })
           if (allowanceIn.lte(outWei)) {
             setIsApproving(false)
           }
@@ -225,6 +190,7 @@ export function useCreateLiquidity({
           })
 
           const hash = result.hash
+          setTxHash({ hash: hash, typeTx: 'add_liquidity' })
 
           const transactionDetails: Transaction = {
             data: {
@@ -258,7 +224,6 @@ export function useCreateLiquidity({
 
           await logTransaction(transactionDetails, pool)
           setLpsUpdated(!lpsUpdated)
-          setTxHash({ hash: hash, typeTx: 'add_liquidity' })
         }
       } else {
         //Allowance token in

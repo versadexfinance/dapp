@@ -118,7 +118,9 @@ function TransactionStatusProvider({ children }) {
             <Typography>
               {transaction.txHash.typeTx == 'approve'
                 ? 'Approving...'
-                : 'Swapping..'}
+                : transaction.txHash.typeTx == 'swap'
+                  ? 'Swapping..'
+                  : 'Adding liquidity...'}
               .
             </Typography>
             <Typography
@@ -165,7 +167,9 @@ function TransactionStatusProvider({ children }) {
               <Typography>
                 {transaction.txHash.typeTx == 'approve'
                   ? 'Approval succesful!'
-                  : 'Swap successful!'}
+                  : transaction.txHash.typeTx == 'swap'
+                    ? ' Swap successful!'
+                    : 'Transaction completed'}
               </Typography>
               <Typography
                 css={{

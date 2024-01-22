@@ -2,19 +2,12 @@
 
 import { Flex, Stack } from '@/components/box'
 import Typography from '@/components/typography'
-import Input from '@/components/input'
-import { Tokens } from '@/web3/types'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
-import {
-  maxSlippageState,
-  tokenInState,
-  tokenOutState,
-  transactionDeadlineState,
-} from '@/pods/atoms/swap-selected-tokens.atom'
 import useOutsideClick from '@/pods/utils/useClickOutside'
 import CoinImagePair from '@/components/coin-image-pair/coin-image-pair'
 import {
+  lpAmountState,
   lpPairOneState,
   lpPairTwoState,
 } from '@/pods/atoms/liquidity-pool-form.atom'
@@ -23,12 +16,18 @@ import Button from '@/components/button'
 import ToggleSwitch from '@/components/toggle-switch'
 import { PuffLoader } from 'react-spinners'
 import Link from 'next/link'
+import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format'
 
 type AddLiquidityModalProps = {
+  status: string
+  hash: `0x${string}`
   closeSettings: () => void
+  isLoading: boolean
+  isApproving: boolean
+  typeTx: string
 }
 
-const WaitingForConfirmationModal = () => {
+const WaitingForConfirmationModal = props => {
   return (
     <Stack
       gap={2}
@@ -52,17 +51,31 @@ const WaitingForConfirmationModal = () => {
           color: 'white',
         }}
       >
-        Waiting for confirmation
+        {props.typeTx?.length
+          ? props.typeTx == 'approve'
+            ? 'Approving...'
+            : 'Adding liquidity'
+          : 'Waiting for confirmation'}
       </Typography>
       <Typography
         css={{
           fontSize: '18px',
-          // fontWeight: 500,
+          textAlign: 'center',
           color: '#F7FFBB',
         }}
       >
-        {' '}
-        Deposition 1.245 ETH and 15,900 VDX
+        {props.typeTx == 'approve' || props.isApproving
+          ? 'Approval of ' +
+            roundToFirstNonZeroDecimal(props.lpAmount.out) +
+            props.pairTwo.displayTicker
+          : 'Deposition of ' +
+            roundToFirstNonZeroDecimal(props.lpAmount.in) +
+            ' ' +
+            props.pairOne.displayTicker +
+            ' and ' +
+            roundToFirstNonZeroDecimal(props.lpAmount.out) +
+            ' ' +
+            props.pairTwo.displayTicker}
       </Typography>
       <Typography
         css={{
@@ -71,18 +84,19 @@ const WaitingForConfirmationModal = () => {
         }}
       >
         {' '}
-        Confirm the transaction in your walletloa
+        Confirm the transaction in your wallet
       </Typography>
     </Stack>
   )
 }
 
-const SuccessModal = () => {
+const SuccessModal = props => {
   return (
     <Stack
       gap={2}
       alignItems={'center'}
       css={{
+        margin: '0 auto',
         // padding: '16px',
         paddingY: '16px',
         width: '350px',
@@ -103,25 +117,33 @@ const SuccessModal = () => {
           color: 'white',
         }}
       >
-        Added liquidity
+        {props.typeTx == 'approve' || props.isApproving
+          ? 'Approval'
+          : 'Deposition'}{' '}
+        successful
       </Typography>
       <Button
-        onClick={() => {}}
+        onClick={() => {
+          props.closeSettings()
+        }}
         css={{
           color: '#020202',
           mt: '12px',
+          alignSelf: 'center',
+          mr: '12px',
+          width: '80%',
           fontSize: '16px',
           lineHeight: '24px',
           background: 'linear-gradient(90deg, #EBFE64 -25.87%, #8CEA69 100%)',
           padding: '12px  40px',
         }}
-        fullWidth
       >
         Close
       </Button>
 
       <Link
-        href={'https://etherscan.com'}
+        href={'https://goerli.etherscan.io/tx/' + props.hash}
+        target="_blank"
         style={{
           color: '#EBFE64',
           fontSize: '16px',
@@ -133,28 +155,55 @@ const SuccessModal = () => {
   )
 }
 
-const AddLiquidityModal = (props: AddLiquidityModalProps) => {
+const AddLiquidityModal = ({
+  closeSettings,
+  status,
+  isLoading,
+  hash: txHash,
+  isApproving,
+  typeTx,
+}: AddLiquidityModalProps) => {
   const [pairOne, setPairOneState] = useRecoilState(lpPairOneState)
   const [pairTwo, setPairTwoState] = useRecoilState(lpPairTwoState)
-  const [status, setStatus] = useState<
-    'confirmation' | 'loading' | 'confirmed'
-  >('confirmation')
+  const [lpAmount] = useRecoilState(lpAmountState)
+  // ;'confirmation' | 'loading' | ('confirmed' > 'confirmation')
 
   const ref = useOutsideClick(() => {
-    props.closeSettings()
-  })
+    if (status === 'success') {
+      closeSettings()
+    }
+  }, status === 'success')
 
   useEffect(() => {
     if (status == 'loading') {
       setTimeout(() => {
-        setStatus('confirmed')
+        // setStatus('confirmed')
       }, 5000)
     }
   }, [status])
 
-  if (status == 'confirmed') return <SuccessModal />
-  if (status == 'loading') return <WaitingForConfirmationModal />
+  if (status == 'success')
+    return (
+      <SuccessModal
+        closeSettings={closeSettings}
+        isApproving={isApproving}
+        typeTx={typeTx}
+        hash={txHash}
+      />
+    )
+  if (status == 'loading' || isLoading)
+    return (
+      <WaitingForConfirmationModal
+        pairOne={pairOne}
+        pairTwo={pairTwo}
+        isApproving={isApproving}
+        lpAmount={lpAmount}
+        typeTx={typeTx}
+        hash={txHash}
+      />
+    )
 
+  closeSettings()
   return (
     status == 'confirmation' && (
       <Stack
@@ -398,7 +447,7 @@ const AddLiquidityModal = (props: AddLiquidityModalProps) => {
                   color: 'white',
                 }}
               >
-                15.900
+                {}
               </Typography>
 
               <div
@@ -426,9 +475,9 @@ const AddLiquidityModal = (props: AddLiquidityModalProps) => {
           </Flex>
         </Stack>
         <Button
-          onClick={() => {
-            setStatus('loading')
-          }}
+          // onClick={() => {
+          //   setStatus('loading')
+          // }}
           css={{
             color: '#020202',
             mt: '12px',
@@ -447,3 +496,4 @@ const AddLiquidityModal = (props: AddLiquidityModalProps) => {
 }
 
 export default AddLiquidityModal
+//

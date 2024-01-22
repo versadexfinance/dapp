@@ -11,6 +11,7 @@ function Dashboard() {
       css={{
         mt: '$1',
         flexDirection: 'column',
+        minHeight: '80vh',
         '@tabletLarge': {
           marginTop: '$4',
           flexDirection: 'row',

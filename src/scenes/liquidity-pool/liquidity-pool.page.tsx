@@ -12,6 +12,7 @@ import { Stack } from '@/components/box'
 import PositionCard from '../dashboard/components/position-card/position-card'
 import { useRecoilState } from 'recoil'
 import { myLpsState } from '@/pods/atoms/liquidity-pool-form.atom'
+import NoPosition from './components/no-position'
 
 export type AppProps = {
   crypto: Crypto
@@ -23,6 +24,7 @@ const Container = styled(Stack, {
   margin: '0 auto',
   gap: '2rem',
   marginTop: '2rem',
+  minHeight: '79vh',
   padding: '0 1rem',
   '@tablet': {
     marginTop: '4rem',
@@ -34,14 +36,18 @@ function LiquidityPoolPage() {
   return (
     <Container>
       <MyPositions button="add-liquidity">
-        {liquidityPools.map((pool, index) => (
-          <PositionCard
-            key={index}
-            pairAddress={pool.pairAddress}
-            pairOne={tokenList.find(t => t.address == pool.tokenOne)}
-            pairTwo={tokenList.find(t => t.address == pool.tokenTwo)}
-          />
-        ))}
+        {liquidityPools.length ? (
+          liquidityPools.map((pool, index) => (
+            <PositionCard
+              key={index}
+              pairAddress={pool.pairAddress}
+              pairOne={tokenList.find(t => t.address == pool.tokenOne)}
+              pairTwo={tokenList.find(t => t.address == pool.tokenTwo)}
+            />
+          ))
+        ) : (
+          <NoPosition />
+        )}
       </MyPositions>
 
       <Link

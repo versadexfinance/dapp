@@ -43,6 +43,7 @@ const Html = ({ children }: HtmlProps) => {
           id="stitches"
           dangerouslySetInnerHTML={{ __html: getCssText() }}
         />
+        <link rel="apple-touch-icon" href="/img/logo.svg" />
       </Head>
       <body>
         <WagmiConfig config={config.wagmiConfig}>

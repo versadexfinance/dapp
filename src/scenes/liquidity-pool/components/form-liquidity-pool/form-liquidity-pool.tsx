@@ -37,6 +37,7 @@ import { BigNumber, ethers } from 'ethers'
 import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format'
 import { useConversionRatio } from '@/web3/hooks/useConversion'
 import { PulseLoader } from 'react-spinners'
+import Link from 'next/link'
 
 export type AppProps = {
   crypto: Crypto
@@ -56,45 +57,72 @@ const Container = styled(Stack, {
 })
 
 const CreateLiquidityPoolHeader = ({ isIncrease }: { isIncrease: boolean }) => (
-  <CardContainer
-    as={Flex}
-    css={{
-      display: 'flex',
-      flexDirection: 'row',
-      gap: '86px',
-      padding: '24px',
-    }}
-  >
-    <Stack gap={2}>
-      <Typography
-        css={{
-          fontSize: '24px',
-          lineHeight: '32px',
-          fontWeight: 600,
-        }}
-      >
-        {isIncrease ? 'Increase liquidity' : 'Create liquidity'}
-      </Typography>
-      <Typography
-        css={{
-          color: '#AFAFAF',
-        }}
-      >
-        Create a new pool or add liquidity on an existing pool, to facilitate
-        trading among pairs and earn fees in the process.
-      </Typography>
-    </Stack>
-    <Stack
-      css={{
-        display: 'none',
-        '@tablet': {
+  <Stack>
+    <Flex css={{ mb: '12px' }}>
+      <Link
+        href="/liquidity-pool"
+        style={{
           display: 'flex',
-        },
+          alignItems: 'center',
+          padding: '4px 8px',
+          borderRadius: '89px',
+          gap: '8px',
+          cursor: 'pointer',
+          background: '#1F1F1F',
+        }}
+      >
+        <img src="/icons/arrow-left-02-round.svg" alt="" />
+        <Typography
+          css={{
+            color: '#E1E1E1',
+            fontSize: '14px',
+            lineHeight: '20px',
+          }}
+        >
+          Back
+        </Typography>
+      </Link>
+    </Flex>
+    <CardContainer
+      as={Flex}
+      css={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '86px',
+        padding: '24px',
       }}
     >
-      <img src="/icons/chart-line.svg" alt="" />
-    </Stack>
-  </CardContainer>
+      <Stack gap={2}>
+        <Typography
+          css={{
+            fontSize: '24px',
+            lineHeight: '32px',
+            fontWeight: 600,
+          }}
+        >
+          {isIncrease ? 'Increase liquidity' : 'Create liquidity'}
+        </Typography>
+        <Typography
+          css={{
+            color: '#AFAFAF',
+          }}
+        >
+          Create a new pool or add liquidity on an existing pool, to facilitate
+          trading among pairs and earn fees in the process.
+        </Typography>
+      </Stack>
+      <Stack
+        css={{
+          display: 'none',
+          '@tablet': {
+            display: 'flex',
+          },
+        }}
+      >
+        <img src="/icons/chart-line.svg" alt="" />
+      </Stack>
+    </CardContainer>
+  </Stack>
 )
 
 function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
@@ -228,7 +256,6 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
     isApproving,
     contractTokenOut,
     isLoading,
-
     txHash,
     allowanceIn,
     allowanceOut,
@@ -292,6 +319,12 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
       img: c.img,
     }
   })
+
+  useEffect(() => {
+    if (txStatus === 'loading' || isLoading || isApproving) {
+      setModalOneOpen(true)
+    }
+  }, [txStatus, isLoading, isApproving])
 
   return (
     <Container>
@@ -509,147 +542,144 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
             label="Liquidity"
             descripion="Specify the quantity of both tokens you want to provide as liquidity. This involves supplying an equal value of both tokens into the pool, allowing traders to swap between them."
           >
-            <Flex
+            <Stack
               css={{
                 marginTop: '16px',
                 border: '1px solid #1F1F1F',
                 padding: '12px',
                 borderRadius: '8px',
               }}
-              gap={2}
-              alignItems={'center'}
               justifyContent={'spaceBetween'}
             >
-              <div style={{ flex: '1' }}>
-                <Flex
-                  alignItems={'center'}
-                  gap={1}
-                  css={{ marginBottom: '4px' }}
+              <Flex alignItems={'center'} gap={1}>
+                <Typography
+                  css={{
+                    fontSize: '14px',
+                    color: '#797979',
+                  }}
                 >
-                  <Typography
-                    css={{
-                      fontSize: '14px',
-                      color: '#797979',
-                    }}
-                  >
-                    Balance:
-                  </Typography>
-                  <Typography
-                    css={{
-                      color: '#AFAFAF',
-                    }}
-                  >
-                    {roundToFirstNonZeroDecimal(
-                      tokenOneBalance.data?.formatted ?? '0',
-                    )}
-                  </Typography>
-                </Flex>
-
-                <CoinSelector
-                  stateTokenIn={lpPairOneState}
-                  stateTokenOut={lpPairTwoState}
-                  disabled
+                  Balance:
+                </Typography>
+                <Typography
                   css={{
-                    flex: 4,
-                    '@tablet': {
-                      flex: 3,
-                    },
+                    color: '#AFAFAF',
                   }}
-                  tokenPosition="in"
-                />
-              </div>
-              <div
-                style={{
-                  flex: '2',
-                }}
+                >
+                  {roundToFirstNonZeroDecimal(
+                    tokenOneBalance.data?.formatted ?? '0',
+                  )}
+                </Typography>
+              </Flex>
+
+              <Flex
+                alignItems={'center'}
+                justifyContent={'spaceBetween'}
+                gap={2}
               >
-                <InputConversion
-                  css={{
-                    flex: 2,
-                    '@tablet': {
-                      flex: 1,
-                    },
+                <div style={{ flex: '1' }}>
+                  <CoinSelector
+                    stateTokenIn={lpPairOneState}
+                    stateTokenOut={lpPairTwoState}
+                    disabled
+                    css={{
+                      flex: 4,
+                      '@tablet': {
+                        flex: 3,
+                      },
+                    }}
+                    tokenPosition="in"
+                  />
+                </div>
+                <div
+                  style={{
+                    flex: '2',
                   }}
-                  placeholder="0"
-                  value={lpAmount.in}
-                  onChange={handleInChange}
-                  type="number"
-                  label={`~ ${getPriceUsd(Number(lpAmount.in))} USD`}
-                />
-              </div>
-            </Flex>
+                >
+                  <InputConversion
+                    css={{
+                      flex: 2,
+                      '@tablet': {
+                        flex: 1,
+                      },
+                    }}
+                    placeholder="0"
+                    value={lpAmount.in}
+                    onChange={handleInChange}
+                    type="number"
+                    label={`~ ${getPriceUsd(Number(lpAmount.in))} USD`}
+                  />
+                </div>
+              </Flex>
+            </Stack>
 
-            <Flex
+            <Stack
               css={{
-                marginTop: '16px',
                 border: '1px solid #1F1F1F',
                 padding: '12px',
                 borderRadius: '8px',
               }}
-              gap={2}
-              alignItems={'center'}
-              justifyContent={'spaceBetween'}
             >
-              <div style={{ flex: '1' }}>
-                <Flex
-                  alignItems={'center'}
-                  gap={1}
-                  css={{ marginBottom: '4px' }}
+              <Flex alignItems={'center'} gap={1} css={{ marginBottom: '4px' }}>
+                <Typography
+                  css={{
+                    fontSize: '14px',
+                    color: '#797979',
+                  }}
                 >
-                  <Typography
-                    css={{
-                      fontSize: '14px',
-                      color: '#797979',
-                    }}
-                  >
-                    Balance:
-                  </Typography>
-                  <Typography
-                    css={{
-                      color: '#AFAFAF',
-                    }}
-                  >
-                    {pairTwo?.address
-                      ? roundToFirstNonZeroDecimal(
-                          tokenTwoBalance?.data?.formatted ?? '0',
-                        )
-                      : '-'}
-                  </Typography>
-                </Flex>
-
-                <CoinSelector
-                  stateTokenIn={lpPairOneState}
-                  stateTokenOut={lpPairTwoState}
-                  disabled
+                  Balance:
+                </Typography>
+                <Typography
                   css={{
-                    flex: 4,
-                    '@tablet': {
-                      flex: 3,
-                    },
+                    color: '#AFAFAF',
                   }}
-                  tokenPosition="out"
-                />
-              </div>
-              <div
-                style={{
-                  flex: '2',
-                }}
+                >
+                  {pairTwo?.address
+                    ? roundToFirstNonZeroDecimal(
+                        tokenTwoBalance?.data?.formatted ?? '0',
+                      )
+                    : '-'}
+                </Typography>
+              </Flex>
+              <Flex
+                gap={2}
+                alignItems={'center'}
+                justifyContent={'spaceBetween'}
               >
-                <InputConversion
-                  css={{
-                    flex: 2,
-                    '@tablet': {
-                      flex: 1,
-                    },
+                <div style={{ flex: '1' }}>
+                  <CoinSelector
+                    stateTokenIn={lpPairOneState}
+                    stateTokenOut={lpPairTwoState}
+                    disabled
+                    css={{
+                      flex: 4,
+                      '@tablet': {
+                        flex: 3,
+                      },
+                    }}
+                    tokenPosition="out"
+                  />
+                </div>
+                <div
+                  style={{
+                    flex: '2',
                   }}
-                  placeholder="0"
-                  value={lpAmount.out}
-                  onChange={handleOutChange}
-                  type="number"
-                  label={`~ ${getPriceUsd(Number(lpAmount.in))} USD`}
-                />
-              </div>
-            </Flex>
+                >
+                  <InputConversion
+                    css={{
+                      flex: 2,
+                      '@tablet': {
+                        flex: 1,
+                      },
+                    }}
+                    placeholder="0"
+                    value={lpAmount.out}
+                    onChange={handleOutChange}
+                    type="number"
+                    label={`~ ${getPriceUsd(Number(lpAmount.in))} USD`}
+                  />
+                </div>
+              </Flex>
+            </Stack>
           </LpFormControl>
         </Stack>
         {/* <pre>
@@ -716,7 +746,7 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
                 lineHeight: '24px',
               }}
             >
-              You don't have enough balance
+              You don&apos;t have enough balance
             </Typography>
           </CardContainer>
         )}
@@ -731,26 +761,35 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
           padding: '12px  40px',
         }}
         fullWidth
-        disabled={isApproving || isLoading || txLoading}
+        disabled={isApproving || isLoading || txLoading || invalid || !pairTwo}
         onClick={() => onClickCreateliquidity()}
       >
         {isApproving || isLoading || txLoading ? (
           <PulseLoader color="#2D2C2C" size={10} />
-        ) : allowanceOut?.lt(
+        ) : pairTwo ? (
+          allowanceOut?.lt(
             ethers.utils.parseUnits(
               lpAmount.out.length ? lpAmount.out : '0',
               pairTwo?.decimals,
             ),
           ) ? (
-          'Approve'
-        ) : !isIncrease &&
-          pairTwo &&
-          (usePairResponse == NULL_ADDRESS || !usePairResponse) ? (
-          'Create pair'
+            'Approve'
+          ) : !isIncrease &&
+            pairTwo &&
+            (usePairResponse == NULL_ADDRESS || !usePairResponse) ? (
+            'Create pair'
+          ) : (
+            'Add liquidity'
+          )
         ) : (
-          'Add liquidity'
+          'Select a token pair'
         )}
       </Button>
+      {/* <pre>txStatus: {JSON.stringify(txStatus)}</pre>
+      <pre>txLoading: {JSON.stringify(txLoading)}</pre>
+      <pre>isApproving: {JSON.stringify(isApproving)}</pre>
+      <pre>isLoading: {JSON.stringify(isLoading)}</pre>
+      <pre>tx: {JSON.stringify(txHash)}</pre> */}
 
       <AnimatePresence>
         <Modal
@@ -760,21 +799,15 @@ function FormLiquidtyPool({ isIncrease }: { isIncrease?: boolean }) {
           }}
         >
           <AddLiquidityModal
+            status={txStatus}
+            hash={txHash.hash as `0x${string}`}
+            typeTx={txHash.typeTx}
+            isLoading={isLoading}
+            isApproving={isApproving}
             closeSettings={() => {
               setModalOneOpen(false)
             }}
           />
-        </Modal>
-      </AnimatePresence>
-
-      <AnimatePresence>
-        <Modal
-          isOpen={modalTwoOpen}
-          onRequestClose={() => {
-            setModalTwoOpen(false)
-          }}
-        >
-          <h2>Hi</h2>
         </Modal>
       </AnimatePresence>
     </Container>

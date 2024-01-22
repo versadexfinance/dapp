@@ -7,6 +7,9 @@ import TopPoolsTable from './components/top-pools-table'
 import { mockPoolTableRow } from './components/top-pools-table/interfaces'
 import RecentTransactions from './components/recent-transactions'
 import PositionCard from './components/position-card'
+import NoPosition from '../liquidity-pool/components/no-position'
+import { Coming_Soon } from 'next/font/google'
+import CoomingSoon from '@/components/comingSoon'
 
 function Dashboard() {
   return (
@@ -26,14 +29,31 @@ function Dashboard() {
             flexDirection: 'row',
             flex: 5,
           },
+          position: 'relative',
         }}
       >
+        <Stack
+          css={{
+            zIndex: 1000,
+            position: 'absolute',
+            filter: 'none',
+            top: '45%',
+            left: '30%',
+            visibility: 'hidden',
+            ':hover': {
+              visibility: 'visible',
+            },
+          }}
+        >
+          <CoomingSoon />
+        </Stack>
         <Stack
           gap={4}
           css={{
             // marginTop: '40px',
             flexDirection: 'row-reverse',
             filter: 'blur(2px)',
+            userSelect: 'none',
             '@tablet': {
               flexDirection: 'column',
               flex: 8,
@@ -41,20 +61,7 @@ function Dashboard() {
           }}
         >
           <MyPositions>
-            <div
-              style={{
-                flex: 1,
-              }}
-            >
-              {/* <PositionCard /> */}
-            </div>
-            <div
-              style={{
-                flex: 1,
-              }}
-            >
-              {/* <PositionCard /> */}
-            </div>
+            <NoPosition />
           </MyPositions>
 
           <TopPoolsTable

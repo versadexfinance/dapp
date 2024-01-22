@@ -37,7 +37,9 @@ const ModalContent = styled(motion.div, {
   padding: '16px',
   borderRadius: '8px',
   width: '100%',
+  height: '55vh',
   '@tablet': {
+    height: 'fit-content',
     width: 'fit-content',
     maxWidth: '80%',
     maxHeight: '80%',
@@ -77,7 +79,7 @@ const Modal = ({ isOpen, onRequestClose: close, children }: ModalProps) => {
           >
             <ModalContent
               initial={{ translateY: '100%' }}
-              animate={{ translateY: gtThanTablet ? '0%' : '0%' }}
+              animate={{ translateY: gtThanTablet ? '0%' : '60%' }}
               exit={{ y: '-100%', transition: { duration: 4 } }}
               onClick={e => {
                 e.stopPropagation()

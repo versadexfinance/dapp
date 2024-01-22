@@ -9,6 +9,7 @@ export const Container = styled(Stack, {
   padding: '1em',
   marginBottom: '4rem',
   marginTop: '4rem',
+  minHeight: '72vh',
 })
 export const GridContainer = styled('div', {
   display: 'grid',

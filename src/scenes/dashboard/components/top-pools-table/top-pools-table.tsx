@@ -1,17 +1,17 @@
-'use client';
-import { styled } from '@stitches/react';
-import { useMediaQuery } from 'usehooks-ts';
+'use client'
+import { styled } from '@stitches/react'
+import { useMediaQuery } from 'usehooks-ts'
 
-import { Thead } from './styles';
-import { PoolTableRowProps, PoolsTableProps } from './interfaces';
-import CoinImagePair from '@/components/coin-image-pair/coin-image-pair';
-import Typography from '@/components/typography';
-import { Flex, Stack } from '@/components/box';
-import Input from '@/components/input';
-import { formatNumber } from '@/pods/utils/number-format';
-import { Container } from '../position-card/styles';
-import Button from '@/components/button';
-import media from '@/styled/media';
+import { Thead } from './styles'
+import { PoolTableRowProps, PoolsTableProps } from './interfaces'
+import CoinImagePair from '@/components/coin-image-pair/coin-image-pair'
+import Typography from '@/components/typography'
+import { Flex, Stack } from '@/components/box'
+import Input from '@/components/input'
+import { formatNumber } from '@/pods/utils/number-format'
+import { Container } from '../position-card/styles'
+import Button from '@/components/button'
+import media from '@/styled/media'
 
 const Table = styled('table', {
   width: '100%',
@@ -19,8 +19,8 @@ const Table = styled('table', {
   fontSize: '14px',
   borderSpacing: '0 12px',
 
-  overflowX: 'auto' // Enable horizontal scrolling on small screens
-});
+  overflowX: 'auto', // Enable horizontal scrolling on small screens
+})
 
 const ProductTable = styled('tbody', {
   // gap: '16px'
@@ -35,11 +35,11 @@ const ProductTable = styled('tbody', {
   //     }
   //   }
   // }
-});
+})
 
 const Td = styled('td', {
-  padding: '$2'
-});
+  padding: '$2',
+})
 
 const ResponsiveTh = styled('td', {
   // padding: '$2',
@@ -47,27 +47,27 @@ const ResponsiveTh = styled('td', {
   fontWeight: '500',
   fontStyle: 'normal',
   color: '#797979',
-  fontSize: '14px'
-});
+  fontSize: '14px',
+})
 const ResponsiveTr = styled('tr', {
   backgroundColor: '#131313',
   // fontSize: '$-1',
   borderSpacing: '20px',
   marginBottom: '16px',
   display: 'table-row-group',
-  borderRadius: '4px'
-});
+  borderRadius: '4px',
+})
 
 const ProductTableDesktop = ({ headers, items }: PoolsTableProps) => (
   <Stack
     css={{
-      marginTop: '$4'
+      marginTop: '$4',
     }}
   >
     <Flex
       justifyContent={'spaceBetween'}
       css={{
-        marginBottom: '24px'
+        marginBottom: '24px',
       }}
     >
       <Typography
@@ -75,14 +75,14 @@ const ProductTableDesktop = ({ headers, items }: PoolsTableProps) => (
           fontSize: '20px',
           lineHeight: '24px',
           color: '#BFBFBF',
-          verticalAlign: 'middle'
+          verticalAlign: 'middle',
         }}
       >
         Top Pools
       </Typography>
       <Input
         css={{
-          width: '280px'
+          width: '280px',
         }}
         size={'sm'}
         leftElement={<img src="/icons/MagnifyingGlass.svg" />}
@@ -92,15 +92,15 @@ const ProductTableDesktop = ({ headers, items }: PoolsTableProps) => (
     </Flex>
     <Table>
       <Thead>
-        {/* {[...headers, null].map((header) => (
+        {[...headers, null].map(header => (
           <ResponsiveTh key={header}>{header}</ResponsiveTh>
-        ))} */}
+        ))}
       </Thead>
       <ProductTable>
         {items.map((item: PoolTableRowProps, idx: number) => (
           <ResponsiveTr
             css={{
-              display: 'table-row'
+              display: 'table-row',
             }}
             key={`row-${idx}`}
           >
@@ -109,7 +109,7 @@ const ProductTableDesktop = ({ headers, items }: PoolsTableProps) => (
                 display: 'flex',
                 alignItems: 'center',
                 gap: 2,
-                borderRadius: '4px 0px 0px 4px'
+                borderRadius: '4px 0px 0px 4px',
               }}
             >
               <CoinImagePair
@@ -125,7 +125,7 @@ const ProductTableDesktop = ({ headers, items }: PoolsTableProps) => (
                   lineHeight: '16px',
                   p: '2px 4px',
                   borderRadius: '4px',
-                  background: '#020202'
+                  background: '#020202',
                 }}
               >
                 0.3%
@@ -150,7 +150,7 @@ const ProductTableDesktop = ({ headers, items }: PoolsTableProps) => (
       </ProductTable>
     </Table>
   </Stack>
-);
+)
 
 const TopPoolsTableMobile = ({ items, headers }: PoolsTableProps) => (
   <Stack gap={2}>
@@ -158,7 +158,7 @@ const TopPoolsTableMobile = ({ items, headers }: PoolsTableProps) => (
       gap={2}
       justifyContent={'spaceBetween'}
       css={{
-        marginBottom: '24px'
+        marginBottom: '24px',
       }}
     >
       <Typography
@@ -166,7 +166,7 @@ const TopPoolsTableMobile = ({ items, headers }: PoolsTableProps) => (
           fontSize: '20px',
           lineHeight: '24px',
           color: '#BFBFBF',
-          verticalAlign: 'middle'
+          verticalAlign: 'middle',
         }}
       >
         Top Pools
@@ -187,16 +187,16 @@ const TopPoolsTableMobile = ({ items, headers }: PoolsTableProps) => (
       />
     ))}
   </Stack>
-);
+)
 
 const MobileTableRow = ({
   item,
   headers,
-  idx
+  idx,
 }: {
-  item: PoolTableRowProps;
-  headers: string[] | undefined;
-  idx: number;
+  item: PoolTableRowProps
+  headers: string[] | undefined
+  idx: number
 }) => (
   <Container gap={2}>
     <Flex gap={1} alignItems={'center'}>
@@ -213,7 +213,7 @@ const MobileTableRow = ({
           lineHeight: '16px',
           p: '2px 4px',
           borderRadius: '4px',
-          background: '#020202'
+          background: '#020202',
         }}
       >
         0.3%
@@ -222,13 +222,13 @@ const MobileTableRow = ({
     <Flex
       gap={1}
       css={{
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
       }}
     >
       <Flex
         gap={1}
         css={{
-          marginRight: 12
+          marginRight: 12,
           // flex: 1
         }}
       >
@@ -236,7 +236,7 @@ const MobileTableRow = ({
           css={{
             fontSize: '18px',
             lineHeight: '24px',
-            color: '#797979'
+            color: '#797979',
           }}
         >
           TVL:
@@ -245,7 +245,7 @@ const MobileTableRow = ({
           css={{
             fontSize: '18px',
             lineHeight: '24px',
-            color: '#80DCB1'
+            color: '#80DCB1',
           }}
         >
           {formatNumber(item.tvl)}
@@ -256,7 +256,7 @@ const MobileTableRow = ({
           css={{
             fontSize: '18px',
             lineHeight: '24px',
-            color: '#797979'
+            color: '#797979',
           }}
           size="-1"
         >
@@ -266,7 +266,7 @@ const MobileTableRow = ({
           css={{
             fontSize: '18px',
             lineHeight: '24px',
-            color: 'white'
+            color: 'white',
           }}
         >
           {formatNumber(item.volume_24h)}
@@ -275,7 +275,7 @@ const MobileTableRow = ({
 
       <Flex
         css={{
-          flexBasis: '100%'
+          flexBasis: '100%',
         }}
         gap={1}
       >
@@ -283,7 +283,7 @@ const MobileTableRow = ({
           css={{
             fontSize: '18px',
             lineHeight: '24px',
-            color: '#797979'
+            color: '#797979',
           }}
           size="-1"
         >
@@ -293,7 +293,7 @@ const MobileTableRow = ({
           css={{
             fontSize: '18px',
             lineHeight: '24px',
-            color: 'white'
+            color: 'white',
           }}
         >
           {item.APR}%
@@ -308,20 +308,20 @@ const MobileTableRow = ({
         borderRadius: '4px',
         padding: '0.5rem 1rem',
         background: 'rgba(235, 254, 100, 0.10)',
-        color: '$primary'
+        color: '$primary',
       }}
     >
       Deposit
     </Button>
   </Container>
-);
+)
 
 const MobileTableField = ({
   element,
-  lastField
+  lastField,
 }: {
-  element: any;
-  lastField?: boolean;
+  element: any
+  lastField?: boolean
 }) => (
   <Flex css={{ padding: '$4' }} justifyContent={'center'}>
     {typeof element === 'object' ? (
@@ -329,7 +329,7 @@ const MobileTableField = ({
     ) : (
       <Typography
         css={{
-          fontWeight: lastField ? '$600' : 'inherit'
+          fontWeight: lastField ? '$600' : 'inherit',
         }}
         size="-1"
       >
@@ -337,16 +337,16 @@ const MobileTableField = ({
       </Typography>
     )}
   </Flex>
-);
+)
 
 const TopPoolsTable = ({ headers, items }: PoolsTableProps) => {
-  const gtThanTablet = useMediaQuery(media.tablet);
+  const gtThanTablet = useMediaQuery(media.tablet)
 
   return gtThanTablet ? (
     <ProductTableDesktop headers={headers} items={items} />
   ) : (
     <TopPoolsTableMobile items={items} />
-  );
-};
+  )
+}
 
-export default TopPoolsTable;
+export default TopPoolsTable

@@ -28,6 +28,8 @@ import { useRemoveLiquidity } from '@/web3/hooks/useRemoveLiquidity'
 import { useTokenAllowance } from '@/web3/hooks/useTokenAllowance'
 import { PulseLoader } from 'react-spinners'
 import Loader from '@/components/loader'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 Chart.register(...registerables)
 
@@ -43,6 +45,7 @@ const Container = styled(Stack, {
   marginTop: '2rem',
   padding: '1em',
   marginBottom: '4rem',
+  minHeight: '72vh',
   '@tablet': {
     marginTop: '4rem',
   },
@@ -66,45 +69,72 @@ const Badge = styled(Typography, {
 })
 
 const ExitLiquidityPoolHeader = () => (
-  <CardContainer
-    as={Flex}
-    css={{
-      display: 'flex',
-      flexDirection: 'row',
-      gap: '86px',
-      padding: '24px',
-    }}
-  >
-    <Stack gap={2}>
-      <Typography
-        css={{
-          fontSize: '24px',
-          lineHeight: '32px',
-          fontWeight: 600,
-        }}
-      >
-        Exit Liquidity
-      </Typography>
-      <Typography
-        css={{
-          color: '#AFAFAF',
-        }}
-      >
-        Exiting a liquidity position involves withdrawing both your tokens and
-        the fees you&apos;ve earned back to your wallet.
-      </Typography>
-    </Stack>
-    <Stack
-      css={{
-        display: 'none',
-        '@tablet': {
+  <Stack>
+    <Flex css={{ mb: '12px' }}>
+      <Link
+        href="/liquidity-pool"
+        style={{
           display: 'flex',
-        },
+          alignItems: 'center',
+          padding: '4px 8px',
+          borderRadius: '89px',
+          gap: '8px',
+          cursor: 'pointer',
+          background: '#1F1F1F',
+        }}
+      >
+        <img src="/icons/arrow-left-02-round.svg" alt="" />
+        <Typography
+          css={{
+            color: '#E1E1E1',
+            fontSize: '14px',
+            lineHeight: '20px',
+          }}
+        >
+          Back
+        </Typography>
+      </Link>
+    </Flex>
+    <CardContainer
+      as={Flex}
+      css={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '86px',
+        padding: '24px',
       }}
     >
-      <img src="/icons/chart-line.svg" alt="" />
-    </Stack>
-  </CardContainer>
+      <Stack gap={2}>
+        <Typography
+          css={{
+            fontSize: '24px',
+            lineHeight: '32px',
+            fontWeight: 600,
+          }}
+        >
+          Exit Liquidity
+        </Typography>
+        <Typography
+          css={{
+            color: '#AFAFAF',
+          }}
+        >
+          Exiting a liquidity position involves withdrawing both your tokens and
+          the fees you&apos;ve earned back to your wallet.
+        </Typography>
+      </Stack>
+      <Stack
+        css={{
+          display: 'none',
+          '@tablet': {
+            display: 'flex',
+          },
+        }}
+      >
+        <img src="/icons/chart-line.svg" alt="" />
+      </Stack>
+    </CardContainer>
+  </Stack>
 )
 
 function LiquidityPoolPage({ params }) {
@@ -189,10 +219,18 @@ function LiquidityPoolPage({ params }) {
     await removeLiquidity()
   }
   if (!(pairOne && pairTwo)) {
-    return <Loader />
+    return (
+      <Container>
+        <Loader />
+      </Container>
+    )
   }
-  if (isError || !Boolean(Number(pairBalance?.data?.value?.toString()))) {
+  if (isError) {
     return <div>Not found</div>
+  }
+
+  if (!Boolean(Number(pairBalance?.data?.value?.toString()))) {
+    return redirect('/liquidity-pool')
   }
 
   return (
@@ -286,13 +324,34 @@ function LiquidityPoolPage({ params }) {
               {range}%
             </Flex>
 
-            <Flex alignItems={'center'} gap={1}>
-              <RangeSlider
-                value={range}
-                onChange={e => {
-                  setRange(Number(e.target.value))
+            <Flex
+              alignItems={'center'}
+              css={{
+                flexDirection: 'column',
+                gap: 8,
+                mt: 4,
+                '@tablet': {
+                  mt: 0,
+                  gap: 1,
+                  flexDirection: 'row',
+                },
+              }}
+            >
+              <Flex
+                style={{
+                  flex: 1,
+                  width: '80%',
+
+                  // padding: '0 40px',
                 }}
-              />
+              >
+                <RangeSlider
+                  value={range}
+                  onChange={e => {
+                    setRange(Number(e.target.value))
+                  }}
+                />
+              </Flex>
 
               <Flex css={{ flex: '1' }} justifyContent={'end'} gap={2}>
                 <Badge
