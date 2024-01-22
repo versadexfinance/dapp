@@ -203,7 +203,7 @@ const SwapCard = () => {
     {
       label: 'Swap',
       content: (
-        <Stack gap={3}>
+        <Stack gap={2}>
           <Container
             css={{
               backgroundColor: '#090909',
@@ -266,9 +266,11 @@ const SwapCard = () => {
               </Flex>
             </Flex>
             <Flex
-              css={{
-                marginTop: '16px',
-              }}
+              css={
+                {
+                  // marginTop: '16px',
+                }
+              }
               gap={2}
               alignItems={'center'}
               justifyContent={'spaceBetween'}
@@ -382,9 +384,11 @@ const SwapCard = () => {
               </Flex>
             </Flex>
             <Flex
-              css={{
-                marginTop: '16px',
-              }}
+              css={
+                {
+                  // marginTop: '16px',
+                }
+              }
               alignItems={'center'}
               gap={2}
               justifyContent={'spaceBetween'}
