@@ -14,6 +14,7 @@ const poppins = Poppins({
 
 import Head from 'next/head'
 import { RecoilRoot } from 'recoil'
+import { Analytics } from '@vercel/analytics/react'
 
 // import useCurrentLocale from '@/pods/i18n/hooks/use-current-locale';
 // import { Locale } from '@/pods/i18n/interfaces';
@@ -64,6 +65,7 @@ const Html = ({ children }: HtmlProps) => {
             </RecoilRoot>
           </RainbowKitProvider>
         </WagmiConfig>
+        <Analytics />
       </body>
     </html>
   )

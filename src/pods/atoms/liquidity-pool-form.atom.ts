@@ -31,7 +31,7 @@ export const removeLiquidityPairTwoState = atom({
 
 export const myLpsState = atom({
   key: 'myLpsState',
-  default: [],
+  default: null,
 })
 
 export const lpsUpdatedState = atom({

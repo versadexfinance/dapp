@@ -13,6 +13,7 @@ import PositionCard from '../dashboard/components/position-card/position-card'
 import { useRecoilState } from 'recoil'
 import { myLpsState } from '@/pods/atoms/liquidity-pool-form.atom'
 import NoPosition from './components/no-position'
+import Loader from '@/components/loader'
 
 export type AppProps = {
   crypto: Crypto
@@ -31,22 +32,53 @@ const Container = styled(Stack, {
   },
 })
 
+const PositionCardSkeleton = () => {
+  return (
+    <div
+      style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '4px' }}
+    >
+      <div
+        style={{
+          backgroundColor: '#eee',
+          height: '20px',
+          width: '100%',
+          marginBottom: '10px',
+        }}
+      ></div>
+      <div
+        style={{ backgroundColor: '#eee', height: '20px', width: '50%' }}
+      ></div>
+    </div>
+  )
+}
+
 function LiquidityPoolPage() {
   const [liquidityPools, setLiquidityPools] = useRecoilState(myLpsState)
+
   return (
     <Container>
       <MyPositions button="add-liquidity">
-        {liquidityPools.length ? (
-          liquidityPools.map((pool, index) => (
-            <PositionCard
-              key={index}
-              pairAddress={pool.pairAddress}
-              pairOne={tokenList.find(t => t.address == pool.tokenOne)}
-              pairTwo={tokenList.find(t => t.address == pool.tokenTwo)}
-            />
-          ))
+        {liquidityPools ? (
+          liquidityPools.length > 0 ? (
+            liquidityPools.map((pool, index) => (
+              <PositionCard
+                key={index}
+                pairAddress={pool.pairAddress}
+                pairOne={tokenList.find(t => t.address == pool.tokenOne)}
+                pairTwo={tokenList.find(t => t.address == pool.tokenTwo)}
+              />
+            ))
+          ) : (
+            <NoPosition />
+          )
         ) : (
-          <NoPosition />
+          <Stack
+            css={{
+              margin: 'auto',
+            }}
+          >
+            <Loader />
+          </Stack>
         )}
       </MyPositions>
 

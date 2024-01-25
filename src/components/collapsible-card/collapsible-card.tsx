@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { styled } from '@/styled'
 import { TriangleDownIcon, TriangleUpIcon } from '@radix-ui/react-icons'
+import { AnimatePresence, motion } from 'framer-motion'
 
 // Styled components for the collapsible card
 const CardWrapper = styled('div', {
@@ -28,22 +29,24 @@ const CardHeader = styled('div', {
   },
 })
 
-const CardContent = styled('div', {
+const CardContent = styled(motion.div, {
   borderTop: '1px solid #1F1F1F',
   paddingTop: '16px',
 })
 
 const StyledCardContent = styled(CardContent, {
-  variants: {
-    isOpen: {
-      true: {
-        display: 'block',
-      },
-      false: {
-        display: 'none',
-      },
-    },
-  },
+  // variants: {
+  //   isOpen: {
+  //     true: {
+  //       opacity: 1,
+  //       // height: 'auto', // Adjust as needed
+  //     },
+  //     false: {
+  //       opacity: 0,
+  //       height: 0,
+  //     },
+  //   },
+  // },
 })
 
 const CollapsibleCard = ({ title, children }: any) => {
@@ -57,9 +60,37 @@ const CollapsibleCard = ({ title, children }: any) => {
     <CardWrapper>
       <CardHeader isOpen={isOpen} onClick={toggleCard}>
         {title}
-        {isOpen ? <TriangleUpIcon /> : <TriangleDownIcon />}
+        <div>
+          <motion.div
+            style={{ paddingTop: '3px' }}
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <TriangleDownIcon
+              style={{
+                scale: 1.5,
+              }}
+            />
+          </motion.div>
+        </div>
       </CardHeader>
-      <StyledCardContent isOpen={isOpen}>{children}</StyledCardContent>
+      <AnimatePresence>
+        {isOpen && (
+          <CardContent
+            key="content"
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            variants={{
+              open: { opacity: 1, height: 'auto' },
+              collapsed: { opacity: 1, height: 0 },
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            {children}
+          </CardContent>
+        )}
+      </AnimatePresence>
     </CardWrapper>
   )
 }
