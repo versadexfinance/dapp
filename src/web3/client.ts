@@ -1,12 +1,12 @@
 
 
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, mainnet } from "wagmi";
+import { configureChains, createConfig, mainnet, sepolia } from "wagmi";
 import { goerli } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [goerli],
+    [sepolia],
     [publicProvider()]
   );
   

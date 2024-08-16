@@ -8,6 +8,7 @@ import {
 } from '@/pods/atoms/liquidity-pool-form.atom'
 import { tokenList } from '@/web3/types'
 import { useRecoilState } from 'recoil'
+import AnimatedPage from '@/components/animated-page'
 
 function CreateLiquidityPoolPage() {
   const [pairOne, setPairOneState] = useRecoilState(lpPairOneState)
@@ -18,7 +19,11 @@ function CreateLiquidityPoolPage() {
     setPairTwoState(null)
   }, [])
 
-  return <FormLiquidityPool isIncrease={false} />
+  return (
+    <AnimatedPage>
+      <FormLiquidityPool isIncrease={false} />
+    </AnimatedPage>
+  )
 }
 
 export default CreateLiquidityPoolPage

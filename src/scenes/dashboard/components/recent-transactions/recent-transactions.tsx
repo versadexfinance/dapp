@@ -20,6 +20,7 @@ const NoTransactions = () => {
       css={{
         margin: 'auto',
         marginTop: '10em',
+        marginBottom: '10em',
       }}
     >
       <Stack css={{ width: '268px' }} alignItems={'center'} gap={3}>
@@ -227,7 +228,7 @@ const TransactionSwap = ({ tx, tokenIn, tokenOut }) => {
           >
             <Link
               target="_blank"
-              href={'https://goerli.etherscan.io/tx/' + tx.txHash}
+              href={'https://sepolia.etherscan.io/tx/' + tx.txHash}
             >
               {`${tx.txHash.substring(0, 4 + 2)}...${tx.txHash.substring(
                 tx.txHash.length - 4,
@@ -486,7 +487,7 @@ const TransactionApprove = ({ tx, tokenIn, tokenOut }) => {
           >
             <Link
               target="_blank"
-              href={'https://goerli.etherscan.io/tx/' + tx.txHash}
+              href={'https://sepolia.etherscan.io/tx/' + tx.txHash}
             >
               {`${tx.txHash.substring(0, 4 + 2)}...${tx.txHash.substring(
                 tx.txHash.length - 4,
@@ -643,6 +644,8 @@ const RecentTransactions = () => {
         } catch (error) {
           console.error('Error fetching transactions:', error)
         }
+      } else {
+        setUserTransactions([])
       }
     }
 

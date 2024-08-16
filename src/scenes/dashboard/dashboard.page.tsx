@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import DashboardHeader from './components/dashboard-header'
 
@@ -10,10 +12,11 @@ import PositionCard from './components/position-card'
 import NoPosition from '../liquidity-pool/components/no-position'
 import { Coming_Soon } from 'next/font/google'
 import CoomingSoon from '@/components/comingSoon'
+import AnimatedPage from '@/components/animated-page'
 
 function Dashboard() {
   return (
-    <>
+    <AnimatedPage>
       <DashboardHeader
         totalValue={19697.26}
         lpTokensvalue={19697.26}
@@ -74,7 +77,7 @@ function Dashboard() {
           <RecentTransactions />
         </Stack>
       </Flex>
-    </>
+    </AnimatedPage>
   )
 }
 

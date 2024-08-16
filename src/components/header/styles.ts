@@ -28,11 +28,20 @@ export const ContainerHeader = styled('header', {
   display: 'flex',
   flexDirection: 'column',
   margin: '0 auto',
-  backgroundColor: '#0A0A0A',
   py: 0,
   borderBottom: '1px solid #1F1F1F', // [TODO] add to Template border-color
   top: 0,
   zIndex: '$header',
+  variants: {
+    transparent: {
+      false: {
+        backgroundColor: '#0A0A0A',
+      },
+      true: {
+        backgroundColor: 'transparent',
+      },
+    },
+  },
   position: 'sticky',
 })
 

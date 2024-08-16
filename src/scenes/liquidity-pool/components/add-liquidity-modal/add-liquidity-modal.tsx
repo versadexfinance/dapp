@@ -142,7 +142,7 @@ const SuccessModal = props => {
       </Button>
 
       <Link
-        href={'https://goerli.etherscan.io/tx/' + props.hash}
+        href={'https://sepolia.etherscan.io/tx/' + props.hash}
         target="_blank"
         style={{
           color: '#EBFE64',

@@ -30,6 +30,7 @@ import { PulseLoader } from 'react-spinners'
 import Loader from '@/components/loader'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import AnimatedPage from '@/components/animated-page'
 
 Chart.register(...registerables)
 
@@ -69,72 +70,74 @@ const Badge = styled(Typography, {
 })
 
 const ExitLiquidityPoolHeader = () => (
-  <Stack>
-    <Flex css={{ mb: '12px' }}>
-      <Link
-        href="/liquidity-pool"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '4px 8px',
-          borderRadius: '89px',
-          gap: '8px',
-          cursor: 'pointer',
-          background: '#1F1F1F',
-        }}
-      >
-        <img src="/icons/arrow-left-02-round.svg" alt="" />
-        <Typography
-          css={{
-            color: '#E1E1E1',
-            fontSize: '14px',
-            lineHeight: '20px',
-          }}
-        >
-          Back
-        </Typography>
-      </Link>
-    </Flex>
-    <CardContainer
-      as={Flex}
-      css={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '86px',
-        padding: '24px',
-      }}
-    >
-      <Stack gap={2}>
-        <Typography
-          css={{
-            fontSize: '24px',
-            lineHeight: '32px',
-            fontWeight: 600,
-          }}
-        >
-          Exit Liquidity
-        </Typography>
-        <Typography
-          css={{
-            color: '#AFAFAF',
-          }}
-        >
-          Exiting a liquidity position involves withdrawing both your tokens and
-          the fees you&apos;ve earned back to your wallet.
-        </Typography>
-      </Stack>
-      <Stack
-        css={{
-          display: 'none',
-          '@tablet': {
+  <AnimatedPage>
+    <Stack>
+      <Flex css={{ mb: '12px' }}>
+        <Link
+          href="/liquidity-pool"
+          style={{
             display: 'flex',
-          },
+            alignItems: 'center',
+            padding: '4px 8px',
+            borderRadius: '89px',
+            gap: '8px',
+            cursor: 'pointer',
+            background: '#1F1F1F',
+          }}
+        >
+          <img src="/icons/arrow-left-02-round.svg" alt="" />
+          <Typography
+            css={{
+              color: '#E1E1E1',
+              fontSize: '14px',
+              lineHeight: '20px',
+            }}
+          >
+            Back
+          </Typography>
+        </Link>
+      </Flex>
+      <CardContainer
+        as={Flex}
+        css={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '86px',
+          padding: '24px',
         }}
       >
-        <img src="/icons/chart-line.svg" alt="" />
-      </Stack>
-    </CardContainer>
-  </Stack>
+        <Stack gap={2}>
+          <Typography
+            css={{
+              fontSize: '24px',
+              lineHeight: '32px',
+              fontWeight: 600,
+            }}
+          >
+            Exit Liquidity
+          </Typography>
+          <Typography
+            css={{
+              color: '#AFAFAF',
+            }}
+          >
+            Exiting a liquidity position involves withdrawing both your tokens
+            and the fees you&apos;ve earned back to your wallet.
+          </Typography>
+        </Stack>
+        <Stack
+          css={{
+            display: 'none',
+            '@tablet': {
+              display: 'flex',
+            },
+          }}
+        >
+          <img src="/icons/chart-line.svg" alt="" />
+        </Stack>
+      </CardContainer>
+    </Stack>
+  </AnimatedPage>
 )
 
 function LiquidityPoolPage({ params }) {

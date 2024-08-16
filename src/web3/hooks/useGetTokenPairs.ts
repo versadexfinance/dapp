@@ -5,7 +5,7 @@ import { config } from '../config'
 import { NULL_ADDRESS } from '../types'
 
 const provider = new ethers.providers.JsonRpcProvider(
-  'https://eth-goerli.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
+  'https://eth-sepolia.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
 )
 
 export function useGetTokenPairs(pairAddress: string) {

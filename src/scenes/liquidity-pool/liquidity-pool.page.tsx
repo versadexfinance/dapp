@@ -14,6 +14,7 @@ import { useRecoilState } from 'recoil'
 import { myLpsState } from '@/pods/atoms/liquidity-pool-form.atom'
 import NoPosition from './components/no-position'
 import Loader from '@/components/loader'
+import AnimatedPage from '@/components/animated-page'
 
 export type AppProps = {
   crypto: Crypto
@@ -56,46 +57,48 @@ function LiquidityPoolPage() {
   const [liquidityPools, setLiquidityPools] = useRecoilState(myLpsState)
 
   return (
-    <Container>
-      <MyPositions button="add-liquidity">
-        {liquidityPools ? (
-          liquidityPools.length > 0 ? (
-            liquidityPools.map((pool, index) => (
-              <PositionCard
-                key={index}
-                pairAddress={pool.pairAddress}
-                pairOne={tokenList.find(t => t.address == pool.tokenOne)}
-                pairTwo={tokenList.find(t => t.address == pool.tokenTwo)}
-              />
-            ))
+    <AnimatedPage>
+      <Container>
+        <MyPositions button="add-liquidity">
+          {liquidityPools ? (
+            liquidityPools.length > 0 ? (
+              liquidityPools.map((pool, index) => (
+                <PositionCard
+                  key={index}
+                  pairAddress={pool.pairAddress}
+                  pairOne={tokenList.find(t => t.address == pool.tokenOne)}
+                  pairTwo={tokenList.find(t => t.address == pool.tokenTwo)}
+                />
+              ))
+            ) : (
+              <NoPosition />
+            )
           ) : (
-            <NoPosition />
-          )
-        ) : (
-          <Stack
-            css={{
-              margin: 'auto',
-            }}
-          >
-            <Loader />
-          </Stack>
-        )}
-      </MyPositions>
+            <Stack
+              css={{
+                margin: 'auto',
+              }}
+            >
+              <Loader />
+            </Stack>
+          )}
+        </MyPositions>
 
-      <Link
-        style={{
-          color: '#EBFE64',
-          marginLeft: '1em',
-          fontSize: '14px',
-          display: 'flex',
-          gap: '0.2em',
-        }}
-        href={'/liquidity-pool'}
-      >
-        Explore Top pools by community
-        <img src="/icons/arrow-up-right-01-round.svg" alt="" />
-      </Link>
-    </Container>
+        <Link
+          style={{
+            color: '#EBFE64',
+            marginLeft: '1em',
+            fontSize: '14px',
+            display: 'flex',
+            gap: '0.2em',
+          }}
+          href={'/liquidity-pool'}
+        >
+          Explore Top pools by community
+          <img src="/icons/arrow-up-right-01-round.svg" alt="" />
+        </Link>
+      </Container>
+    </AnimatedPage>
   )
 }
 

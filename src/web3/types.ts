@@ -123,7 +123,7 @@ export const tokenList: Tokens[] = [
 export const CHAINS: Chain[] = [
   {
     img: '/img/eth-chain.png',
-    name: 'Goerli Ethereum Chain',
+    name: 'Sepolia Ethereum Chain',
     chainId: 5,
   },
 ]

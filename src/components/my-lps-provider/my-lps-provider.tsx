@@ -18,6 +18,8 @@ function MyLpsProvider({ children }) {
 
   useEffect(() => {
     if (address) {
+      setLiquidityPools(null)
+
       // Fetch liquidity pools
       fetchUserLiquidityPools(address)
         .then(myLps => {
@@ -29,6 +31,8 @@ function MyLpsProvider({ children }) {
         .catch(error => {
           console.error('Error fetching liquidity pools: ', error)
         })
+    } else {
+      setLiquidityPools([])
     }
   }, [address])
 

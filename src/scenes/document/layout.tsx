@@ -9,6 +9,7 @@ import Header from '@/components/header/header'
 import Footer from '@/components/footer/footer'
 import { Flex } from '@/components/box'
 import { styled } from '@/styled'
+import { AnimatePresence } from 'framer-motion'
 
 interface RootLayoutProps {
   children: ReactNode
@@ -42,6 +43,7 @@ const RootLayout = ({ children, ...props }: RootLayoutProps) => {
     <ServerStylesheet>
       <Html>
         <Header />
+
         <Container>{children}</Container>
         <Footer />
         <ToastContainer position="top-center" theme="dark" />

@@ -15,7 +15,7 @@ import {
 import { useTokenAllowance } from './useTokenAllowance'
 
 const provider = new ethers.providers.JsonRpcProvider(
-  'https://eth-goerli.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
+  'https://eth-sepolia.g.alchemy.com/v2/FPWZWj868XfD49MGxWZTlBBukppP04pz',
 )
 
 const logTransaction = async (transaction: Transaction, pool?: Pool_V2) => {

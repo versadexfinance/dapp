@@ -17,6 +17,7 @@ import {
 import { tokenList } from '@/web3/types'
 import FormLiquidityPool from '../components/form-liquidity-pool'
 import Loader from '@/components/loader'
+import AnimatedPage from '@/components/animated-page'
 
 Chart.register(...registerables)
 
@@ -54,7 +55,11 @@ function IncreaseLiquidityPoolPage({ params }) {
 
   if (!pairOne || !pairTwo) return <Loader />
 
-  return <FormLiquidityPool isIncrease={true} />
+  return (
+    <AnimatedPage>
+      <FormLiquidityPool isIncrease={true} />
+    </AnimatedPage>
+  )
 }
 
 export default IncreaseLiquidityPoolPage

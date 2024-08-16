@@ -5,11 +5,13 @@ import { ContainerHeader, ContainerHeaderNavbar } from './styles'
 import NextLink from '../next-link'
 import { styled } from '@/styled'
 import { usePathname } from 'next/navigation'
-import media from '@/styled/media'
 // import { start } from 'repl';
 import ConnectWalletButton from '../connect-button/connect-button'
 import Link from 'next/link'
-import { Fragment } from 'react'
+import { Router } from 'next/router'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { LoadingBar } from '../loading-bar'
 
 // Common components
 
@@ -63,6 +65,13 @@ const NavigationLinks = ({ pathname }: { pathname: string | null }) => (
     >
       Liquidity Pool
     </StyledNextLink>
+    <StyledNextLink
+      href="/stake"
+      active={pathname.includes('/stake') == true}
+      shallow
+    >
+      Stake
+    </StyledNextLink>
   </ResponsiveNavLinksContainer>
 )
 
@@ -82,10 +91,30 @@ const HiddenOnDesktop = styled(Flex, {
 })
 
 const Header = () => {
+  const router = useRouter() // Get the router instance
   const pathname = usePathname()
+  const [loading, setLoading] = useState(false)
+
+  // useEffect(() => {
+  //   if (!router.isReady || typeof window === 'undefined') {
+  //     return
+  //   }
+  //   const handleStart = url => url !== router.asPath && setLoading(true)
+  //   const handleComplete = url => url === router.asPath && setLoading(false)
+
+  //   Router.events.on('routeChangeStart', handleStart)
+  //   Router.events.on('routeChangeComplete', handleComplete)
+  //   Router.events.on('routeChangeError', handleComplete)
+
+  //   return () => {
+  //     Router.events.off('routeChangeStart', handleStart)
+  //     Router.events.off('routeChangeComplete', handleComplete)
+  //     Router.events.off('routeChangeError', handleComplete)
+  //   }
+  // }, [router.isReady, router.events])
 
   return (
-    <ContainerHeader>
+    <ContainerHeader transparent={pathname == '/stake' ? 'true' : 'false'}>
       <ContainerHeaderNavbar alignItems="center" justifyContent="spaceBetween">
         <Flex
           css={{
@@ -98,7 +127,7 @@ const Header = () => {
             },
           }}
         >
-          <NextLink css={{ height: 7.5 }} href="/dashboard">
+          <NextLink css={{ height: 7.5 }} href="dashboard">
             <Image src="/img/logo.svg" alt="logo" width={50} height={40} />
           </NextLink>
           <HiddenOnMobile>
@@ -117,6 +146,7 @@ const Header = () => {
           </Flex>
         </HiddenOnMobile>
       </ContainerHeaderNavbar>
+      <LoadingBar loading={loading} />
     </ContainerHeader>
   )
 }

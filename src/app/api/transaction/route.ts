@@ -53,7 +53,7 @@ async function connectToDatabase() {
 }
 
 const provider = new ethers.providers.JsonRpcProvider(
-  'https://eth-goerli.g.alchemy.com/v2/FPLZvzEhuo4jMdGjuTqWrtAsaFUpID3t',
+  'https://eth-sepolia.g.alchemy.com/v2/FPLZvzEhuo4jMdGjuTqWrtAsaFUpID3t',
 )
 
 export async function POST(req: Request) {

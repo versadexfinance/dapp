@@ -25,6 +25,7 @@ import { useTokenBalance } from '@/web3/hooks'
 import { BigNumber } from 'ethers'
 import { roundToFirstNonZeroDecimal } from '@/pods/utils/number-format'
 import Loader from '@/components/loader'
+import AnimatedPage from '@/components/animated-page'
 
 export type AppProps = {
   crypto: Crypto
@@ -82,128 +83,97 @@ function PositionPage({ params }) {
     return <Loader />
   }
   return (
-    <Container>
-      <Stack gap={6}>
-        <PositionHeader
-          pairOne={pairOne}
-          pairTwo={pairTwo}
-          pairAddress={params.id}
-        />
-      </Stack>
-      <GridContainer>
-        <GridCardContainer
-          css={{
-            gap: '$2',
-            gridArea: 'liquidity',
-          }}
-        >
-          <Typography
+    <AnimatedPage>
+      <Container>
+        <Stack gap={6}>
+          <PositionHeader
+            pairOne={pairOne}
+            pairTwo={pairTwo}
+            pairAddress={params.id}
+          />
+        </Stack>
+        <GridContainer>
+          <GridCardContainer
             css={{
-              color: '#F7FFBB',
-              fontSize: '18px',
-              lineHeight: '24px',
+              gap: '$2',
+              gridArea: 'liquidity',
             }}
           >
-            Liquidity
-          </Typography>
-          <Typography
-            css={{
-              fontSize: '32px',
-              lineHeight: '40px',
-            }}
-          >
-            ${getPriceUsd(reserves?.tokenOne * 2 * poolShare)}
-          </Typography>
-          <PriceRow token={pairOne} value={reserves?.tokenOne * poolShare} />
-          <PriceRow token={pairTwo} value={reserves?.tokenTwo * poolShare} />
-        </GridCardContainer>
+            <Typography
+              css={{
+                color: '#F7FFBB',
+                fontSize: '18px',
+                lineHeight: '24px',
+              }}
+            >
+              Liquidity
+            </Typography>
+            <Typography
+              css={{
+                fontSize: '32px',
+                lineHeight: '40px',
+              }}
+            >
+              ${getPriceUsd(reserves?.tokenOne * 2 * poolShare)}
+            </Typography>
+            <PriceRow token={pairOne} value={reserves?.tokenOne * poolShare} />
+            <PriceRow token={pairTwo} value={reserves?.tokenTwo * poolShare} />
+          </GridCardContainer>
 
-        {/* <GridCardContainer
+          {/* <GridCardContainer
           css={{
             gridArea: 'nft',
           }}
         >
           <PositionGraph />
         </GridCardContainer> */}
-        <GridCardContainer
-          css={{
-            gap: '$2',
-            gridArea: 'fees',
-          }}
-        >
-          <Typography
+          <GridCardContainer
             css={{
-              color: '#F7FFBB',
-              fontSize: '18px',
-              lineHeight: '24px',
+              gap: '$2',
+              gridArea: 'fees',
             }}
           >
-            Liquidity Pool Info
-          </Typography>
-          <Typography
-            css={{
-              fontSize: '32px',
-              lineHeight: '40px',
-              height: '40px',
-            }}
-          >
-            {''}
-          </Typography>
-          <Flex
-            justifyContent={'spaceBetween'}
-            css={{
-              padding: '16px',
-              background: '#1f1f1f',
-              borderRadius: '4px',
-              gap: '24px',
-              alignItems: 'center',
-            }}
-          >
-            <Flex gap={'1'}>LP tokens</Flex>
-            <Flex>
-              <Typography
-                css={{
-                  fontSize: '24px',
-                  lineHeight: '32px',
-                  color: '#AFAFAF',
-                }}
-              >
-                {roundToFirstNonZeroDecimal(pairBalance.data.formatted)}{' '}
-                VERSA-V2
-              </Typography>
-              {/* <Typography
-          css={{
-            fontSize: '24px',
-            lineHeight: '32px',
-            color: '#AFAFAF',
-          }}
-        >
-          $55.25
-        </Typography> */}
-            </Flex>
-          </Flex>
-          <Flex
-            justifyContent={'spaceBetween'}
-            css={{
-              padding: '16px',
-              background: '#1f1f1f',
-              borderRadius: '4px',
-              gap: '24px',
-              alignItems: 'center',
-            }}
-          >
-            <Flex gap={'1'}>Pool Share</Flex>
-            <Flex>
-              <Typography
-                css={{
-                  fontSize: '24px',
-                  lineHeight: '32px',
-                  color: '#AFAFAF',
-                }}
-              >
-                {roundToFirstNonZeroDecimal(poolShare * 100)} %
-              </Typography>
-              {/* <Typography
+            <Typography
+              css={{
+                color: '#F7FFBB',
+                fontSize: '18px',
+                lineHeight: '24px',
+              }}
+            >
+              Liquidity Pool Info
+            </Typography>
+            <Typography
+              css={{
+                fontSize: '32px',
+                lineHeight: '40px',
+                height: '40px',
+              }}
+            >
+              {''}
+            </Typography>
+            <Flex
+              justifyContent={'spaceBetween'}
+              css={{
+                padding: '16px',
+                background: '#1f1f1f',
+                borderRadius: '4px',
+                gap: '24px',
+                alignItems: 'center',
+              }}
+            >
+              <Flex gap={'1'}>LP tokens</Flex>
+              <Flex>
+                <Typography
+                  css={{
+                    fontSize: '24px',
+                    lineHeight: '32px',
+                    color: '#AFAFAF',
+                  }}
+                >
+                  {roundToFirstNonZeroDecimal(pairBalance.data.formatted)}{' '}
+                  VERSA-V2
+                </Typography>
+                {/* <Typography
           css={{
             fontSize: '24px',
             lineHeight: '32px',
@@ -212,14 +182,46 @@ function PositionPage({ params }) {
         >
           $55.25
         </Typography> */}
+              </Flex>
             </Flex>
-          </Flex>
-        </GridCardContainer>
-        {/* <GridCardContainer css={{ gridArea: 'range' }}>
+            <Flex
+              justifyContent={'spaceBetween'}
+              css={{
+                padding: '16px',
+                background: '#1f1f1f',
+                borderRadius: '4px',
+                gap: '24px',
+                alignItems: 'center',
+              }}
+            >
+              <Flex gap={'1'}>Pool Share</Flex>
+              <Flex>
+                <Typography
+                  css={{
+                    fontSize: '24px',
+                    lineHeight: '32px',
+                    color: '#AFAFAF',
+                  }}
+                >
+                  {roundToFirstNonZeroDecimal(poolShare * 100)} %
+                </Typography>
+                {/* <Typography
+          css={{
+            fontSize: '24px',
+            lineHeight: '32px',
+            color: '#AFAFAF',
+          }}
+        >
+          $55.25
+        </Typography> */}
+              </Flex>
+            </Flex>
+          </GridCardContainer>
+          {/* <GridCardContainer css={{ gridArea: 'range' }}>
           <Typography>Price range</Typography>
         </GridCardContainer> */}
-      </GridContainer>
-      {/* 
+        </GridContainer>
+        {/* 
       <pre>{JSON.stringify(currentLp, null, 2)}</pre>
       <pre>reserves : {JSON.stringify(reserves, null, 2)}</pre>
       <pre>totalSupply : {JSON.stringify(totalSupply.toString(), null, 2)}</pre>
@@ -230,8 +232,9 @@ function PositionPage({ params }) {
 
       <pre>Token One : {JSON.stringify(pairOne, null, 2)}</pre>
       <pre>Token Two : {JSON.stringify(pairTwo, null, 2)}</pre> */}
-      <AnimatePresence></AnimatePresence>
-    </Container>
+        <AnimatePresence></AnimatePresence>
+      </Container>
+    </AnimatedPage>
   )
 }
 
